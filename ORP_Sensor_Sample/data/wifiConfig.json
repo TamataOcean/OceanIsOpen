@@ -1,0 +1,9 @@
+{
+	"wifiCount":1,
+	"timeOut":180,
+	"nomad":0,
+	"Wifi1":{
+		"ssid":"LaCoolCo_Raspi",
+		"pass":"FISTDEPUTE"
+	}
+}

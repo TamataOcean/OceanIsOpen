@@ -1,0 +1,18 @@
+{
+	"sensorsNumber":0,
+	"sensor0":
+	{
+		"reference":"DallasTemperature",
+		"type":"TempMC"
+	},
+	"sensor1":
+	{
+		"reference":"Adafruit_TCS34725",
+		"type":"RGBSensor",
+		"kind0":"RGBSensor_r",
+		"kind1":"RGBSensor_g",
+		"kind2":"RGBSensor_b",
+		"kind3":"RGBSensor_colorTemp",
+		"king4":"RGBSensor_lux"
+	}
+}

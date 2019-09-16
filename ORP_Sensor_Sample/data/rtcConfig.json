@@ -1,0 +1,9 @@
+{
+	"NTP":true,
+	"compileTime":false,
+	"timeServer":"0.europe.pool.ntp.org",
+	"localPort":8888,
+	"timeSync":0
+}
+
+
