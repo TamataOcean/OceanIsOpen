@@ -28,6 +28,8 @@ void setup()
 {
   Serial.begin(115200);
   ec.begin();
+
+  Serial.print("EC Testing probe");
 }
 
 void loop()
