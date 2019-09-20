@@ -26,6 +26,8 @@
 #include "GravityTurbidity.h"
 
 #include "Config.h"
+#include "Debug.h"
+
 
 //********************************************************************************************
 // function name: sensors []
@@ -39,6 +41,8 @@
 
 GravitySensorHub::GravitySensorHub()
 {
+	Debug::println("Initialize GravitySensorHub...");
+
 	for (size_t i = 0; i < this->SensorCount; i++)
 	{
 		this->sensors[i] = NULL;

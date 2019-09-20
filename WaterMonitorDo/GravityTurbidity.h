@@ -2,6 +2,7 @@
 
 #include "ISensor.h"
 #include "Arduino.h"
+#include "Debug.h"
 
 class GravityTurbidity: public ISensor
 {

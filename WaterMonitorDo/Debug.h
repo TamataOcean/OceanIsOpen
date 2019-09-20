@@ -84,7 +84,7 @@ public:
 		SerialUSB.println(info);
 #endif // DEBUG_M0
 
-#ifdef DEBUG_AVR
+#ifdef DEBUG_AVR 
 		Serial.println(info);
 #endif // DEBUG_AVR
 

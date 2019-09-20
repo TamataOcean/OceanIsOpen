@@ -16,8 +16,9 @@
 **********************************************************************/
 
 #include "GravityTemperature.h"
+#include "DallasTemperature.h"
 #include <OneWire.h>
-//#include "Debug.h"
+#include "Debug.h"
 
 GravityTemperature::GravityTemperature(int pin)
 {
@@ -35,6 +36,7 @@ GravityTemperature::~GravityTemperature()
 //********************************************************************************************
 void GravityTemperature::setup()
 {
+
 }
 
 
@@ -74,16 +76,16 @@ double GravityTemperature::TempProcess(bool ch)
 	static float TemperatureSum;
 	if (!ch) {
 		if (!oneWire->search(addr)) {
-			//Debug::println(F("no temperature sensors on chain, reset search!"));
+			Debug::println(F("no temperature sensors on chain, reset search!"));
 			oneWire->reset_search();
 			return 0;
 		}
 		if (OneWire::crc8(addr, 7) != addr[7]) {
-			//Debug::println(F("CRC is not valid!"));
+			Debug::println(F("CRC is not valid!"));
 			return 0;
 		}
 		if (addr[0] != 0x10 && addr[0] != 0x28) {
-			//Debug::println(F("Device is not recognized!"));
+			Debug::println(F("Device is not recognized!"));
 			return 0;
 		}
 		oneWire->reset();

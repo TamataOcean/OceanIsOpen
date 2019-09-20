@@ -39,8 +39,7 @@ const int CsPin = 4;
 #include <SPI.h>
 #include "Debug.h"
 #include "GravityRtc.h"
-#include "config.h"
-#include "Debug.h"
+#include "Config.h"
 
 extern GravityRtc rtc;
 

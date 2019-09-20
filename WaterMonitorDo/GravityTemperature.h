@@ -17,6 +17,7 @@
 
 #pragma once
 #include "ISensor.h"
+#include "DallasTemperature.h"
 #include "OneWire.h"
 #define StartConvert 0
 #define ReadTemperature 1

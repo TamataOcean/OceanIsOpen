@@ -52,13 +52,13 @@
 #include "Debug.h"
 
 // Alias clock module logic as rtc
-GravityRtc rtc;
+//GravityRtc rtc;
 
 // Alias sensor logic as sensorHub 
 GravitySensorHub sensorHub;
 
 // Alias SD logic as sdService applied to sensors
-SdService sdService = SdService(sensorHub.sensors);
+//SdService sdService = SdService(sensorHub.sensors);
 
 void setup() {
 	
@@ -67,8 +67,8 @@ void setup() {
 	Debug::println("Serial begin");
 	
 	//initialize RTC module with computer time
-	Debug::println("rtc.setup");
-	rtc.setup();
+	//Debug::println("rtc.setup");
+	//rtc.setup();
 
 	//Reset and initialize sensors
 	Debug::println("sensorHub setup");
@@ -88,7 +88,7 @@ void setup() {
 	#endif
 	
 	//Check for SD card and configure datafile
-	//Debug::println("sdService setup");
+	//Serial::println("sdService setup");
 	//sdService.setup();
 }
 
@@ -96,7 +96,6 @@ void setup() {
 unsigned long updateTime = 0;
 
 void loop() {
-  
 	//Update time from clock module
 	//rtc.update();
 

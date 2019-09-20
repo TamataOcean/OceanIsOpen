@@ -23,7 +23,7 @@
 #include <Arduino.h>
 #include "ISensor.h"
 #include "Config.h"
-#include "debug.h"
+#include "Debug.h"
 
 class GravityOrp:public ISensor
 {
