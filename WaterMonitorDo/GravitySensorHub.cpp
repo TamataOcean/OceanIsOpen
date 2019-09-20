@@ -20,8 +20,11 @@
 #include "GravityPh.h"
 #include "GravityOrp.h"
 #include "GravityEc.h"
+#include "GravityTDS.h"
 #include "GravityTemperature.h"
 #include "GravityDo.h"
+#include "GravityTurbidity.h"
+
 #include "Config.h"
 
 //********************************************************************************************
@@ -46,10 +49,13 @@ GravitySensorHub::GravitySensorHub()
 	this->sensors[doSensor] = new GravityDo();
 	#ifdef SELECTEC
 		this->sensors[ecSensor] = new GravityEc();
-	#else
+	#endif
+	#ifdef SELECTTDS
 		this->sensors[tdsSensor] = new GravityTDS();
 	#endif
+
 	this->sensors[orpSensor] = new GravityOrp();
+	this->sensors[turbiditySensor] = new GravityTurbidity();
 }
 
 //********************************************************************************************

@@ -96,6 +96,7 @@ void setup() {
 unsigned long updateTime = 0;
 
 void loop() {
+  
 	//Update time from clock module
 	//rtc.update();
 
