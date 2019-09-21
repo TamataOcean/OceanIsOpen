@@ -69,6 +69,8 @@ GravitySensorHub sensorHub ;
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 IPAddress ip(172, 16, 0, 100);
 IPAddress server(172, 16, 0, 2);
+char* outTopic = "Topic/OUT";
+char* inTopic = "Topic/IN";
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
@@ -83,40 +85,59 @@ void callback(char* topic, byte* payload, unsigned int length) {
 EthernetClient ethClient;
 PubSubClient client(ethClient);
 
-void reconnect() {
+void reconnect(int nbTry) {
+  int cpt = 0;
   // Loop until we're reconnected
-  while (!client.connected()) {
+  while (!client.connected() && cpt < nbTry ) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("arduinoClient")) {
+    if (client.connect(server)) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("outTopic","hello world");
+      client.publish(outTopic,sensorHub.getJsonSensorsUpdate().c_str());
       // ... and resubscribe
-      client.subscribe("inTopic");
+      client.subscribe(inTopic);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
+      Serial.println(" try "+ (String)cpt + "/"+ (String)nbTry +". Next try in 5 seconds ");
+
       // Wait 5 seconds before retrying
       delay(5000);
+      cpt++;
     }
   }
 }
 
+/*************************/
+/*        SETUP          */
+/*************************/
 void setup() {
 	//SERIAL INIT
 	Serial.begin(9600);
 	delay(1000);
 	Debug::println("Serial begin");
 	
-  	// NETWORK & MQTT setup
+	/********************************/
+  	/* 			NETWORK SETUP 		*/
+  	/*								*/
   	Debug::println("Network setup begin...");
+  	
+  	// Ethernet.init(20);  // Teensy++ 2.0
+  	// if (Ethernet.hardwareStatus() == EthernetNoHardware) {
+   //    Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
+   //    while (true) {
+   //      delay(1); // do nothing, no point running without Ethernet hardware
+   //    }
+  	// }
+  	Ethernet.begin(mac, ip);
   	client.setServer(server, 1883);
   	client.setCallback(callback);
-  	Ethernet.begin(mac, ip);
   	delay(1500);						  	// Allow the hardware to sort itself out
 
+  	/********************************/
+  	/* 			SENSORS SETUP 		*/
+  	/*								*/
 	//Reset and initialize sensors
 	Debug::println("SensorHub setup begin...");
 	sensorHub.setup();
@@ -145,14 +166,16 @@ void setup() {
 
 //Create variable to track time
 unsigned long updateTime = 0;
-
+/*************************/
+/*        LOOP           */
+/*************************/
 void loop() {
 
 	//MQTT Connection 
-	// if (!client.connected()) {
- //    	reconnect();
- //  	}
- //  	client.loop();
+	if (!client.connected()) {	
+    	reconnect(5);
+  	}
+  	client.loop();
 
 	//Update time from clock module
 	//rtc.update();
@@ -160,8 +183,9 @@ void loop() {
 	//Collect sensor readings
 	sensorHub.update();
 	
+	//Export sensor in JSON
 	Serial.println(sensorHub.getJsonSensorsUpdate());
 	
-	//Write data to SD card
+	//If no connection... Write data to SD card
 	//sdService.update();
 }
