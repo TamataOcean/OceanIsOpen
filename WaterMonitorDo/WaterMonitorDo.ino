@@ -40,6 +40,10 @@
 **********************************************************************/
 
 #include <SPI.h>
+#include <Ethernet.h>
+#include <PubSubClient.h>
+//#include "NetworkControl.h"
+
 #include <SD.h>
 #include <Wire.h>
 #include "GravitySensorHub.h"
@@ -53,25 +57,68 @@
 
 // Alias clock module logic as rtc
 //GravityRtc rtc;
-
-// Alias sensor logic as sensorHub 
-GravitySensorHub sensorHub;
-
 // Alias SD logic as sdService applied to sensors
 //SdService sdService = SdService(sensorHub.sensors);
 
+// Alias sensor logic as sensorHub 
+GravitySensorHub sensorHub ;
+
+/* NETWORK & MQTT Config */
+/*************************/
+//NetworkControl netControl = NetworkControl(sensorHub.sensors);
+byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
+IPAddress ip(172, 16, 0, 100);
+IPAddress server(172, 16, 0, 2);
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i=0;i<length;i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+}
+
+EthernetClient ethClient;
+PubSubClient client(ethClient);
+
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Attempt to connect
+    if (client.connect("arduinoClient")) {
+      Serial.println("connected");
+      // Once connected, publish an announcement...
+      client.publish("outTopic","hello world");
+      // ... and resubscribe
+      client.subscribe("inTopic");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
 void setup() {
-	
-	//Open communication at 9600 baud
+	//SERIAL INIT
 	Serial.begin(9600);
+	delay(1000);
 	Debug::println("Serial begin");
 	
-	//initialize RTC module with computer time
-	//Debug::println("rtc.setup");
-	//rtc.setup();
+  	// NETWORK & MQTT setup
+  	Debug::println("Network setup begin...");
+  	client.setServer(server, 1883);
+  	client.setCallback(callback);
+  	Ethernet.begin(mac, ip);
+  	delay(1500);						  	// Allow the hardware to sort itself out
 
 	//Reset and initialize sensors
-	Debug::println("sensorHub setup");
+	Debug::println("SensorHub setup begin...");
 	sensorHub.setup();
 
 	//Apply calibration offsets
@@ -87,6 +134,10 @@ void setup() {
 	Debug::println(ECKVALUE);
 	#endif
 	
+	//initialize RTC module with computer time
+	//Debug::println("rtc.setup");
+	//rtc.setup();
+
 	//Check for SD card and configure datafile
 	//Serial::println("sdService setup");
 	//sdService.setup();
@@ -96,12 +147,21 @@ void setup() {
 unsigned long updateTime = 0;
 
 void loop() {
+
+	//MQTT Connection 
+	// if (!client.connected()) {
+ //    	reconnect();
+ //  	}
+ //  	client.loop();
+
 	//Update time from clock module
 	//rtc.update();
 
 	//Collect sensor readings
 	sensorHub.update();
-
+	
+	Serial.println(sensorHub.getJsonSensorsUpdate());
+	
 	//Write data to SD card
 	//sdService.update();
 }

@@ -18,6 +18,7 @@
 #pragma once
 #include "ISensor.h"
 #include "Config.h"
+#include"Arduino.h"		//Arduino Defs
 /*
 sensors :
 0,ph
@@ -52,4 +53,7 @@ public:
 
 	// Get the sensor data
 	double getValueBySensorNumber(int num);
+
+	// Get JSON Value of sensors
+	String getJsonSensorsUpdate();
 };

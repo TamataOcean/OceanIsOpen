@@ -127,3 +127,35 @@ double GravitySensorHub::getValueBySensorNumber(int num)
 	}
 	return this->sensors[num]->getValue();
 }
+
+String GravitySensorHub::getJsonSensorsUpdate()
+{
+	//CRADE... mais ça marche ;)
+	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
+
+	String json = "{\"state\":{\"reported\":";	
+	for (size_t i = 0; i < SensorCount; i++)
+	{
+		if (i == SensorCount-2 ) {
+			if (this->sensors[i])
+			{
+			json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue();
+			}	
+		}
+		else if (this->sensors[i])
+		{
+			json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue() + ",";
+		}
+	}
+	json += " } }";
+
+	return json;
+}
+
+//sending jetpackStatus over MQTT
+/* 
+String jsonJetpackStatus="{\"state\":{\"reported\":";
+jsonJetpackStatus+=jetpackStatus;
+jsonJetpackStatus += " } }"; // {"state":{"reported":{..,..,..,..,..,..,..,..}  } }
+mqtt.publish( jsonJetpackStatus.c_str() );	
+*/
