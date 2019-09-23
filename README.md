@@ -14,9 +14,15 @@ Utilisation d'un Teensy 3.6 pour la gestion des capteurs
 [ORP](https://wiki.dfrobot.com/Analog_ORP_Meter_SKU_SEN0165_)   
 [DS18b20](https://wiki.dfrobot.com/Waterproof_DS18B20_Digital_Temperature_Sensor__SKU_DFR0198_)   
 
+GPS Position.
+[emLid technologie](https://store.emlid.com/product/reachm-plus/)   
+
+### Installation
+Teensy   
+[emLid](https://jancelin.github.io/centipede/3_0_montage.html)  
+
 ### Architecture
 
 (coming soon...)
 
-### Contact : contact@tamataocean.com 
-
+#### Contact : contact@tamataocean.com 
