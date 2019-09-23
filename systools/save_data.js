@@ -48,7 +48,6 @@ function begin() {
 		console.log('Config');
 		console.log('MqttServer ='+ jsonConfig.system.mqttServer);
 		console.log('MqttTopic ='+ jsonConfig.system.mqttTopic);
-		console.log('Mongo Config ='+ JSON.stringify(jsonConfig.system.mongoDB) ) ;
 		console.log('Influx Config ='+ JSON.stringify(jsonConfig.system.influxDB) ) ;
 	}
    
