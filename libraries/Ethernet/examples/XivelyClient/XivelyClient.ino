@@ -1,12 +1,12 @@
 /*
   Xively sensor client
- 
+
  This sketch connects an analog sensor to Xively (http://www.xively.com)
  using a Wiznet Ethernet shield. You can use the Arduino Ethernet shield, or
  the Adafruit Ethernet shield, either one will work, as long as it's got
  a Wiznet Ethernet module on board.
- 
- This example has been updated to use version 2.0 of the Xively.com API. 
+
+ This example has been updated to use version 2.0 of the Xively.com API.
  To make it work, create a feed with a datastream, and give it the ID
  sensor1. Or change the code below to match your feed.
 
@@ -18,18 +18,14 @@
  created 15 March 2010
  modified 9 Apr 2012
  by Tom Igoe with input from Usman Haque and Joe Saavedra
- modified 15 Jul 2014
- by Soohwan Kim 
- 
-http://arduino.cc/en/Tutorial/XivelyClient
+
+ http://arduino.cc/en/Tutorial/XivelyClient
  This code is in the public domain.
 
  */
 
 #include <SPI.h>
 #include <Ethernet.h>
-void sendData(int thisData);
-int getLength(int someValue); 
 
 #define APIKEY         "YOUR API KEY GOES HERE" // replace your xively api key here
 #define FEEDID         00000 // replace your feed ID
@@ -38,25 +34,19 @@ int getLength(int someValue);
 // assign a MAC address for the ethernet controller.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
 // fill in your address here:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-;
-#else
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-#endif
+byte mac[] = {
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
+};
 
 // fill in an available IP address on your network here,
 // for manual configuration:
-IPAddress ip(192, 168, 1, 20);
-IPAddress gateway(192, 168, 1, 1);
-IPAddress subnet(255, 255, 255, 0);
-// fill in your Domain Name Server address here:
-IPAddress myDns(8, 8, 8, 8); // google puble dns
+IPAddress ip(10, 0, 1, 20);
 // initialize the library instance:
 EthernetClient client;
 
 // if you don't want to use DNS (and reduce your sketch size)
 // use the numeric IP instead of the name for the server:
-IPAddress server(216,52,233,122);      // numeric IP for api.xively.com
+IPAddress server(216, 52, 233, 122);      // numeric IP for api.xively.com
 //char server[] = "api.xively.com";   // name address for xively API
 
 unsigned long lastConnectionTime = 0;          // last time you connected to the server, in milliseconds
@@ -64,26 +54,26 @@ boolean lastConnected = false;                 // state of the connection last t
 const unsigned long postingInterval = 10*1000; //delay between updates to Xively.com
 
 void setup() {
-  // Open serial communications and wait for port to open:
+  // You can use Ethernet.init(pin) to configure the CS pin
+  //Ethernet.init(10);  // Most Arduino shields
+  //Ethernet.init(5);   // MKR ETH shield
+  //Ethernet.init(0);   // Teensy 2.0
+  //Ethernet.init(20);  // Teensy++ 2.0
+  //Ethernet.init(15);  // ESP8266 with Adafruit Featherwing Ethernet
+  //Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
+
+ // Open serial communications and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for Leonardo only
+    ; // wait for serial port to connect. Needed for native USB port only
   }
 
 
-  // start the Ethernet connection:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  if (Ethernet.begin() == 0) {
-#else
+ // start the Ethernet connection:
   if (Ethernet.begin(mac) == 0) {
-#endif  
     Serial.println("Failed to configure Ethernet using DHCP");
     // DHCP failed, so use a fixed IP address:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-    Ethernet.begin(ip, myDns, gateway, subnet);
-#else
-    Ethernet.begin(mac, ip, myDns, gateway, subnet);
-#endif  
+    Ethernet.begin(mac, ip);
   }
 }
 
@@ -109,7 +99,7 @@ void loop() {
 
   // if you're not connected, and ten seconds have passed since
   // your last connection, then connect again and send data:
-  if (!client.connected() && (millis() - lastConnectionTime > postingInterval)) {
+  if(!client.connected() && (millis() - lastConnectionTime > postingInterval)) {
     sendData(sensorReading);
   }
   // store the state of the connection for next time through
@@ -147,15 +137,14 @@ void sendData(int thisData) {
     client.print("sensor1,");
     client.println(thisData);
 
-  }
-  else {
+  } else {
     // if you couldn't make a connection:
     Serial.println("connection failed");
     Serial.println();
     Serial.println("disconnecting.");
     client.stop();
   }
-  // note the time that the connection was made or attempted:
+   // note the time that the connection was made or attempted:
   lastConnectionTime = millis();
 }
 
@@ -171,9 +160,9 @@ int getLength(int someValue) {
   // continually divide the value by ten,
   // adding one to the digit count for each
   // time you divide, until you're at 0:
-  int dividend = someValue / 10;
+  int dividend = someValue /10;
   while (dividend > 0) {
-    dividend = dividend / 10;
+    dividend = dividend /10;
     digits++;
   }
   // return the number of digits:

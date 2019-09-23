@@ -4,10 +4,12 @@
  Serves the output of a Barometric Pressure Sensor as a web page.
  Uses the SPI library. For details on the sensor, see:
  http://www.sparkfun.com/commerce/product_info.php?products_id=8161
- http://www.vti.fi/en/support/obsolete_products/pressure_sensors/
 
  This sketch adapted from Nathan Seidle's SCP1000 example for PIC:
  http://www.sparkfun.com/datasheets/Sensors/SCP1000-Testing.zip
+
+ TODO: this hardware is long obsolete.  This example program should
+ be rewritten to use https://www.sparkfun.com/products/9721
 
  Circuit:
  SCP1000 sensor attached to pins 6,7, and 11 - 13:
@@ -19,34 +21,21 @@
 
  created 31 July 2010
  by Tom Igoe
- modified 15 Jul 2014
- by Soohwan Kim 
  */
 
 #include <Ethernet.h>
 // the sensor communicates using SPI, so include the library:
 #include <SPI.h>
 
-void getData(); 
-void listenForEthernetClients(); 
-void writeRegister(byte registerName, byte registerValue); 
-unsigned int readRegister(byte registerName, int numBytes);
 
-//#define __USE_DHCP__
-
-// assign a MAC address for the ethernet controller.
+// assign a MAC address for the Ethernet controller.
 // fill in your address here:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-;
-#else
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-#endif
+byte mac[] = {
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
+};
 // assign an IP address for the controller:
 IPAddress ip(192, 168, 1, 20);
-IPAddress gateway(192, 168, 1, 1);
-IPAddress subnet(255, 255, 255, 0);
-// fill in your Domain Name Server address here:
-IPAddress myDns(8, 8, 8, 8); // google puble dns
+
 
 // Initialize the Ethernet server library
 // with the IP address and port you want to use
@@ -59,7 +48,7 @@ const int PRESSURE = 0x1F;      //3 most significant bits of pressure
 const int PRESSURE_LSB = 0x20;  //16 least significant bits of pressure
 const int TEMPERATURE = 0x21;   //16 bit temperature reading
 
-// pins used for the connection with the sensorau BufRead,BufNewFile *.pde set filetype=arduin
+// pins used for the connection with the sensor
 // the others you need are controlled by the SPI library):
 const int dataReadyPin = 6;
 const int chipSelectPin = 7;
@@ -69,31 +58,43 @@ long pressure = 0;
 long lastReadingTime = 0;
 
 void setup() {
+  // You can use Ethernet.init(pin) to configure the CS pin
+  //Ethernet.init(10);  // Most Arduino shields
+  //Ethernet.init(5);   // MKR ETH shield
+  //Ethernet.init(0);   // Teensy 2.0
+  //Ethernet.init(20);  // Teensy++ 2.0
+  //Ethernet.init(15);  // ESP8266 with Adafruit Featherwing Ethernet
+  //Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
+
   // start the SPI library:
   SPI.begin();
 
-  // initialize the ethernet device
-#if defined __USE_DHCP__
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin();
-#else
-  Ethernet.begin(mac);
-#endif  
-#else
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin(ip, myDns, gateway, subnet);
-#else
-  Ethernet.begin(mac, ip, myDns, gateway, subnet);
-#endif  
-#endif
-  // start the Ethernet connection and the server:
+  // start the Ethernet connection
+  Ethernet.begin(mac, ip);
+
+  // Open serial communications and wait for port to open:
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+
+  // Check for Ethernet hardware present
+  if (Ethernet.hardwareStatus() == EthernetNoHardware) {
+    Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
+    while (true) {
+      delay(1); // do nothing, no point running without Ethernet hardware
+    }
+  }
+  if (Ethernet.linkStatus() == LinkOFF) {
+    Serial.println("Ethernet cable is not connected.");
+  }
+
+  // start listening for clients
   server.begin();
 
-  // initalize the  data ready and chip select pins:
+  // initalize the data ready and chip select pins:
   pinMode(dataReadyPin, INPUT);
   pinMode(chipSelectPin, OUTPUT);
-
-  Serial.begin(9600);
 
   //Configure SCP1000 for low noise configuration:
   writeRegister(0x02, 0x2D);
@@ -105,6 +106,7 @@ void setup() {
 
   //Set the sensor to high resolution mode tp start readings:
   writeRegister(0x03, 0x0A);
+
 }
 
 void loop() {
@@ -179,8 +181,7 @@ void listenForEthernetClients() {
         if (c == '\n') {
           // you're starting a new line
           currentLineIsBlank = true;
-        }
-        else if (c != '\r') {
+        } else if (c != '\r') {
           // you've gotten a character on the current line
           currentLineIsBlank = false;
         }
@@ -242,5 +243,5 @@ unsigned int readRegister(byte registerName, int numBytes) {
   // take the chip select high to de-select:
   digitalWrite(chipSelectPin, HIGH);
   // return the result:
-  return(result);
+  return (result);
 }
