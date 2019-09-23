@@ -10,8 +10,9 @@
 
 //MQTT Config
 #define MQTTSERVER 172.24.1.1
-#define MQTTUSER "TeensyWater"
+#define MQTTUSER "TeensyProbes"
 #define	MQTTBUFFERSIZE 3000
+#define MQTTTOPIC "TeensyProbes/Sensors"
 
 
 //The maximum length of the sensor filter array

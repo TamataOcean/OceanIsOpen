@@ -1,0 +1,15 @@
+# Sytools component 
+
+Config service to keep data.
+NodeJS program to listen Mosquitto & Saving data on InfluxDB.
+
+### Config.json
+Define your 
+* mosquitto server 
+* mqtt config
+* influxDb access
+
+
+### save_data.js 
+
+In charge of listening Mosquitto, when a message arrive, save to influxDB

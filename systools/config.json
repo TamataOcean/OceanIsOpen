@@ -1,0 +1,33 @@
+{
+    "AppName": "OceanIsOpen",
+    "Version": "1.0.0",
+    "Copyright": "Copyright Open Source - W3Licence",
+    "system": {
+        "user": "OceanIsOpen",
+        "id": "TeensyProbes",
+        "mac": "123456789007",
+        "interval": 10,
+        "mqttServer": "localhost",
+        "mqttTopic": "TeensyProbes/Sensors",
+        "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
+        
+        "influxDB": {
+            "database": "datawater",
+            "host": "localhost",
+            "port": 8086,
+            "username": "oceanisopen",
+            "password": "oceanisopen"
+        }
+    },
+    
+    "sensors": {
+        "phSensor": 0,
+        "temperatureSensor": 1,
+        "doSensor": 2,
+        "ecSensor": 3,
+        "tdsSensor": 4,
+        "orpSensor": 5,
+        "turbiditySensor": 6
+    }
+    
+}
