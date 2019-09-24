@@ -133,7 +133,7 @@ String GravitySensorHub::getJsonSensorsUpdate()
 	//CRADE... mais ça marche ;)
 	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
 
-	String json = "{\"state\":{\"reported\":";	
+	String json = "{\"state\":{\"reported\":{";	
 	for (size_t i = 0; i < SensorCount; i++)
 	{
 		if (i == SensorCount-2 ) {
@@ -147,7 +147,7 @@ String GravitySensorHub::getJsonSensorsUpdate()
 			json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue() + ",";
 		}
 	}
-	json += " } }";
+	json += "} }}";
 
 	return json;
 }

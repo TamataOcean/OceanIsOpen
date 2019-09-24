@@ -7,13 +7,13 @@
         "id": "TeensyProbes",
         "mac": "123456789007",
         "interval": 10,
-        "mqttServer": "localhost",
-        "mqttTopic": "TeensyProbes/Sensors",
+        "mqttServer": "192.168.0.104",
+        "mqttTopic": "teensy/sensors",
         "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
         
         "influxDB": {
             "database": "datawater",
-            "host": "localhost",
+            "host": "192.168.0.104",
             "port": 8086,
             "username": "oceanisopen",
             "password": "oceanisopen"

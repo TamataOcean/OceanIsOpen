@@ -169,10 +169,10 @@ unsigned long updateTime = 0;
 void loop() {
 
 	//MQTT Connection 
-	if (!client.connected()) {	
-    	reconnect(5);
-  	}
-  	client.loop();
+	// if (!client.connected()) {	
+ //    	reconnect(5);
+ //  	}
+ //  	client.loop();
 
 	//Update time from clock module
 	//rtc.update();

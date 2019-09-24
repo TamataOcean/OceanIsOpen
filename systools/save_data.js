@@ -35,7 +35,7 @@ jsonfile.readFile(configFile, function(err, data) {
 		jsonConfig = data;
 
 		if (err) throw err;
-		mqttTopic = jsonConfig.system.mqttTopic + '/update';
+		mqttTopic = jsonConfig.system.mqttTopic ;
 		mqttServer = jsonConfig.system.mqttServer;
 		mqttAWS = jsonConfig.system.mqttAWS;
 		user = jsonConfig.system.user;
@@ -52,17 +52,19 @@ function begin() {
 	}
    
 	client = mqtt.connect('mqtt://'+ jsonConfig.system.mqttServer );
-    client.subscribe( jsonConfig.system.mqttTopic + "/update"); 
+    client.subscribe( jsonConfig.system.mqttTopic ); 
     //client.subscribe("dev/update"); 
     client.on('connect', () => { console.log('Mqtt connected to ' + jsonConfig.system.mqttServer + "/ Topic : " + jsonConfig.system.mqttTopic  )} )
     client.on('message', insertEvent );
 }
 
 function insertEvent(topic,message) {
-	var parsedMessage = JSON.parse(message);
 
 	if (DEBUG) console.log('************************');
-	if (DEBUG) console.log('Mqtt Message received : ');
+	if (DEBUG) console.log('Mqtt Message received : ' + message );
+
+	var parsedMessage = JSON.parse(message);
+
 	if (DEBUG) console.log('Insert Message : ' + JSON.stringify(parsedMessage) ) ;
 
 	// Checking Message 

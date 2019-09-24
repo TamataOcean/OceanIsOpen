@@ -31,8 +31,8 @@ class TamataInfluxDB {
    	            measurement: this.measurement,
    	            fields: {
    	              user :         FieldType.STRING,
-   	              timestamp :  FieldType.FLOAT,
-   	              mac:         FieldType.STRING,
+   	              //timestamp :  FieldType.FLOAT,
+   	              //mac:         FieldType.STRING,
    	              phSensor:   FieldType.FLOAT,
    	              temperatureSensor:    FieldType.FLOAT,
    	              doSensor:    FieldType.FLOAT,
@@ -50,18 +50,19 @@ class TamataInfluxDB {
 
    save( jsonRecord, measurement ) {
    	if (DEBUG) console.log('InfluxDB save function...');
+
       this.influx.getDatabaseNames()
       .then(names => {
-       if ( !names.includes('dataspiru') ) {
-         if (DEBUG) console.log('First connection... create database dataspiru');
+       if ( !names.includes(this.config.database) ) {
+         if (DEBUG) console.log('First connection... create database '+ this.config.database);
          
          this.influx.createUser('test', 'test').then( ()=> {
-            return this.influx.createDatabase('dataspiru')
+            return this.influx.createDatabase(this.config.database)
          } );  
        }
       })
       .then( () => {
-         if (DEBUG) console.log('database : dataspiru found');
+         if (DEBUG) console.log('database : ' + this.config.database + ' found');
          if (DEBUG) console.log('jsonRecord = '+ JSON.stringify(jsonRecord) );
 
          if       (measurement ==="sensor" ) { this.saveSensor(jsonRecord,measurement);  } 
@@ -84,8 +85,8 @@ class TamataInfluxDB {
          tags: { sensor: "CoolBoardSensors" },
          fields: { 
             user :               jsonRecord.state.reported.user,
-            timestamp :          Date.parse(jsonRecord.state.reported.timestamp),
-            mac:                 jsonRecord.state.reported.mac,
+            //timestamp :          Date.parse(jsonRecord.state.reported.timestamp),
+            //mac:                 jsonRecord.state.reported.mac,
             phSensor:            jsonRecord.state.reported.phSensor,
             temperatureSensor:   jsonRecord.state.reported.temperatureSensor,
             doSensor:            jsonRecord.state.reported.doSensor,
