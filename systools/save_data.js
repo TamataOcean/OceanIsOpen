@@ -37,6 +37,7 @@ jsonfile.readFile(configFile, function(err, data) {
 		if (err) throw err;
 		mqttTopic = jsonConfig.system.mqttTopic ;
 		mqttServer = jsonConfig.system.mqttServer;
+		mqttUser = jsonConfig.system.mqttUser;
 		mqttAWS = jsonConfig.system.mqttAWS;
 		user = jsonConfig.system.user;
 		begin();
@@ -47,6 +48,7 @@ function begin() {
 		// console.log('Function Begin(jsonConfig) : '+JSON.stringify(jsonConfig) );
 		console.log('Config');
 		console.log('MqttServer ='+ jsonConfig.system.mqttServer);
+		console.log('MqttUser ='+ jsonConfig.system.mqttUser);
 		console.log('MqttTopic ='+ jsonConfig.system.mqttTopic);
 		console.log('Influx Config ='+ JSON.stringify(jsonConfig.system.influxDB) ) ;
 	}
@@ -105,16 +107,16 @@ function getMeasurement(parsedMessage) {
 		if (DEBUG) {console.log('Function getMeasurement start... ');}
 		var measurement;
 
-		if ( parsedMessage.state.reported.user === "TeensyProbes" ) { 
+		if ( parsedMessage.state.reported.user === mqttUser ) { 
 			if (DEBUG) { console.log('sensor message detected') }
 			measurement = "sensor";
 			return measurement;
 		} 
-		else if ( parsedMessage.state.reported.Act0 !== null ){//&& parsedMessage.state.reported.user === null ) {
-			if (DEBUG) { console.log('jetpack message detected') }
-			measurement = "jetpack"
-			return measurement;
-		}
+		// else if ( parsedMessage.state.reported.Act0 !== null ){//&& parsedMessage.state.reported.user === null ) {
+		// 	if (DEBUG) { console.log('jetpack message detected') }
+		// 	measurement = "jetpack"
+		// 	return measurement;
+		// }
 		else {
 			return "unManaged";
 		}

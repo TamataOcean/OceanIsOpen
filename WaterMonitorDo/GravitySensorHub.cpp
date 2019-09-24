@@ -42,7 +42,9 @@
 GravitySensorHub::GravitySensorHub()
 {
 	Debug::println("Initialize GravitySensorHub...");
-
+	Debug::println("mqttUser = " + (String)MQTTUSER);
+	Debug::println("------------------------------");
+	
 	for (size_t i = 0; i < this->SensorCount; i++)
 	{
 		this->sensors[i] = NULL;
@@ -133,7 +135,7 @@ String GravitySensorHub::getJsonSensorsUpdate()
 	//CRADE... mais ça marche ;)
 	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
 
-	String json = "{\"state\":{\"reported\":{";	
+	String json = "{\"state\":{\"reported\":{\"user\":\""+(String)MQTTUSER+"\",";	
 	for (size_t i = 0; i < SensorCount; i++)
 	{
 		if (i == SensorCount-2 ) {

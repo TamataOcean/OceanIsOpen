@@ -181,8 +181,9 @@ void loop() {
 	sensorHub.update();
 	
 	//Export sensor in JSON
+	Serial.println("Sending to MQTT Topic : " + (String)MQTTTOPIC);
 	Serial.println(sensorHub.getJsonSensorsUpdate());
-	
+
 	//If no connection... Write data to SD card
 	//sdService.update();
 }
