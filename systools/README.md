@@ -9,12 +9,13 @@ Define your
 * mqtt config
 * influxDb access
 
+### save_data.js
 
-### save_data.js
+In charge of listening Mosquitto, when a message arrive, save to influxDB 
 
-In charge of listening Mosquitto, when a message arrive, save to influxDB
-     [JSON Formated Message]
-     {"state":{"reported":{"user":"teensySensors","phSensor":5.34,"temperatureSensor":15.10,"doSensor":9.25,"ecSensor":13.06,"tdsSensor":456.05,"orpSensor":237.30,"turbiditySensor":2.35}}}
+     [Format]
+      {"state":{"reported":{"user":"teensySensors","phSensor":5.34,"temperatureSensor":15.10,"doSensor":9.25,"ecSensor":13.06,"tdsSensor":456.05,"orpSensor":237.30,"turbiditySensor":2.35}}}
+      
 
 
 ### Writing service script for Spiru
