@@ -43,6 +43,15 @@ class TamataPostgres {
 
    save( jsonRecord, measurement ) {
    	if (DEBUG) console.log('Postgres save() function...');
+      if (DEBUG) console.log("INSERT INTO sensors(user, phSensor, temperatureSensor, doSensor, ecSensor, tdsSensor, orpSensor) VALUES("+
+            jsonRecord.state.reported.user +"," +
+            jsonRecord.state.reported.phSensor + ","+ 
+            jsonRecord.state.reported.temperatureSensor + ","+ 
+            jsonRecord.state.reported.doSensor + ","+ 
+            jsonRecord.state.reported.ecSensor + ","+ 
+            jsonRecord.state.reported.tdsSensor + ","+ 
+            jsonRecord.state.reported.orpSensor + 
+         ")");
 
       pool.query("INSERT INTO sensors(user, phSensor, temperatureSensor, doSensor, ecSensor, tdsSensor, orpSensor)" + 
          "VALUES("+
@@ -52,12 +61,13 @@ class TamataPostgres {
             jsonRecord.state.reported.doSensor + ","+ 
             jsonRecord.state.reported.ecSensor + ","+ 
             jsonRecord.state.reported.tdsSensor + ","+ 
-            jsonRecord.state.reported.orpSensor + ","+ 
+            jsonRecord.state.reported.orpSensor + 
          ")", (err, res) => {
          console.log(err, res);
          pool.end();
       });
-
+      
+      
       //this.saveSensor(jsonRecord,measurement);   
       /*
       this.influx.getDatabaseNames()
