@@ -16,6 +16,8 @@ var mqtt = require('mqtt'); //includes mqtt server
 var moment = require('moment')
 
 const TamataInfluxDB = require('./actions/components/TamataInflux')
+const TamataPostgres = require('./actions/components/TamataPostgres')
+
 var jsonConfig ;
 
 /* Config JSON indent mode */
@@ -78,8 +80,12 @@ function insertEvent(topic,message) {
 		.then(  (measurement) => {
 			if (measurement !== "unManaged") {	
 				if (DEBUG) console.log('Begin saving... measurement = ' + measurement );
-				influx = new TamataInfluxDB( jsonConfig.system.influxDB, measurement );
-				influx.save( parsedMessage, measurement );
+				//influx = new TamataInfluxDB( jsonConfig.system.influxDB, measurement );
+				//influx.save( parsedMessage, measurement );
+
+				/* INSERT to Postgres database */
+				posgresDB = new TamataPostgres( jsonConfig.system.postgres, measurement );
+				posgresDB.save( parsedMessage, measurement );
 			}
 			else {
 				if (DEBUG) console.log('UnManaged measurement = ' + measurement );
