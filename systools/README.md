@@ -17,7 +17,7 @@ In charge of listening Mosquitto, when a message arrive, save to influxDB
       {"state":{"reported":{"user":"teensySensors","phSensor":5.34,"temperatureSensor":15.10,"doSensor":9.25,"ecSensor":13.06,"tdsSensor":456.05,"orpSensor":237.30,"turbiditySensor":2.35}}}
       
 
-### Writing service script for Spiru
+### Writing service script
 #### Into : /lib/systemd/system 
 
      [Unit]
