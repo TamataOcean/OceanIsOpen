@@ -42,29 +42,30 @@ class TamataPostgres {
    }
 
    save( jsonRecord, measurement ) {
-   	if (DEBUG) console.log('Postgres save() function...');
-      if (DEBUG) console.log("INSERT INTO sensors(user, phSensor, temperatureSensor, doSensor, ecSensor, tdsSensor, orpSensor) VALUES("+
-            jsonRecord.state.reported.user +"," +
+      if (DEBUG) console.log('Postgres save() function...');
+      const queryText = "INSERT INTO sensors(\"user\", \"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\") VALUES('"+
+            jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
             jsonRecord.state.reported.phSensor + ","+ 
             jsonRecord.state.reported.temperatureSensor + ","+ 
             jsonRecord.state.reported.doSensor + ","+ 
             jsonRecord.state.reported.ecSensor + ","+ 
             jsonRecord.state.reported.tdsSensor + ","+ 
             jsonRecord.state.reported.orpSensor + 
-         ")");
+      ")";
+      if (DEBUG) console.log("queryText " + queryText);
 
-      pool.query("INSERT INTO sensors(user, phSensor, temperatureSensor, doSensor, ecSensor, tdsSensor, orpSensor)" + 
-         "VALUES("+
-            jsonRecord.state.reported.user +"," +
-            jsonRecord.state.reported.phSensor + ","+ 
-            jsonRecord.state.reported.temperatureSensor + ","+ 
-            jsonRecord.state.reported.doSensor + ","+ 
-            jsonRecord.state.reported.ecSensor + ","+ 
-            jsonRecord.state.reported.tdsSensor + ","+ 
-            jsonRecord.state.reported.orpSensor + 
-         ")", (err, res) => {
-         console.log(err, res);
-         pool.end();
+   	/* WORKING FINE */   
+      // pool.query("INSERT INTO sensors(\"user\", \"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\") "+
+      //    "VALUES('teensy',7.34,16.1,10.25,12.06,456.05,212.3)", (err, res) => { 
+      //       console.log (err, res); 
+      //       //pool.end();
+      // });
+      
+
+      pool.query(queryText, (err, res) => {
+                        console.log(err, res);
+
+                        //pool.end();
       });
       
       
@@ -95,33 +96,6 @@ class TamataPostgres {
           return;
       });*/
    	// body...
-   }
-
-   saveSensor(jsonRecord, measurement ) {
-      if (DEBUG) console.log("Postgres - saveSensor() function ")
-      /*this.influx.writePoints([
-         {
-         measurement: measurement,
-         tags: { sensor: "teensySensors" },
-         fields: { 
-            user :               jsonRecord.state.reported.user,
-            //timestamp :          Date.parse(jsonRecord.state.reported.timestamp),
-            //mac:                 jsonRecord.state.reported.mac,
-            phSensor:            jsonRecord.state.reported.phSensor,
-            temperatureSensor:   jsonRecord.state.reported.temperatureSensor,
-            doSensor:            jsonRecord.state.reported.doSensor,
-            ecSensor:            jsonRecord.state.reported.ecSensor,
-            tdsSensor:           jsonRecord.state.reported.tdsSensor,
-            orpSensor:           jsonRecord.state.reported.orpSensor
-            }  
-         }]).catch(err => {
-            console.error(`Error saving Sensor data to InfluxDB! ${err.stack}`);
-            return;
-         }).then( () => {
-            console.log('Doc type '+measurement +' pushed to InFlux'  );
-            console.log('\n');
-         });
-      */
    }
 }
 
