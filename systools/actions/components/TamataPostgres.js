@@ -53,58 +53,13 @@ class TamataPostgres {
             jsonRecord.state.reported.orpSensor + 
       ")";
       if (DEBUG) console.log("queryText " + queryText);
-
-   	/* WORKING FINE */   
-      // pool.query("INSERT INTO sensors(\"user\", \"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\") "+
-      //    "VALUES('teensy',7.34,16.1,10.25,12.06,456.05,212.3)", (err, res) => { 
-      //       console.log (err, res); 
-      //       //pool.end();
-      // });
-      
-
+    
       pool.query(queryText, (err, res) => {
                         console.log(err, res);
-
                         //pool.end();
-      });
-      
-      
-      //this.saveSensor(jsonRecord,measurement);   
-      /*
-      this.influx.getDatabaseNames()
-      .then(names => {
-       if ( !names.includes(this.config.database) ) {
-         if (DEBUG) console.log('First connection... create database '+ this.config.database);
-         
-         this.influx.createUser('test', 'test').then( ()=> {
-            return this.influx.createDatabase(this.config.database)
-         } );  
-       }
-      })
-      .then( () => {
-         if (DEBUG) console.log('database : ' + this.config.database + ' found');
-         if (DEBUG) console.log('jsonRecord = '+ JSON.stringify(jsonRecord) );
-
-         if       (measurement ==="sensor" ) { this.saveSensor(jsonRecord,measurement);  } 
-         else {
-            console.log('Mqtt message Type not managed... yet ;-) !!! ');
-         }
-      })
-      .catch(err => {
-          console.error(`Error creating Influx database!`)
-          console.log(`${err.stack}`);
-          return;
-      });*/
-   	// body...
+      }); 
+      // body...
    }
-}
-
-function convertBoolean( boolean ) {
-   if (DEBUG) console.log('convertBoolean entry '+  boolean );
-   var result = 0;
-   if (boolean) result = 1;
-   if (DEBUG) console.log('converted to '+ result );
-   return result;
 }
 
 module.exports = TamataPostgres;

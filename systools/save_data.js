@@ -47,7 +47,6 @@ jsonfile.readFile(configFile, function(err, data) {
 
 function begin() {
 	if (DEBUG) {
-		// console.log('Function Begin(jsonConfig) : '+JSON.stringify(jsonConfig) );
 		console.log('Config');
 		console.log('MqttServer ='+ jsonConfig.system.mqttServer);
 		console.log('MqttUser ='+ jsonConfig.system.mqttUser);
@@ -57,7 +56,6 @@ function begin() {
    
 	client = mqtt.connect('mqtt://'+ jsonConfig.system.mqttServer );
     client.subscribe( jsonConfig.system.mqttTopic ); 
-    //client.subscribe("dev/update"); 
     client.on('connect', () => { console.log('Mqtt connected to ' + jsonConfig.system.mqttServer + "/ Topic : " + jsonConfig.system.mqttTopic  )} )
     client.on('message', insertEvent );
 }
@@ -80,10 +78,13 @@ function insertEvent(topic,message) {
 		.then(  (measurement) => {
 			if (measurement !== "unManaged") {	
 				if (DEBUG) console.log('Begin saving... measurement = ' + measurement );
+				/* Uncomment to add datas to InfluxDB */
+				/**************************************/
 				//influx = new TamataInfluxDB( jsonConfig.system.influxDB, measurement );
 				//influx.save( parsedMessage, measurement );
 
 				/* INSERT to Postgres database */
+				/*******************************/
 				posgresDB = new TamataPostgres( jsonConfig.system.postgres, measurement );
 				posgresDB.save( parsedMessage, measurement );
 			}
@@ -93,7 +94,6 @@ function insertEvent(topic,message) {
 		})
 	);
 
-	// Then Internet Check & Close DBs
 	promiseMeasurement.then( () => {
 		if (DEBUG) console.log('Last actions... ');
 	});
@@ -118,15 +118,8 @@ function getMeasurement(parsedMessage) {
 			measurement = "sensor";
 			return measurement;
 		} 
-		// else if ( parsedMessage.state.reported.Act0 !== null ){//&& parsedMessage.state.reported.user === null ) {
-		// 	if (DEBUG) { console.log('jetpack message detected') }
-		// 	measurement = "jetpack"
-		// 	return measurement;
-		// }
 		else {
 			return "unManaged";
 		}
 	});
-
-
 }
