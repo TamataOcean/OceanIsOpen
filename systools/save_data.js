@@ -61,23 +61,28 @@ function begin() {
 }
 
 function insertEvent(topic,message) {
+	var parsedMessage = JSON.parse(message);
+	var parsedPosition = "";
 
 	if (DEBUG) console.log('************************');
 	if (DEBUG) console.log('Mqtt Message received : ' + message );
-
-	var parsedMessage = JSON.parse(message);
-
 	if (DEBUG) console.log('Insert Message : ' + JSON.stringify(parsedMessage) ) ;
 
-	// Checking Message 
+	const promisePosition = getGpsPosition();
+	
+	/* Checking Message 
 	const promiseMeasurement = new Promise( (resolve, reject) => {
 		return resolve();
-	})
-	// Then Connect to Moogose // Influx 
-	.then( getMeasurement(parsedMessage)
+	}) */
+	
+	// Then Connect to Database
+	const promiseMeasurement = promisePosition.then( getMeasurement(parsedMessage)
 		.then(  (measurement) => {
 			if (measurement !== "unManaged") {	
 				if (DEBUG) console.log('Begin saving... measurement = ' + measurement );
+				/* Measurement received --> Looking for gps position */
+				// getGpsPosition();
+
 				/* Uncomment to add datas to InfluxDB */
 				/**************************************/
 				//influx = new TamataInfluxDB( jsonConfig.system.influxDB, measurement );
@@ -86,7 +91,7 @@ function insertEvent(topic,message) {
 				/* INSERT to Postgres database */
 				/*******************************/
 				posgresDB = new TamataPostgres( jsonConfig.system.postgres, measurement );
-				posgresDB.save( parsedMessage, measurement );
+				posgresDB.save( parsedMessage );
 			}
 			else {
 				if (DEBUG) console.log('UnManaged measurement = ' + measurement );
@@ -101,6 +106,39 @@ function insertEvent(topic,message) {
 } // End Insert Event
 
 
+/***************************************
+- function getGpsPosition()
+Return a Promise with position type NMEA
+*/
+function getGpsPosition() {
+	return new Promise( (resolve, reject) => {
+		if (DEBUG) console.log("Function getGpsPosition...");
+		
+		const SerialPort = require('serialport')
+		const Readline = require('@serialport/parser-readline')
+		const port = new SerialPort('/dev/cu.SLAB_USBtoUART', { baudRate: 4800 })
+		const nmea = require('node-nmea')
+
+		// Open errors will be emitted as an error event
+		port.on('error', function(err) {
+  			console.log('Error: ', err.message)
+		})
+
+		const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
+		parser.on('data', function (data) {
+			if (data.includes("$GPRMC")) {
+				console.log(nmea.parse(data));
+				parsedPosition = nmea.parse(data);
+				return resolve(parsedPosition);
+			}
+			// return resolve();
+		})
+		// return resolve();
+	}).then ((position) => {
+		console.log("End function getGpsPosition..." + position);
+	})
+}
+
 /*********************************************
 - function getMeasurement(parsedMessage)
 Return a Promise with measurement type 
@@ -112,9 +150,7 @@ function getMeasurement(parsedMessage) {
 	}).then( () => {
 		if (DEBUG) {console.log('Function getMeasurement start... ');}
 		var measurement;
-
 		if ( parsedMessage.state.reported.user === mqttUser ) { 
-			if (DEBUG) { console.log('sensor message detected') }
 			measurement = "sensor";
 			return measurement;
 		} 

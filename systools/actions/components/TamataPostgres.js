@@ -41,7 +41,7 @@ class TamataPostgres {
       }
    }
 
-   save( jsonRecord, measurement ) {
+   save( jsonRecord ) {
       if (DEBUG) console.log('Postgres save() function...');
       const queryText = "INSERT INTO sensors(\"user\", \"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\") VALUES('"+
             jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
