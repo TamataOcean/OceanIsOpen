@@ -7,11 +7,12 @@ NodeJS program to listen Mosquitto & Saving data on InfluxDB.
 Define your 
 * mosquitto server 
 * mqtt config
-* influxDb access
+* postgres access
+* serialport for GPS
 
 ### save_data.js
 
-In charge of listening Mosquitto, when a message arrive, save to influxDB 
+In charge of listening Mosquitto, when a message arrive, keeping GPS position and save to PostGres 
 
      [Format]
       {"state":{"reported":{"user":"teensySensors","phSensor":5.34,"temperatureSensor":15.10,"doSensor":9.25,"ecSensor":13.06,"tdsSensor":456.05,"orpSensor":237.30,"turbiditySensor":2.35}}}
