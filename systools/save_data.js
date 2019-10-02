@@ -23,7 +23,8 @@ var mqttServer=""
 var mqttAWS= ""
 var influx;
 var mongo;
-
+var serialport;
+var baud;
 let parser;
 //---------------------
 //get config
@@ -37,6 +38,8 @@ jsonfile.readFile(configFile, function(err, data) {
 		mqttUser = data.system.mqttUser;
 		mqttAWS = data.system.mqttAWS;
 		user = data.system.user;
+		serialport = data.system.serialport.port;
+		baud = data.system.serialport.baud;
 		begin();
 });
 
@@ -47,11 +50,12 @@ jsonfile.readFile(configFile, function(err, data) {
  */
 function begin() {
 	if (DEBUG) {
-		console.log('.............. BEGIN .............');
+		console.log('.............. CONFIG .............');
 		console.log('MqttServer ='+ mqttServer);
 		console.log('MqttUser ='+ mqttUser);
 		console.log('MqttTopic ='+ mqttTopic);
-		console.log('Influx Config ='+ JSON.stringify(jsonConfig.system.influxDB) ) ;
+		console.log('Postgres ='+ JSON.stringify(jsonConfig.system.postgres) ) ;
+		console.log('SerialPort ='+ JSON.stringify(jsonConfig.system.serialport) ) ;
 	}
    	
    	/* LISTENING on MQTT */
@@ -63,7 +67,8 @@ function begin() {
     /* LISTENING on SERIAL */
     const SerialPort = require('serialport')
 	const Readline = require('@serialport/parser-readline')
-	const port = new SerialPort('/dev/cu.SLAB_USBtoUART', { baudRate: 4800 })
+	
+	const port = new SerialPort( serialport, { baudRate: baud })
 	port.on('error', function(err) {
 			console.log('Error: ', err.message)
 	})

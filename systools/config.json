@@ -11,14 +11,6 @@
         "mqttServer": "192.168.0.104",
         "mqttTopic": "teensy/sensors",
         "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
-        
-        "influxDB": {
-            "database": "datawater",
-            "host": "192.168.0.104",
-            "port": 8086,
-            "username": "oceanisopen",
-            "password": "oceanisopen"
-        },
 
         "postgres": {
             "user": "postgres",
@@ -26,6 +18,11 @@
             "database": "postgis_oceanSensors",
             "password": "postgres",
             "port": "5432"
+        },
+
+        "serialport" : {
+            "port" : "/dev/cu.SLAB_USBtoUART",
+            "baud" : 4800
         }
     },
     
