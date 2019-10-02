@@ -11,49 +11,58 @@ password: "postgres",
 port: "5432"});
 
 class TamataPostgres {
-   constructor ( jsonObject, measurement ) {
-   	this.measurement = measurement;
+   constructor ( jsonObject ) {
    	this.config = jsonObject;
 
    	console.log('Postgres constructor...');
    	console.log('Config = ' + JSON.stringify ( jsonObject ) );
-   	console.log('Postgres Measurement = ' + measurement);
    	this.connect()
    }
 
    connect() {
    	console.log("Postgres - connect function");
-   	if ( this.measurement === "sensor") {
-   		console.log('this a sensor to save to Postgres');
-   		
-         pool.connect((err, client, release) => {
+      pool.connect((err, client, release) => {
+         if (err) {
+            return console.error('Error acquiring client', err.stack)
+         }
+         client.query('SELECT NOW()', (err, result) => {
+            release()
             if (err) {
-               return console.error('Error acquiring client', err.stack)
+               return console.error('Error executing query', err.stack)
             }
-            client.query('SELECT NOW()', (err, result) => {
-               release()
-               if (err) {
-                  return console.error('Error executing query', err.stack)
-               }
-               console.log('Connection to database OK',result.rows)
-            })
-         });
-      }
+            console.log('Connection to database OK',result.rows)
+         })
+      });
    }
 
-   save( jsonRecord ) {
-      if (DEBUG) console.log('Postgres save() function...');
-      const queryText = "INSERT INTO sensors(\"user\", \"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\") VALUES('"+
+   save( jsonRecord, jsonPosition ) { 
+      if (DEBUG) console.log('------------- Postgres save() function ----------------');
+      if (DEBUG) console.log("Position data : ");
+      console.log("     date = " + jsonPosition.gps.date );
+      console.log("     time = " + jsonPosition.gps.time );
+      console.log("     latitude = " + jsonPosition.geo.latitude );
+      console.log("     longitude = " + jsonPosition.geo.longitude );
+      console.log("     speed= " + jsonPosition.speed.knots );
+      if (DEBUG) console.log('-------------------------------------------------------');     
+
+      const queryText = "INSERT INTO sensors(\"user\", \"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\","+
+            "\"date\", \"time\", \"latitude\", \"longitude\", \"speed\" ) VALUES('"+
             jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
             jsonRecord.state.reported.phSensor + ","+ 
             jsonRecord.state.reported.temperatureSensor + ","+ 
             jsonRecord.state.reported.doSensor + ","+ 
             jsonRecord.state.reported.ecSensor + ","+ 
             jsonRecord.state.reported.tdsSensor + ","+ 
-            jsonRecord.state.reported.orpSensor + 
+            jsonRecord.state.reported.orpSensor + ",'" +
+            /* GPS data */
+            jsonPosition.gps.date + "','" + 
+            jsonPosition.gps.time + "'," + 
+            jsonPosition.geo.latitude + "," + 
+            jsonPosition.geo.longitude + "," + 
+            jsonPosition.speed.knots + 
       ")";
+
       if (DEBUG) console.log("queryText " + queryText);
-    
       pool.query(queryText, (err, res) => {
                         console.log(err, res);
                         //pool.end();

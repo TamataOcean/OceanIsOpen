@@ -13,23 +13,18 @@ var jsonfile = require('jsonfile')
 jsonfile.spaces = 4;
 
 var mqtt = require('mqtt'); //includes mqtt server 
-var moment = require('moment')
-
-const TamataInfluxDB = require('./actions/components/TamataInflux')
 const TamataPostgres = require('./actions/components/TamataPostgres')
 
-var jsonConfig ;
-
-/* Config JSON indent mode */
-// configFile = "/home/pi/node/config/config.json";
 var configFile = "config.json";
+var jsonConfig ;
 var mqttTopicIn="" 
 var mqttTopicOut="" 
 var mqttServer=""
 var mqttAWS= ""
-
 var influx;
 var mongo;
+
+let parser;
 //---------------------
 //get config
 //---------------------
@@ -37,125 +32,78 @@ jsonfile.readFile(configFile, function(err, data) {
 		jsonConfig = data;
 
 		if (err) throw err;
-		mqttTopic = jsonConfig.system.mqttTopic ;
-		mqttServer = jsonConfig.system.mqttServer;
-		mqttUser = jsonConfig.system.mqttUser;
-		mqttAWS = jsonConfig.system.mqttAWS;
-		user = jsonConfig.system.user;
+		mqttTopic = data.system.mqttTopic ;
+		mqttServer = data.system.mqttServer;
+		mqttUser = data.system.mqttUser;
+		mqttAWS = data.system.mqttAWS;
+		user = data.system.user;
 		begin();
 });
 
+/***************************************
+- function begin())
+- Listening on MQTT & Serial 
+- When MQTT message arrive, => insertData()
+ */
 function begin() {
 	if (DEBUG) {
-		console.log('Config');
-		console.log('MqttServer ='+ jsonConfig.system.mqttServer);
-		console.log('MqttUser ='+ jsonConfig.system.mqttUser);
-		console.log('MqttTopic ='+ jsonConfig.system.mqttTopic);
+		console.log('.............. BEGIN .............');
+		console.log('MqttServer ='+ mqttServer);
+		console.log('MqttUser ='+ mqttUser);
+		console.log('MqttTopic ='+ mqttTopic);
 		console.log('Influx Config ='+ JSON.stringify(jsonConfig.system.influxDB) ) ;
 	}
-   
+   	
+   	/* LISTENING on MQTT */
 	client = mqtt.connect('mqtt://'+ jsonConfig.system.mqttServer );
     client.subscribe( jsonConfig.system.mqttTopic ); 
     client.on('connect', () => { console.log('Mqtt connected to ' + jsonConfig.system.mqttServer + "/ Topic : " + jsonConfig.system.mqttTopic  )} )
-    client.on('message', insertEvent );
+    client.on('message', insertData );
+
+    /* LISTENING on SERIAL */
+    const SerialPort = require('serialport')
+	const Readline = require('@serialport/parser-readline')
+	const port = new SerialPort('/dev/cu.SLAB_USBtoUART', { baudRate: 4800 })
+	port.on('error', function(err) {
+			console.log('Error: ', err.message)
+	})
+
+	parser = port.pipe(new Readline({ delimiter: '\r\n' }))
 }
 
-function insertEvent(topic,message) {
+/***************************************
+- function insertData(topic, message)
+Parse message & position and INSERT into Database */
+async function insertData(topic,message) {
 	var parsedMessage = JSON.parse(message);
-	var parsedPosition = "";
 
-	if (DEBUG) console.log('************************');
+	if (DEBUG) console.log('***********************************');
 	if (DEBUG) console.log('Mqtt Message received : ' + message );
-	if (DEBUG) console.log('Insert Message : ' + JSON.stringify(parsedMessage) ) ;
 
-	const promisePosition = getGpsPosition();
-	
-	/* Checking Message 
-	const promiseMeasurement = new Promise( (resolve, reject) => {
-		return resolve();
-	}) */
-	
-	// Then Connect to Database
-	const promiseMeasurement = promisePosition.then( getMeasurement(parsedMessage)
-		.then(  (measurement) => {
-			if (measurement !== "unManaged") {	
-				if (DEBUG) console.log('Begin saving... measurement = ' + measurement );
-				/* Measurement received --> Looking for gps position */
-				// getGpsPosition();
-
-				/* Uncomment to add datas to InfluxDB */
-				/**************************************/
-				//influx = new TamataInfluxDB( jsonConfig.system.influxDB, measurement );
-				//influx.save( parsedMessage, measurement );
-
-				/* INSERT to Postgres database */
-				/*******************************/
-				posgresDB = new TamataPostgres( jsonConfig.system.postgres, measurement );
-				posgresDB.save( parsedMessage );
-			}
-			else {
-				if (DEBUG) console.log('UnManaged measurement = ' + measurement );
-			}
-		})
-	);
-
-	promiseMeasurement.then( () => {
-		if (DEBUG) console.log('Last actions... ');
-	});
-
-} // End Insert Event
-
+	getGpsPosition().then( (parsedPosition) => {
+		/* INSERT to Postgres database */
+		posgresDB = new TamataPostgres( jsonConfig.system.postgres );
+		posgresDB.save( parsedMessage, parsedPosition );
+		if (DEBUG) console.log('Inserted datas : ' + JSON.stringify(parsedMessage) ) ;
+		if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
+	})
+} 
 
 /***************************************
 - function getGpsPosition()
-Return a Promise with position type NMEA
-*/
+Return a Promise with position type NMEA */
 function getGpsPosition() {
 	return new Promise( (resolve, reject) => {
-		if (DEBUG) console.log("Function getGpsPosition...");
-		
-		const SerialPort = require('serialport')
-		const Readline = require('@serialport/parser-readline')
-		const port = new SerialPort('/dev/cu.SLAB_USBtoUART', { baudRate: 4800 })
 		const nmea = require('node-nmea')
+		const gprmc = require('gprmc-parser')
 
-		// Open errors will be emitted as an error event
-		port.on('error', function(err) {
-  			console.log('Error: ', err.message)
-		})
-
-		const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
 		parser.on('data', function (data) {
 			if (data.includes("$GPRMC")) {
-				console.log(nmea.parse(data));
-				parsedPosition = nmea.parse(data);
-				return resolve(parsedPosition);
+				
+				//resolve(nmea.parse(data));
+				resolve(gprmc(data));
 			}
-			// return resolve();
 		})
-		// return resolve();
-	}).then ((position) => {
-		console.log("End function getGpsPosition..." + position);
 	})
 }
 
-/*********************************************
-- function getMeasurement(parsedMessage)
-Return a Promise with measurement type 
-sensor, jetpack, coolboardconfig, rtcconfig... 
-*/
-function getMeasurement(parsedMessage) {
-	return new Promise(  (resolve, reject) => {
-		return resolve();
-	}).then( () => {
-		if (DEBUG) {console.log('Function getMeasurement start... ');}
-		var measurement;
-		if ( parsedMessage.state.reported.user === mqttUser ) { 
-			measurement = "sensor";
-			return measurement;
-		} 
-		else {
-			return "unManaged";
-		}
-	});
-}
