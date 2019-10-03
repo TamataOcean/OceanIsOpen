@@ -23,6 +23,6 @@ Teensy
 
 ### Architecture
 
-(coming soon...)
+![Sch_Infrastructure](https://user-images.githubusercontent.com/25310798/66127651-7fc26680-e5ec-11e9-853d-109e7026b98e.png)
 
 #### Contact : contact@tamataocean.com 
