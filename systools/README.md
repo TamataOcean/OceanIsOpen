@@ -1,7 +1,7 @@
 # Sytools component 
 
 Config service to keep data.
-NodeJS program to listen Mosquitto & Saving data on InfluxDB.
+NodeJS program to listen Mosquitto & Saving data on Postgres.
 
 ![save_data_JS_Architecture](https://user-images.githubusercontent.com/25310798/66206025-1a837980-e6af-11e9-9402-aa3d28ff5975.png)
 
