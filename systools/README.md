@@ -7,8 +7,7 @@ NodeJS program to listen Mosquitto & Saving data on Postgres.
 
 ### Config.json
 Define your 
-* mosquitto server 
-* mqtt config
+* mqtt config ( in this case mosquitto )
 * postgres access
 * serialport for GPS
 
