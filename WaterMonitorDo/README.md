@@ -2,8 +2,6 @@
 [Teensyduino](https://www.pjrc.com/teensy/td_download.html).   
 
 ### Liste des capteurs 
-Utilisation d'un Teensy 3.6 pour la gestion des capteurs
-
 [Sonde PH "Pro"](https://wiki.dfrobot.com/PH_meter_SKU__SEN0161_)   
 ![Teensy_PH_meter_connection1__1_](https://user-images.githubusercontent.com/25310798/66202433-071fe080-e6a6-11e9-8eff-ec88eb919bd0.png)
 
