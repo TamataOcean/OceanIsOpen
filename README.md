@@ -18,7 +18,7 @@ GPS Position.
 [emLid technologie](https://store.emlid.com/product/reachm-plus/)   
 
 ### Installation
-Teensy   
+[Teensy](https://www.pjrc.com/teensy/td_download.html)   
 [emLid](https://jancelin.github.io/centipede/3_0_montage.html)  
 
 ### Architecture
