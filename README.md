@@ -25,4 +25,8 @@ GPS Position.
 
 ![Sch_Infrastructure](https://user-images.githubusercontent.com/25310798/66127651-7fc26680-e5ec-11e9-853d-109e7026b98e.png)
 
+### [Champ d'application](https://github.com/TamataOcean/OceanIsOpen/wiki/Data-Interpretation)
+
+Il y a une multitude d'applications possibles en corrélation avec d'autres informations. Cela permet de faire une base de données permettant de voir les variations globales à l'échelle locale et fournir des données pour accompagner des réseaux de chercheurs, d'analyse pour une exploitation adaptée aux variations maritimes.
+
 #### Contact : contact@tamataocean.com 
