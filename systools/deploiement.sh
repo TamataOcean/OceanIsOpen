@@ -20,7 +20,7 @@ cd OceanIsOpen && sudo git clone https://github.com/TamataOcean/OceanIsOpen.git
 # Création du service oceanisopen
 cd /etc/systemd/system && sudo touch oceanisopen.service
 # Configuration des librairies
-sudo echo "[Unit]
+echo "[Unit]
 Description=OceanIsOpen
 After=multi-user.target
 
