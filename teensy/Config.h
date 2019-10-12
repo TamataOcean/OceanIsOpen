@@ -9,7 +9,7 @@
 #define NETBUFFERSIZE 3000
 
 //MQTT Config
-#define MQTTSERVER 172.24.1.1
+#define MQTTSERVER 192.168.1.41
 #define MQTTUSER "teensySensors"
 #define	MQTTBUFFERSIZE 3000
 #define MQTTTOPIC "teensy/sensors"
@@ -32,15 +32,15 @@
 #define PHPIN  A2
 #define TEMPPIN 33
 #define DOPIN  A0
-#define ECPIN  A1
-#define TDSPIN A1
-#define ORPPIN A3
+#define ECPIN  14
+#define TDSPIN 36
+#define ORPPIN 37
 #define TURBPINLED A4
 #define TURBPINSENSOR 15
 
 //Set sensor offset (calibration data)
 #define PHOFFSET 0.12
-#define ECKVALUE 0.6
+#define ECKVALUE 4.96
 
 //The maximum number of sensors
 #define SENSORCOUNT 8
@@ -56,4 +56,3 @@ enum SensorNumber
 	orpSensor = 5,			//ORP Sensor
 	turbiditySensor = 6		//Turbidity Sensor
 };
-

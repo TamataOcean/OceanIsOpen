@@ -45,7 +45,6 @@
 #include <Wire.h>
 #include "GravitySensorHub.h"
 #include "GravityRtc.h"
-#include "GravityEc.h"
 #include "GravityPh.h"
 #include "GravityDo.h"
 #include "OneWire.h"
@@ -166,12 +165,7 @@ void setup() {
 	Debug::print("pH offset: ");
 	Debug::println(PHOFFSET);
 	
-	// Calibrate EC if present
-	#ifdef SELECTEC
-	((GravityEc*)(sensorHub.sensors[ecSensor]))->setKValue(ECKVALUE);
-	Debug::print("EC K Value: ");
-	Debug::println(ECKVALUE);
-	#endif
+	
 	
 }
 
