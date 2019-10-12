@@ -1,5 +1,5 @@
 ### Variabiliser l'utilisateur
-utilisateur=$USER
+exit && utilisateur=$USERNAME && sudo -s
 
 ### Installation de Node.js et npm
 # Installation de Node.js
