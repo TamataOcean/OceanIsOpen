@@ -8,7 +8,7 @@
 - Winston Logger to get last actions... ( Debug process )
 */
 var DEBUG = true;
-
+/* TEST */ 
 var jsonfile = require('jsonfile')
 jsonfile.spaces = 4;
 
@@ -87,6 +87,7 @@ async function insertData(topic,message) {
 
 	getGpsPosition().then( (parsedPosition) => {
 		/* INSERT to Postgres database */
+		console.log("Position : " + JSON.stringify( parsedPosition )) ;
 		posgresDB = new TamataPostgres( jsonConfig.system.postgres );
 		posgresDB.save( parsedMessage, parsedPosition );
 		if (DEBUG) console.log('Inserted datas : ' + JSON.stringify(parsedMessage) ) ;
@@ -98,14 +99,18 @@ async function insertData(topic,message) {
 - function getGpsPosition()
 Return a Promise with position type NMEA */
 function getGpsPosition() {
+	console.log("getGpsPosition 1")
 	return new Promise( (resolve, reject) => {
 		const nmea = require('node-nmea')
 		const gprmc = require('gprmc-parser')
 
 		parser.on('data', function (data) {
-			if (data.includes("$GPRMC")) {
-				
+			//console.log("Data from GPS")
+			//console.log(data)
+			if (data.includes("$GNRMC")) {
+				//console.log(nmea.parse(data))
 				//resolve(nmea.parse(data));
+				
 				resolve(gprmc(data));
 			}
 		})
