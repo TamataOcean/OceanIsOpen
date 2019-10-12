@@ -1,8 +1,13 @@
 ### Installation de Node.js et npm
+# Installation de Node.js
 wget https://nodejs.org/dist/v8.9.0/node-v8.9.0-linux-armv6l.tar.gz
 tar -xzf node-v8.9.0-linux-armv6l.tar.gz
 cd node-v8.9.0-linux-armv6l/
 sudo cp -R * /usr/local/
+# Installation des librairies npm
+npm install pg mqtt jsonfile node-nmea gprmc-parser make gcc g++
+npm --unsafe-perm --verbose serialport
+npm install @serialport/parser-readline
 
 ### Création d'un dossier OceanIsOpen et récupération du GitHub
 # Création du dossier OceanIsOpen
@@ -12,7 +17,7 @@ cd OceanIsOpen && git clone https://github.com/TamataOcean/OceanIsOpen.git
 
 ### Configuration des librairies SaveData et automatisation du démarrage des services au démarrage du Raspberry
 # Création du service oceanisopen
-cd /lib/systemd/system && touch oceanisopen.service
+cd /etc/systemd/system && touch oceanisopen.service
 # Configuration des librairies
 echo "[Unit]
 Description=OceanIsOpen
