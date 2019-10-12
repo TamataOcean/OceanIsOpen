@@ -30,13 +30,13 @@
 
 //Sensor pin settings
 #define PHPIN  A2
-#define TEMPPIN 5
+#define TEMPPIN 33
 #define DOPIN  A0
 #define ECPIN  A1
 #define TDSPIN A1
 #define ORPPIN A3
 #define TURBPINLED A4
-#define TURBPINSENSOR A4
+#define TURBPINSENSOR 15
 
 //Set sensor offset (calibration data)
 #define PHOFFSET 0.12

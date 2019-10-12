@@ -26,7 +26,9 @@ void GravityTurbidity::setup()
 void GravityTurbidity::update()
 {
 	int sensorValue = analogRead(this->sensorIn);// read the input on analog:
-  	turbidityValue = sensorValue * (5.0 / 1024.0); // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
+	Serial.print("Before convert - Turbidity Sensor update : " );
+	Serial.println(sensorValue);
+  	turbidityValue = sensorValue * (3.3 / 4096.0); // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
 	Serial.print("Turbidity Sensor update : " );
 	Serial.println(turbidityValue);
 }

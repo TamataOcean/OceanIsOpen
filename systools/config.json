@@ -13,10 +13,10 @@
         "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
 
         "postgres": {
-            "user": "postgres",
-            "host": "192.168.0.113",
-            "database": "postgis_oceanSensors",
-            "password": "postgres",
+            "user": "docker",
+            "host": "postgis",
+            "database": "oio",
+            "password": "docker",
             "port": "5432"
         },
 
