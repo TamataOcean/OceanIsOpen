@@ -9,20 +9,19 @@
         "interval": 10,
         "mqttUser":"teensy",
         "mqttServer": "192.168.1.41",
-        "mqttTopic": "teensy/sensors",
+        "mqttTopic": "teensy/order",
         "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
-        "mqttTopic": "teensy/sensors",
 
         "postgres": {
-            "user": "docker",
-            "host": "postgis",
-            "database": "oio",
-            "password": "docker",
+            "user": "postgres",
+            "host": "192.168.0.113",
+            "database": "postgis_oceanSensors",
+            "password": "postgres",
             "port": "5432"
         },
 
         "serialport" : {
-            "port" : "/dev/ttyACM0",
+            "port" : "/dev/cu.SLAB_USBtoUART",
             "baud" : 4800
         }
     },

@@ -24,7 +24,7 @@
 
 extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 
-GravityOrp::GravityOrp():pin(ORPPIN), voltage(5.0), offset(0), orpValue(0.0)
+GravityOrp::GravityOrp():pin(ORPPIN), voltage(3.3), offset(0), orpValue(0.0)
 {
 }
 
@@ -54,7 +54,7 @@ void GravityOrp::update()
 		delay(10);
 	}
 	averageValue = readMedianValue(orpArray, ARRAYLENGTH);
-	this->orpValue = ((30 * this->voltage * 1000) - (75 * averageValue*this->voltage * 1000 / 1024)) / 75 - this->offset;
+	this->orpValue = ((30 * this->voltage * 1000) - (75 * averageValue*this->voltage * 1000 / 4096)) / 75 - this->offset;
 }
 
 

@@ -1,0 +1,32 @@
+{
+  "name": "systools",
+  "version": "1.0.0",
+  "description": "Manage Mqtt data to Postgres with GPS Position data sync",
+  "main": "save_data.js",
+  "dependencies": {
+    "@serialport/parser-readline": "^2.0.2",
+    "gprmc-parser": "^1.0.2",
+    "jsonfile": "^5.0.0",
+    "mqtt": "^3.0.0",
+    "node-nmea": "^2.0.0",
+    "parser-readline": "^1.0.2",
+    "pg": "^7.12.1",
+    "serialport": "^7.1.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node save_data.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TamataOcean/OceanIsOpen/tree/dev/systools"
+  },
+  "keywords": [
+    "nodejs",
+    "postgres",
+    "emlid",
+    "gps"
+  ],
+  "author": "Tamata Ocean's team",
+  "license": "ISC"
+}

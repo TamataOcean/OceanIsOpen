@@ -45,7 +45,6 @@
 #include <Wire.h>
 #include "GravitySensorHub.h"
 #include "GravityRtc.h"
-#include "GravityEc.h"
 #include "GravityPh.h"
 #include "GravityDo.h"
 #include "OneWire.h"
@@ -63,11 +62,13 @@ GravitySensorHub sensorHub ;
 /* NETWORK & MQTT Config */
 /*************************/
 //NetworkControl netControl = NetworkControl(sensorHub.sensors);
-byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-IPAddress ip(172, 16, 0, 100);
-IPAddress server(172, 16, 0, 2);
-char* outTopic = "Topic/OUT";
-char* inTopic = "Topic/IN";
+//byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
+byte mac[] = {   0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02};
+// IPAddress ip(192, 168, 1, 100);
+IPAddress server(192, 168, 1, 41);
+char* outTopic = "sensors";
+char* inTopicOrder = "teensy/order";
+char * outTopicOrder = "teensy/check";
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
@@ -80,7 +81,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 }
 
 EthernetClient ethClient;
-PubSubClient client(ethClient);
+PubSubClient client(server, 1883, callback, ethClient);
 
 void reconnect(int nbTry) {
   int cpt = 0;
@@ -93,7 +94,7 @@ void reconnect(int nbTry) {
       // Once connected, publish an announcement...
       client.publish(outTopic,sensorHub.getJsonSensorsUpdate().c_str());
       // ... and resubscribe
-      client.subscribe(inTopic);
+      client.subscribe(inTopicOrder);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -116,27 +117,46 @@ void setup() {
 	Debug::println("Serial begin");
 	
 	/********************************/
-  	/* 			NETWORK SETUP 		*/
-  	/*								*/
-  	Debug::println("Network setup begin...");
-  	
-  	// Ethernet.init(20);  // Teensy++ 2.0
-  	// if (Ethernet.hardwareStatus() == EthernetNoHardware) {
-   //    Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
-   //    while (true) {
-   //      delay(1); // do nothing, no point running without Ethernet hardware
-   //    }
-  	// }
-  	Ethernet.begin(mac, ip);
-  	client.setServer(server, 1883);
-  	client.setCallback(callback);
-  	delay(1500);						  	// Allow the hardware to sort itself out
+	/* 			NETWORK SETUP 		*/
+	/*								*/	
+  Debug::println("Initialize Ethernet with DHCP:");
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("Failed to configure Ethernet using DHCP");
+    if (Ethernet.hardwareStatus() == EthernetNoHardware) {
+      Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
+    } else if (Ethernet.linkStatus() == LinkOFF) {
+      Serial.println("Ethernet cable is not connected.");
+    }
+    // no point in carrying on, so do nothing forevermore:
+    while (true) {
+      delay(1);
+    }
+  }
+  // print your local IP address:
+  Serial.print("My IP address: ");
+  Serial.println(Ethernet.localIP());
+	delay(1500);						  	// Allow the hardware to sort itself out
 
+  /********************************/
+  /* MQTT                         */
+  /*                              */
+  if (client.connect("arduinoClient", "testuser", "testpass")) {
+    client.publish("outTopic","hello world");
+    client.subscribe("inTopic");
+  }
+  
+  // if (client.connect("teeeny", "test", "test")) 
+  // {
+  //   client.publish("outTopic", "Test setup mqtt");
+  // }
+  // client.setServer(server, 1883);
+  // client.setCallback(callback);
+  
   	/********************************/
   	/* 			SENSORS SETUP 		*/
   	/*								*/
 	//Reset and initialize sensors
-	Debug::println("SensorHub setup begin...");
+	Debug::println("... SensorHub setup begin...");
 	sensorHub.setup();
 
 	//Apply calibration offsets
@@ -145,20 +165,8 @@ void setup() {
 	Debug::print("pH offset: ");
 	Debug::println(PHOFFSET);
 	
-	// Calibrate EC if present
-	#ifdef SELECTEC
-	((GravityEc*)(sensorHub.sensors[ecSensor]))->setKValue(ECKVALUE);
-	Debug::print("EC K Value: ");
-	Debug::println(ECKVALUE);
-	#endif
 	
-	//initialize RTC module with computer time
-	//Debug::println("rtc.setup");
-	//rtc.setup();
-
-	//Check for SD card and configure datafile
-	//Serial::println("sdService setup");
-	//sdService.setup();
+	
 }
 
 //Create variable to track time
@@ -169,10 +177,11 @@ unsigned long updateTime = 0;
 void loop() {
 
 	//MQTT Connection 
-	// if (!client.connected()) {	
- //    	reconnect(5);
- //  	}
- //  	client.loop();
+	if (!client.connected()) {
+        Serial.println("MQTT not connected");
+      	reconnect(5);
+  }
+  client.loop();
 
 	//Update time from clock module
 	//rtc.update();
@@ -182,7 +191,11 @@ void loop() {
 	
 	//Export sensor in JSON
 	Serial.println("Sending to MQTT Topic : " + (String)MQTTTOPIC);
-	Serial.println(sensorHub.getJsonSensorsUpdate());
+	Serial.println(sensorHub.getJsonSensorsUpdate().c_str());
+  client.publish("teensy",sensorHub.getJsonSensorsUpdate().c_str());
+  Serial.println("MQTT message sent");
+  
+  delay(5000);
 
 	//If no connection... Write data to SD card
 	//sdService.update();

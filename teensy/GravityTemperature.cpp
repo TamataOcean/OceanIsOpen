@@ -23,6 +23,7 @@
 GravityTemperature::GravityTemperature(int pin)
 {
 	this->oneWire = new OneWire(pin);
+	this->update();
 }
 
 GravityTemperature::~GravityTemperature()
@@ -46,6 +47,7 @@ void GravityTemperature::setup()
 //********************************************************************************************
 void GravityTemperature::update()
 {
+	Debug::println("Update Temperature Sensor...");
 	if ( millis () - tempSampleTime >= tempSampleInterval)
 	{
 		tempSampleTime = millis ();

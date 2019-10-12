@@ -1,0 +1,2 @@
+INSERT INTO sensors("teensy_user", "teensy_phSensor", "teensy_temperatureSensor", "teensy_doSensor", "teensy_ecSensor", "teensy_tdsSensor", "teensy_orpSensor","nmea_date", "nmea_time", "nmea_latitude", "nmea_longitude", "nmea_speed" ) VALUES('teensySensors',5.34,15.1,9.25,13.06,456.05,237.3,'2019-10-12','16:05:23.80',46.149953,-1.151173,0.04)
+
