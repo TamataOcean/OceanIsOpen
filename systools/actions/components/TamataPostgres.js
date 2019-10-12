@@ -45,8 +45,8 @@ class TamataPostgres {
       console.log("     speed= " + jsonPosition.speed.knots );
       if (DEBUG) console.log('-------------------------------------------------------');     
 
-      const queryText = "INSERT INTO sensors(\"user\", \"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\","+
-            "\"date\", \"time\", \"latitude\", \"longitude\", \"speed\" ) VALUES('"+
+      const queryText = "INSERT INTO sensors(\"teensy_user\", \"teensy_phSensor\", \"teensy_temperatureSensor\", \"teensy_doSensor\", \"teensy_ecSensor\", \"teensy_tdsSensor\", \"teensy_orpSensor\","+
+            "\"nmea_date\", \"nmea_time\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
             jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
             jsonRecord.state.reported.phSensor + ","+ 
             jsonRecord.state.reported.temperatureSensor + ","+ 

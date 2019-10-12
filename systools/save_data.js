@@ -109,9 +109,9 @@ function getGpsPosition() {
 			//console.log(data)
 			if (data.includes("$GNRMC")) {
 				//console.log(nmea.parse(data))
-				resolve(nmea.parse(data));
+				//resolve(nmea.parse(data));
 				
-				//resolve(gprmc(data));
+				resolve(gprmc(data));
 			}
 		})
 	})
