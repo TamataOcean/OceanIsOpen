@@ -9,7 +9,7 @@ CREATE TABLE public.sensors
 	teensy_ecSensor double precision,		--Conductivite electrique
 	teensy_tdsSensor double precision,		--Taux de particule
 	teensy_orpSensor double precision,		--Oxygenation
-	nmea_date date,					--Date GPS
+	nmea_date date,							--Date GPS
 	nmea_time time without time zone,		--Temps GPS
 	nmea_latitude double precision,			--latitude GPS
 	nmea_longitude double precision,		--Longitude GPS
@@ -24,20 +24,20 @@ CREATE INDEX sensors_index
     TABLESPACE pg_default;
 
 --make Geom with lon_lat
-CREATE FUNCTION public.func_add_geom()
+CREATE OR REPLACE FUNCTION public.func_add_geom()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
     IMMUTABLE NOT LEAKPROOF
 AS $BODY$
 BEGIN
-  NEW.geom=st_setsrid(st_makepoint(longitude::double precision,latitude::double precision), 4326) AS geom;
+  NEW.geom = st_setsrid(st_makepoint(NEW.nmea_longitude,NEW.nmea_latitude), 4326) AS geom;
   RETURN NEW;
 END;
 $BODY$;
 
-CREATE TRIGGER add_geom
-    AFTER INSERT OR UPDATE 
+CREATE  TRIGGER add_geom
+    BEFORE INSERT OR UPDATE 
     ON public.sensors
     FOR EACH ROW
     EXECUTE PROCEDURE public.func_add_geom();
@@ -49,5 +49,3 @@ st_makeline(sensors.geom ORDER BY ((sensors.nmea_date || ' '::text) || sensors.n
 FROM sensors
 GROUP BY sensors.nmea_date;
 
-	
-	
