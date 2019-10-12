@@ -2,21 +2,20 @@
 CREATE TABLE public.sensors
 (
 	id serial,
-	teensy_user character varying, 
-	teensy_phSensor double precision,
-	teensy_temperatureSensor double precision,
-	teensy_doSensor double precision,
-	teensy_ecSensor double precision,
-	teensy_tdsSensor double precision,
-	teensy_orpSensor double precision,
-	nmea_date date,
-	nmea_time time without time zone,
-	nmea_latitude double precision,
-	nmea_longitude double precision,
-	nmea_speed double precision,	
---	precision_nmea double precision, -- si besoin et si rajouté dans TamataPostres.js
---	mqttUser character varying, -- si plusieurs teensy
-	geom geometry(Point,4326),
+	teensy_user character varying,			--Id du teensy
+	teensy_phSensor double precision, 		--PH
+	teensy_temperatureSensor double precision, 	--Température
+	teensy_doSensor double precision,		--Oxygene dissoud
+	teensy_ecSensor double precision,		--Conductivite electrique
+	teensy_tdsSensor double precision,		--Taux de particule
+	teensy_orpSensor double precision,		--Oxygenation
+	nmea_date date,					--Date GPS
+	nmea_time time without time zone,		--Temps GPS
+	nmea_latitude double precision,			--latitude GPS
+	nmea_longitude double precision,		--Longitude GPS
+	nmea_speed double precision,			--Vitesse
+--	precision_nmea double precision, 		--Si besoin et si rajouté dans TamataPostres.js
+	geom geometry(Point,4326),			--Geométrie fabrique avec les long lat
 	    CONSTRAINT sensors_pkey PRIMARY KEY (id)
 );
 CREATE INDEX sensors_index
