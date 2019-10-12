@@ -5,7 +5,6 @@ tar -xzf node-v8.9.0-linux-armv6l.tar.gz
 cd node-v8.9.0-linux-armv6l/
 sudo cp -R * /usr/local/
 # Installation des librairies npm
-npm install pg mqtt jsonfile node-nmea gprmc-parser
 sudo apt-get install make gcc g++
 npm --unsafe-perm --verbose serialport
 npm install @serialport/parser-readline
@@ -15,6 +14,7 @@ npm install @serialport/parser-readline
 mkdir OceanIsOpen
 # Clonage du GitHub dans le dossier
 cd OceanIsOpen && git clone https://github.com/TamataOcean/OceanIsOpen.git
+npm install
 
 ### Configuration des librairies SaveData et automatisation du démarrage des services au démarrage du Raspberry
 # Création du service oceanisopen
