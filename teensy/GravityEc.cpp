@@ -1,9 +1,12 @@
 #include "GravityEc.h"
 #include "Config.h"
 
+#define RES2 (7500.0/0.66)
+#define ECREF 20.0
+
 extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 
-GravityEc::GravityEc() :kValue(1.0), pin(ECPIN)
+GravityEc::GravityEc() :kValue(ECKVALUE), pin(ECPIN)
 {
 }
 
@@ -27,9 +30,10 @@ void GravityEc::update()
 		ecValueBuffer[i] = analogRead(this->pin);
 		delay(10);
 	}
-	averageVoltage = readMedianValue(ecValueBuffer, ARRAYLENGTH)/1024.0*5000.0;
-	this->ecValue = 1000 * averageVoltage / 820.0 / 196.0 /this->kValue;
-
+	averageVoltage = readMedianValue(ecValueBuffer, ARRAYLENGTH)/4096.0*3300.0;
+  float value = 0;
+  value = 1000*averageVoltage/RES2/ECREF*this->kValue*10.0;
+  this->ecValue = value;
 }
 
 double GravityEc::getValue()
