@@ -26,7 +26,7 @@ After=multi-user.target
 
 [Service]
 WorkingDirectory=/home/$utilisateur/code/OceanIsOpen/systools
-ExecStart=/usr/bin/node /home/$utilisateur/code/OceanIsOpen/systools/save_data.js
+ExecStart=node /home/$utilisateur/code/OceanIsOpen/systools/save_data.js
 Restart=on-failure
 
 [Install]
