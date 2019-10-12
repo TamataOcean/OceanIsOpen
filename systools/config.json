@@ -8,9 +8,8 @@
         "mac": "123456789007",
         "interval": 10,
         "mqttUser":"teensy",
-        "mqttServer": "192.168.0.104",
+        "mqttServer": "192.168.1.41",
         "mqttTopic": "teensy/sensors",
-        "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
 
         "postgres": {
             "user": "docker",
@@ -21,7 +20,7 @@
         },
 
         "serialport" : {
-            "port" : "/dev/cu.SLAB_USBtoUART",
+            "port" : "/dev/ttyACM0",
             "baud" : 4800
         }
     },

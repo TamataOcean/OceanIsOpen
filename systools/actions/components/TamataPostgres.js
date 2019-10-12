@@ -1,13 +1,13 @@
-/* Save to Postgres */
+/* Save to Postgres TEST */
 var DEBUG = true;
 
 const pg = require('pg')
 
 const pool = new pg.Pool({
-user: "postgres",
-host: "192.168.0.113",
-database: "postgis_oceanSensors",
-password: "postgres",
+user: "docker",
+host: "192.168.1.41",
+database: "oio",
+password: "docker",
 port: "5432"});
 
 class TamataPostgres {
