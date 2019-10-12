@@ -6,7 +6,7 @@ cd node-v8.9.0-linux-armv6l/
 sudo cp -R * /usr/local/
 # Installation des librairies npm
 npm install pg mqtt jsonfile node-nmea gprmc-parser
-apt-get install make gcc g++
+sudo apt-get install make gcc g++
 npm --unsafe-perm --verbose serialport
 npm install @serialport/parser-readline
 
