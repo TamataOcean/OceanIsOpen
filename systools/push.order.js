@@ -15,7 +15,7 @@ jsonfile.spaces = 4;
 var mqtt = require('mqtt'); //includes mqtt server 
 const TamataPostgres = require('./actions/components/TamataPostgres')
 
-var configFile = "config.json";
+var configFile = "configOrder.json";
 var jsonConfig ;
 var mqttTopicIn="" 
 var mqttTopicOut="" 
@@ -35,7 +35,8 @@ jsonfile.readFile(configFile, function(err, data) {
 		jsonConfig = data;
 
 		if (err) throw err;
-		mqttTopic = data.system.mqttTopic ;
+		mqttTopicIn = data.system.mqttTopicIn ;
+		mqttTopicOut = data.system.mqttTopicOut ;
 		mqttServer = data.system.mqttServer;
 		mqttUser = data.system.mqttUser;
 		mqttAWS = data.system.mqttAWS;
@@ -52,35 +53,57 @@ function begin() {
 		console.log('.............. CONFIG .............');
 		console.log('MqttServer ='+ mqttServer);
 		console.log('MqttUser ='+ mqttUser);
-		console.log('MqttTopic ='+ mqttTopic);
+		console.log('MqttTopicIn ='+ mqttTopicIn);
+		console.log('MqttTopicOut ='+ mqttTopicOut);
 	}
 
+	/* Envoie Ordre PH */
+	
+	client = mqtt.connect('mqtt://'+ jsonConfig.system.mqttServer );
+	client.on('connect',function() {
+	client.publish(mqttTopicOut,"PhCalibration")
+	console.log('************************')
+	console.log("Desired requested on" + mqttTopicOut +" : "+"ordre PH activé" )
+	})
+		
 	/* LISTENING on MQTT Upd*/
 	client = mqtt.connect('mqtt://'+ jsonConfig.system.mqttServer );
-    client.subscribe( jsonConfig.system.mqttTopic ); 
-    client.on('connect', () => { console.log('Mqtt connected to ' + jsonConfig.system.mqttServer + "/ Topic : " + jsonConfig.system.mqttTopic  )} )
-    client.on('message', insertEvent );
+	client.subscribe( jsonConfig.system.mqttTopicIn ); 
+	client.on('connect', () => { console.log('Mqtt connected to ' + jsonConfig.system.mqttServer + "/ Topic : " + jsonConfig.system.mqttTopicIn  )} );
+	client.on('message', messagesArrived );
    	
-	/* client.on('message', insertData );
-	client.on('connect',function() {
-		client.publish(mqttTopic,"UpdateNowPH")
-		console.log("Desired requested on" + mqttTopic +" : "+"ordre 66 activé" )
-		client.end()
-		})
-		*/
 }  
 	/* CHECK MESSAGE*/
-function insertEvent(topic,message) {
+ function  messagesArrived(topic,message) {
+	 try {
+		 var parsedMessage = JSON.parse(message);
+		 if (DEBUG) console.log('************************');
+		 if (DEBUG) console.log('Mqtt Message received from + ' + mqttTopicIn );
+		 if (DEBUG) console.log('Message : ' + message)  ;
+		 // Checking Message 
+		 if (parsedMessage.phCalib === "OK_PhCalibration"){
+			 if (DEBUG) console.log('Ok Ph Calibration' );
+	 
+		 }
+		 else if (parsedMessage.checkPh === "Check_Ph_OK"){
+			 if (DEBUG) console.log('check Ph Ok' );
+			 client.end();
+	 
+		 }
+		 else{
+			 console.log("Message recu inconnu")
+		 }
+	 } catch (error) {
+		 console.log("erreur lors du parsing. Message")
+	 }
 
-	console.log("Function insertevent begin");
+}
+
+/*
+function sendOrder(order) {
+  consol.log("null")
+}
+async function checkOk(topic, message){
 	var parsedMessage = JSON.parse(message);
 
-	if (DEBUG) console.log('************************');
-	if (DEBUG) console.log('Mqtt Message received : ');
-	if (DEBUG) console.log('Insert Message : ' + message ) ;
-
-	/* Checking Message 
-	const promiseMeasurement = new Promise( (resolve, reject) => {
-		return resolve();
-	}) */
-}
+}*/

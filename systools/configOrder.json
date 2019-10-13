@@ -9,7 +9,8 @@
         "interval": 10,
         "mqttUser":"teensy",
         "mqttServer": "192.168.1.41",
-        "mqttTopic": "teensy/order",
+        "mqttTopicOut": "teensy/order",
+        "mqttTopicIn":"teensy/check",
         "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
 
         "postgres": {
