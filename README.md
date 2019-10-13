@@ -25,6 +25,7 @@ GPS Position.
 Lien du script pour le déploiement sur le Raspberry Pi : https://github.com/TamataOcean/OceanIsOpen/tree/dev/systools. <br><br>
 Téléchargez le fichier deploiement.sh, puis exécutez les codes ci-dessous : <br>
 cd /path_to_file/ (ex: /home/root/downloads) <br>
+sudo nano deploiement.sh + modifier nom utilisateur à la 2ème ligne
 sudo chmod +x deploiement.sh <br>
 sudo ./deployment.sh <br><br>
 
