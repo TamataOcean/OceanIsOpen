@@ -21,6 +21,15 @@ GPS Position.
 [Teensy](https://www.pjrc.com/teensy/td_download.html)   
 [emLid](https://jancelin.github.io/centipede/3_0_montage.html)  
 
+## Configuration du Raspberry
+Lien du script Shell pour le déploiement sur le Raspberry Pi : https://github.com/TamataOcean/OceanIsOpen/tree/dev/systools
+Téléchargez le fichier deploiement.sh, puis exécutez les codes ci-dessous :
+<p style='background-color:black; color:white'>
+cd /path_to_file/ (ex: /home/root/downloads) <br>
+sudo chmod +x deploiement.sh <br>
+sudo ./deployment.sh <br>
+</p>
+
 ### Architecture
 
 ![Sch_Infrastructure](https://user-images.githubusercontent.com/25310798/66127651-7fc26680-e5ec-11e9-853d-109e7026b98e.png)
