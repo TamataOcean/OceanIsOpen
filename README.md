@@ -22,8 +22,8 @@ GPS Position.
 [emLid](https://jancelin.github.io/centipede/3_0_montage.html)  
 
 ## Configuration du Raspberry
-Lien du script Shell pour le déploiement sur le Raspberry Pi : https://github.com/TamataOcean/OceanIsOpen/tree/dev/systools
-Téléchargez le fichier deploiement.sh, puis exécutez les codes ci-dessous :
+Lien du script Shell pour le déploiement sur le Raspberry Pi : https://github.com/TamataOcean/OceanIsOpen/tree/dev/systools <br>
+Téléchargez le fichier deploiement.sh, puis exécutez les codes ci-dessous : <br>
 <p style='background-color:black; color:white'>
 cd /path_to_file/ (ex: /home/root/downloads) <br>
 sudo chmod +x deploiement.sh <br>
