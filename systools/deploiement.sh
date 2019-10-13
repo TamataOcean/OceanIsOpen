@@ -1,5 +1,5 @@
 ### Variabiliser l'utilisateur
-utilisateur=pirate
+utilisateur=VOTRE_NOM_D'UTILISATEUR
 
 ### Installation de Node.js et npm
 # Installation de Node.js
