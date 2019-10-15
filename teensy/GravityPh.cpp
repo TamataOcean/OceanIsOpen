@@ -52,7 +52,7 @@ void GravityPh::update()
 		delay(10);
 	}
 	averageVoltage = readMedianValue(pHArray, ARRAYLENGTH);
-	averageVoltage = averageVoltage*5.0 / 1024.0;
+	averageVoltage = averageVoltage*3.3 / 4096.0;
 	pHValue = 3.5*averageVoltage + this->offset;
 
 }
@@ -71,5 +71,3 @@ void GravityPh::setOffset(float offset)
 {
 	this->offset = offset;
 }
-
-

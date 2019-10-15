@@ -94,7 +94,7 @@ void reconnect(int nbTry) {
       // Once connected, publish an announcement...
       client.publish(outTopic,sensorHub.getJsonSensorsUpdate().c_str());
       // ... and resubscribe
-      client.subscribe(inTopicOrder);
+      //client.subscribe(inTopicOrder);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -149,8 +149,8 @@ void setup() {
   // {
   //   client.publish("outTopic", "Test setup mqtt");
   // }
-  // client.setServer(server, 1883);
-  // client.setCallback(callback);
+   client.setServer(server, 1883);
+   client.setCallback(callback);
   
   	/********************************/
   	/* 			SENSORS SETUP 		*/
@@ -192,10 +192,10 @@ void loop() {
 	//Export sensor in JSON
 	Serial.println("Sending to MQTT Topic : " + (String)MQTTTOPIC);
 	Serial.println(sensorHub.getJsonSensorsUpdate().c_str());
-  client.publish("teensy",sensorHub.getJsonSensorsUpdate().c_str());
+  client.publish("teensy/sensors",sensorHub.getJsonSensorsUpdate().c_str());
   Serial.println("MQTT message sent");
   
-  delay(5000);
+  delay(10000);
 
 	//If no connection... Write data to SD card
 	//sdService.update();

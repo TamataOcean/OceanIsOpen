@@ -29,7 +29,7 @@
 
 
 //Sensor pin settings
-#define PHPIN  A2
+#define PHPIN  35
 #define TEMPPIN 33
 #define DOPIN  A0
 #define ECPIN  14
