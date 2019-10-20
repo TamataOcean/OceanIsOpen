@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import socketIOClient from "socket.io-client";
 import Toolbar from './components/Toolbar/Toolbar';
 import Sidenav from './components/Sidenav/Sidenav';
+import SideDrawer from './components/SideDrawer/SideDrawer'
+import Backdrop from './components/Backdrop/Backdrop'
 
 
 class App extends Component {
@@ -45,9 +47,12 @@ class App extends Component {
     const socket = socketIOClient(this.state.endpoint);
 
     return (
-      <div classname="App">
+      <div style={{height: '100%'}} classname="App">
         
         <Toolbar />
+        <SideDrawer />
+        <Backdrop />
+
         <main style={{ marginTop: '100px' }}>
           <p> This is the beginning </p>
         </main>
