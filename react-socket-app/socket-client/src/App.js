@@ -1,6 +1,7 @@
 // Updated. Thanks to: Paul Luna
 import React, { Component } from "react";
 import socketIOClient from "socket.io-client";
+import Toolbar from './components/Toolbar/Toolbar';
 
 class App extends Component {
   constructor() {
@@ -9,9 +10,10 @@ class App extends Component {
       endpoint: "localhost:4001",
 
       ///
-      color: 'white'
-      ///
-
+      color: 'white',
+      // Teensy Config
+      teensy_user: '',
+      teensy_version : ''
     };
   }
 
@@ -41,14 +43,13 @@ class App extends Component {
     const socket = socketIOClient(this.state.endpoint);
 
     return (
-      <div style={{ textAlign: "center" }}>
-        <button onClick={() => this.send() }>Change Color</button>
-
-
-
-        <button id="blue" onClick={() => this.setColor('blue')}>Blue</button>
-        <button id="red" onClick={() => this.setColor('red')}>Red</button>
-
+      <div classname="App">
+        <Toolbar />
+        <div style={{ textAlign: "center" }}>
+          <button onClick={() => this.send() }>Change Color</button>
+          <button id="blue" onClick={() => this.setColor('blue')}>Blue</button>
+          <button id="red" onClick={() => this.setColor('red')}>Red</button>
+        </div>
       </div>
     )
   }
