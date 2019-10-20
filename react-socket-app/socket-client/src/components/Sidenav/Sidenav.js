@@ -17,7 +17,7 @@ const sidenav = props => (
                 <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
             </NavIcon>
             <NavText>
-                OceanIsOpen
+                <a href="/">OceanIsOpen</a>
             </NavText>
         </NavItem>
         <NavItem eventKey="calibration">
@@ -29,7 +29,7 @@ const sidenav = props => (
             </NavText>
             <NavItem eventKey="calibration/ph">
                 <NavText>
-                    Ph
+                    <a href="/calibrationPh"> Ph </a>
                 </NavText>
             </NavItem>
             <NavItem eventKey="calibration/redox">

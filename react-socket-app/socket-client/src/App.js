@@ -1,7 +1,7 @@
 // Updated. Thanks to: Paul Luna
 import React, { Component } from "react";
 import socketIOClient from "socket.io-client";
-//import Toolbar from './components/Toolbar/Toolbar';
+import Toolbar from './components/Toolbar/Toolbar';
 import Sidenav from './components/Sidenav/Sidenav';
 
 
@@ -46,9 +46,13 @@ class App extends Component {
 
     return (
       <div classname="App">
-
-        <Sidenav />
         
+        <Toolbar />
+        <main style={{ marginTop: '100px' }}>
+          <p> This is the beginning </p>
+        </main>
+
+
         <div style={{ textAlign: "center" }}>
           <button onClick={() => this.send() }>Change Color</button>
           <button id="blue" onClick={() => this.setColor('blue')}>Blue</button>
