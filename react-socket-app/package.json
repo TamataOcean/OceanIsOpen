@@ -1,0 +1,20 @@
+{
+  "name": "react-socket-app",
+  "version": "1.0.0",
+  "description": "ReactApp to communicate with Teensy",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [
+    "ReactJS",
+    "WebSocket",
+    "Teensy"
+  ],
+  "author": "Romain.T",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
+}
