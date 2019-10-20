@@ -4,15 +4,13 @@ import DrawerToggleButton from '../SideDrawer/DrawerToggleButton';
 
 const toolbar = props => (
 	<header className="toolbar">
-		<nav className="toolbar__nav">
 
-			<div>
+		<nav className="toolbar__nav">
+			<div className='toggle-button'>
 				<DrawerToggleButton />
 			</div>
-			<div className="toolbar__logo"> <a href="/"> OCEAN IS OPEN </a></div>	
-			
-			<div className="spacer"></div>
-			
+			<div className="toolbar__logo"> <a href="/"> OCEAN IS OPEN </a></div>			
+			<div className="spacer" />
 			<div className="toolbar__nav-items">
 				<ul>
 					<li><a href="/calibration"> Calibration </a> </li>
@@ -22,6 +20,7 @@ const toolbar = props => (
 				</ul>
 			</div>
 		</nav>
+
 	</header>
 );
 

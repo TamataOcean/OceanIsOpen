@@ -50,10 +50,10 @@ class App extends Component {
       <div style={{height: '100%'}} classname="App">
         
         <Toolbar />
-        <SideDrawer />
+        <SideDrawer />      
         <Backdrop />
-
-        <main style={{ marginTop: '100px' }}>
+ 
+        <main style={{ marginTop: '30px' }}>
           <p> This is the beginning </p>
         </main>
 
