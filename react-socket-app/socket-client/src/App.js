@@ -1,7 +1,7 @@
 // Updated. Thanks to: Paul Luna
 import React, { Component } from "react";
 import socketIOClient from "socket.io-client";
-import Toolbar from './components/Toolbar/Toolbar';
+//import Toolbar from './components/Toolbar/Toolbar';
 import Sidenav from './components/Sidenav/Sidenav';
 
 

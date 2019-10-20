@@ -25,6 +25,15 @@ io.on('connection', socket => {
     io.sockets.emit('change color', color)
   })
   
+  // just like on the client side, we have a socket.on method that takes a callback function
+  socket.on('calibrate ph', () => {
+    console.log('Calibrate ph asked')
+    
+    // Emit to Teensy to be prepared.
+    io.sockets.emit('calibrate_ph_1')
+  })
+  
+
   // disconnect is fired when a client leaves the server
   socket.on('disconnect', () => {
     console.log('user disconnected')
