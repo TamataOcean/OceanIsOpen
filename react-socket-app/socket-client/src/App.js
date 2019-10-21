@@ -5,7 +5,13 @@ import Toolbar from './components/Toolbar/Toolbar';
 import Sidenav from './components/Sidenav/Sidenav';
 import SideDrawer from './components/SideDrawer/SideDrawer'
 import Backdrop from './components/Backdrop/Backdrop'
-
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch
+} from "react-router-dom";
 
 class App extends Component {
   constructor() {
@@ -47,23 +53,25 @@ class App extends Component {
     const socket = socketIOClient(this.state.endpoint);
 
     return (
-      <div style={{height: '100%'}} classname="App">
-        
-        <Toolbar />
-        <SideDrawer />      
-        <Backdrop />
- 
-        <main style={{ marginTop: '30px' }}>
-          <p> This is the beginning </p>
-        </main>
+      <Router>
+        <div style={{height: '100%'}} classname="App">
+          
+          <Toolbar />
+          {/* <SideDrawer />       */}
+          <Backdrop />
+  
+          <main style={{ marginTop: '30px' }}>
+            <p> This is the beginning </p>
+          </main>
 
 
-        <div style={{ textAlign: "center" }}>
-          <button onClick={() => this.send() }>Change Color</button>
-          <button id="blue" onClick={() => this.setColor('blue')}>Blue</button>
-          <button id="red" onClick={() => this.setColor('red')}>Red</button>
+          {/* <div style={{ textAlign: "center" }}>
+            <button onClick={() => this.send() }>Change Color</button>
+            <button id="blue" onClick={() => this.setColor('blue')}>Blue</button>
+            <button id="red" onClick={() => this.setColor('red')}>Red</button>
+          </div> */}
         </div>
-      </div>
+      </Router>
     )
   }
 }
