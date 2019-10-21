@@ -2,15 +2,10 @@
 import React, { Component } from "react";
 import socketIOClient from "socket.io-client";
 import Toolbar from './components/Toolbar/Toolbar';
-import Sidenav from './components/Sidenav/Sidenav';
 import SideDrawer from './components/SideDrawer/SideDrawer'
 import Backdrop from './components/Backdrop/Backdrop'
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch
+  BrowserRouter as Router
 } from "react-router-dom";
 
 class App extends Component {
