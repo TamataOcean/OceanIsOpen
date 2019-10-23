@@ -11,3 +11,10 @@ React socket is in charge to manage a ReactJS app to control Teensy config and a
 ### Launch the React app
      cd ./socket-client/
      npm start
+
+### Mosquitto config for Websockets
+Add these lines to /etc/mosquitto/mosquitto.conf
+
+     listener 1883
+     listener 1884
+     protocol websockets
