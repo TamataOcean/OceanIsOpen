@@ -16,5 +16,7 @@ React socket is in charge to manage a ReactJS app to control Teensy config and a
 Add these lines to /etc/mosquitto/mosquitto.conf
 
      listener 1883
-     listener 1884
+     protocol mqtt
+     
+     listener 9001
      protocol websockets
