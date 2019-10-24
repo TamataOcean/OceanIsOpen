@@ -29,8 +29,8 @@ class App extends Component {
         <Router>
             <Toolbar />
                 <main style={{ marginTop: '30px' }}>
-              <p> This is the beginning </p>
-            </main>
+                  <p> This is the beginning </p>
+                </main>
         </Router>
       </div>
     )

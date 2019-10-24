@@ -1,4 +1,6 @@
 import React, {Component, useState} from 'react';
+import './WindowsApp.css';
+
 import { Connector } from 'mqtt-react';
 import MqttConsole from '../Mqtt/MqttConsole';
 import Button from 'react-bootstrap/Button';
@@ -29,7 +31,7 @@ class WAcquire extends Component {
 
   render(){
       return (
-        <div>
+        <div className="WAcquire">
           <h2>Acquisition - Harvest Data</h2>
           <Button onClick={this.handleClick} variant="warning" color={this.state.color}>Load Acquisition {this.state.isToggleOn ? 'ON' : 'OFF'} </Button>
           <Connector mqttProps="ws://192.168.0.104:9001/"> 
