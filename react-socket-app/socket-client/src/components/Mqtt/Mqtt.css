@@ -1,0 +1,24 @@
+.console{
+	position: fixed;
+	top: 20%;
+	color: darkslateblue;
+}
+
+.subscriber{
+    position: fixed;
+	height: 50%;
+	width: 50%;
+	background-color: lightsteelblue;
+	top: 25%;
+	left: 0;
+}
+
+.subscriber ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.subscriber li {
+	padding: 0 0.5rem;
+}
