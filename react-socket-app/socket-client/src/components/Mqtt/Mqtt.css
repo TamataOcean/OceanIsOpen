@@ -10,7 +10,8 @@
 	width: 50%;
 	background-color: lightsteelblue;
 	top: 25%;
-	left: 0;
+	left: 1%;
+	border-radius: 10px;
 }
 
 .subscriber ul {

@@ -4,9 +4,11 @@
   "private": true,
   "dependencies": {
     "@trendmicro/react-sidenav": "^0.4.5",
+    "bootstrap": "^4.3.1",
     "mqtt-react": "0.0.3",
     "object.omit": "^3.0.0",
     "react": "^16.10.2",
+    "react-bootstrap": "^1.0.0-beta.14",
     "react-dom": "^16.10.2",
     "react-iframe": "^1.8.0",
     "react-json-view": "^1.19.1",
