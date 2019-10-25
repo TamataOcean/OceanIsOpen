@@ -7,13 +7,13 @@
 }
 
 .button{
+    padding: 10px;
     color: red;
     height: 50px;
 }
 
 .WAcquire h3{
     font-size: 20px;
-    padding: 10px;
 }
 
 .WGrafana{

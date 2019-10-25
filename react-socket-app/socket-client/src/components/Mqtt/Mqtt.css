@@ -1,8 +1,9 @@
 .console{
 	position: relative;
-	left: 0;
+	padding: 10px;
 	top: 2%;
 	color: rgb(105, 85, 236);
+	width: 100%;
 }
 
 .subscriber{
@@ -12,13 +13,12 @@
 	justify-content: center;
 	align-items: center;
     position: relative;
-	height: 450px;
-	width: 450px;
+	height: 50%;
 	background-color: rgb(72, 77, 83);
 	color: rgb(173, 193, 199);
 	top: 15px;  
-	left: 10px;
-	border-radius: 10px; 
+	border-radius: 10px;
+	height: 150px; 
 }
 
 .subscriber ul {
