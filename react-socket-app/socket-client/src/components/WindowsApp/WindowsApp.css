@@ -1,14 +1,17 @@
 .WAcquire{
     display: flex;
+    flex-direction: row;
+    align-items: center;
     left:50%;
     padding: 10px;
 }
 
-.WAcquire h2{
+.WAcquire h3{
+    font-size: 20px;
     padding: 10px;
 }
 
-.grafanaIFrame{
+.WGrafana{
     height: 800px;
     width: 100%;
 }
