@@ -5,9 +5,7 @@ import './Mqtt.css';
 class MqttConsole extends Component{
     render() {
         return (
-            <div className='console'>
-                <p> Mqtt Console </p>
-                
+            <div className='console'>               
                 <MqttSubscribe />
             </div>
         )
