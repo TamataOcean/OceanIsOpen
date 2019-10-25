@@ -1,11 +1,10 @@
 .console{
 	position: fixed;
 	top: 20%;
-	color: darkslateblue;
+	color: rgb(105, 85, 236);
 }
 
 .subscriber{
-	flex:1;
 	display:flex;
 	flex-direction: column;
 	overflow-y: scroll;
@@ -17,8 +16,8 @@
 	background-color: rgb(72, 77, 83);
 	color: rgb(173, 193, 199);
 	top: 15%;
-	left: 10px;
-	border-radius: 10px;
+	/* left: 10px; */
+	border-radius: 10px; 
 }
 
 .subscriber ul {

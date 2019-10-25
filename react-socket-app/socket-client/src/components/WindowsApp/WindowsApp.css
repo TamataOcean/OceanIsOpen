@@ -7,3 +7,8 @@
 .WAcquire h2{
     padding: 10px;
 }
+
+.grafanaIFrame{
+    height: 800px;
+    width: 100%;
+}

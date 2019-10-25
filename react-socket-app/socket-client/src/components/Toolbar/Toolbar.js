@@ -11,6 +11,7 @@ import {
 import WAcquire from '../WindowsApp/WAcquire';  
 import WCalibration from '../WindowsApp/WCalibration';  
 import WGeopoppy from '../WindowsApp/WGeopoppy';  
+import WGrafana from '../WindowsApp/WGrafana';  
 import WSystem from '../WindowsApp/WSystem'
 import WHome from '../WindowsApp/WHome'
 import './Toolbar.css';
@@ -30,6 +31,7 @@ const toolbar = props => (
 					<li><Link to={"/acquisistion"}> Acquisition</Link> </li>
 					<li><Link to={"/calibration"}> Calibration</Link></li>
 					<li><Link to={"/geopoppy"}> Geopoppy</Link> </li>
+					<li><Link to={"/grafana"}> Grafana</Link> </li>
 					<li><Link to={"/system"}> Systeme</Link> </li>
 				</ul>
 			</div>
@@ -50,6 +52,9 @@ const toolbar = props => (
           </Route>
           <Route path="/system">
             <WSystem />
+          </Route>
+          <Route path="/grafana">
+            <WGrafana />
           </Route>
         </Switch>
 	</header>
