@@ -6,49 +6,50 @@ const FieldType = Influx.FieldType;
 
 
 class TamataInfluxDB {
-   constructor ( jsonObject, measurement ) {
-   	this.measurement = measurement;
+   constructor ( jsonObject ) {
    	this.config = jsonObject;
-
    	console.log('InfluxDB constructor...');
    	console.log('Config = ' + JSON.stringify ( jsonObject ) );
-   	console.log('InfluxDB Measurement = ' + measurement);
    	this.connect()
    }
 
    connect() {
    	console.log("InfluxDB - connect function");
-   	if ( this.measurement === "sensor") {
-   		console.log('this a sensor to save to InfluxDB');
-   		this.influx = new Influx.InfluxDB({
-   	        database: this.config.database,
-   	        host: this.config.host,
-   	        port: this.config.port,
-   	        username: this.config.username,
-   	        password: this.config.password,
-   	        schema: [
-   	          {
-   	            measurement: this.measurement,
-   	            fields: {
-   	              user :         FieldType.STRING,
-   	              //timestamp :  FieldType.FLOAT,
-   	              //mac:         FieldType.STRING,
-   	              phSensor:   FieldType.FLOAT,
-   	              temperatureSensor:    FieldType.FLOAT,
-   	              doSensor:    FieldType.FLOAT,
-   	              ecSensor:    FieldType.FLOAT,
-   	              tdsSensor:       FieldType.FLOAT,
-   	              orpSensor:       FieldType.FLOAT,
-   	              turbiditySensor:           FieldType.FLOAT,
-   	            },
-   	            tags: [ 'sensor' ]
-   	          }
-   	        ]
-   	    });
-   	}
+      console.log('this a sensor to save to InfluxDB');
+      this.influx = new Influx.InfluxDB({
+            database: this.config.database,
+            host: this.config.host,
+            port: this.config.port,
+            username: this.config.username,
+            password: this.config.password,
+            schema: [
+               {
+               measurement: "sensor",
+               fields: {
+                  user :         FieldType.STRING,
+                  //timestamp :  FieldType.FLOAT,
+                  //mac:         FieldType.STRING,
+                  ph:   FieldType.FLOAT,
+                  temperature:    FieldType.FLOAT,
+                  do:    FieldType.FLOAT,
+                  ec:    FieldType.FLOAT,
+                  tds:       FieldType.FLOAT,
+                  orp:       FieldType.FLOAT,
+                  turbidity:           FieldType.FLOAT,
+                  /* GPS data */
+                  gps_date: FieldType.STRING, 
+                  gps_time: FieldType.STRING,
+                  geo_latitude: FieldType.STRING,
+                  geo_longitude: FieldType.STRING,
+                  speed_knots: FieldType.STRING
+               },
+               tags: [ 'sensor' ]
+               }
+            ]
+         });
    };
 
-   save( jsonRecord, measurement ) {
+   save( jsonRecord ) {
    	if (DEBUG) console.log('InfluxDB save function...');
 
       this.influx.getDatabaseNames()
@@ -65,10 +66,7 @@ class TamataInfluxDB {
          if (DEBUG) console.log('database : ' + this.config.database + ' found');
          if (DEBUG) console.log('jsonRecord = '+ JSON.stringify(jsonRecord) );
 
-         if       (measurement ==="sensor" ) { this.saveSensor(jsonRecord,measurement);  } 
-         else {
-            console.log('Mqtt message Type not managed... yet ;-) !!! ');
-         }
+         this.saveSensor(jsonRecord);
       })
       .catch(err => {
           console.error(`Error creating Influx database!`)
@@ -78,38 +76,34 @@ class TamataInfluxDB {
    	// body...
    }
 
-   saveSensor(jsonRecord, measurement ) {    
+   saveSensor(jsonRecord, jsonPosition ) {    
       this.influx.writePoints([
          {
-         measurement: measurement,
          tags: { sensor: "teensySensors" },
+         measurement : "sensor",
          fields: { 
-            user :               jsonRecord.state.reported.user,
-            //timestamp :          Date.parse(jsonRecord.state.reported.timestamp),
-            //mac:                 jsonRecord.state.reported.mac,
-            phSensor:            jsonRecord.state.reported.phSensor,
-            temperatureSensor:   jsonRecord.state.reported.temperatureSensor,
-            doSensor:            jsonRecord.state.reported.doSensor,
-            ecSensor:            jsonRecord.state.reported.ecSensor,
-            tdsSensor:           jsonRecord.state.reported.tdsSensor,
-            orpSensor:           jsonRecord.state.reported.orpSensor
+            user :         jsonRecord.state.reported.user,
+            ph:            jsonRecord.state.reported.ph,
+            temperature:   jsonRecord.state.reported.temperature,
+            do:            jsonRecord.state.reported.do,
+            ec:            jsonRecord.state.reported.ec,
+            tds:           jsonRecord.state.reported.tds,
+            orp:           jsonRecord.state.reported.orp, 
+            /* GPS data */
+            // gps_date: jsonPosition.gps.date, 
+            // gps_time: jsonPosition.gps.time, 
+            // geo_latitude: jsonPosition.geo.latitude, 
+            // geo_longitude: jsonPosition.geo.longitude, 
+            // speed_knots: jsonPosition.speed.knots 
             }  
          }]).catch(err => {
             console.error(`Error saving Sensor data to InfluxDB! ${err.stack}`);
             return;
          }).then( () => {
-            console.log('Doc type '+measurement +' pushed to InFlux'  );
+            console.log('Data pushed to InFlux'  );
             console.log('\n');
          });
    }
-}
-
-function convertBoolean( boolean ) {
-   if (DEBUG) console.log('convertBoolean entry '+  boolean );
-   var result = 0;
-   if (boolean) result = 1;
-   if (DEBUG) console.log('converted to '+ result );
-   return result;
 }
 
 module.exports = TamataInfluxDB;
