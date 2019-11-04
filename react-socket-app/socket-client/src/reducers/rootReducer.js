@@ -22,8 +22,21 @@ const initState = {
     }
 }
 
-const rootReducer = ( state= initState, action) => {
-    return state;
+const rootReducer = ( state = initState, action) => {
+    switch (action.type) {
+        case "CALIBRATE_SENSOR" : {
+            let sensor = state.sensors.find(sensor => sensor.id === action.id)
+            console.log("Calibrate sensor reducer function... ", sensor.name, "/", sensor.id);
+            // Sending request to Teensy for calibration ok sensor.id 
+            // return {};
+        }
+
+        case "LOG_RECORDING" : {
+            console.log("Log recording on... ");
+        }
+        default:
+            return state;
+    }
 }
 
 export default rootReducer;

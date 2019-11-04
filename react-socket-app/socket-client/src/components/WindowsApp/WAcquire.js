@@ -45,7 +45,8 @@ class WAcquire extends Component {
   };
 
   render(){
-      const { sensors } = this.props;
+      const { sensors, log } = this.props;
+
       const sensorsList = sensors.length ? ( 
         sensors.map( sensor => {
           return(
@@ -56,13 +57,11 @@ class WAcquire extends Component {
         })
       ) : ( <p> Pas de capteurs identifiés </p>)
 
-
       const { selectedOption } = this.state;
 
       return (
         <div className="WAcquire">
-          <h2>Acquisition - Harvest Data {}</h2>
-          {/* <h3> Sensors List : Ph - Temperature - Redox - ORP - Oxygen </h3> */}
+          <h2>Acquisition - Harvest Data - Log status = {log.state} </h2>
           <h3 className="sensorList"> Sensors List : {sensorsList}  </h3>
           
           {/* Launch recording process */}
@@ -88,7 +87,8 @@ class WAcquire extends Component {
 
 const mapStateToProps = state => {
   return {
-    sensors: state.sensors
+    sensors: state.sensors,
+    log: state.log
   };
 };
 

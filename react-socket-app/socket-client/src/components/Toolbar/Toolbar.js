@@ -38,25 +38,14 @@ const toolbar = props => (
 		</nav>
 
 		<Switch>
-          <Route exact path="/">
-            <WHome />
-          </Route>
-          <Route path="/acquisistion">
-            <WAcquire />
-          </Route>
-          <Route path="/calibration">
-            <WCalibration />
-          </Route>
-          <Route path="/geopoppy">
-            <WGeopoppy />
-          </Route>
-          <Route path="/system">
-            <WSystem />
-          </Route>
-          <Route path="/grafana">
-            <WGrafana />
-          </Route>
+          <Route exact path="/" component={WHome} />
+          <Route path="/acquisistion" component= {WAcquire} />
+          <Route path="/calibration" component= {WCalibration} />
+          <Route path="/geopoppy" component= {WGeopoppy} />
+          <Route path="/system" component = {WSystem} />
+          <Route path="/grafana" component = {WGrafana} />
         </Switch>
+		
 	</header>
 );
 
