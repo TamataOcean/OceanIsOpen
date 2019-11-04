@@ -6,6 +6,16 @@
     padding: 10px;
 }
 
+.sensor{
+    display: flex;
+    flex-direction: row;
+    padding: 0 0.5rem;
+}
+
+.sensorList{
+    display: flex;
+    flex-direction: row;
+}
 .button{
     padding: 10px;
     color: red;

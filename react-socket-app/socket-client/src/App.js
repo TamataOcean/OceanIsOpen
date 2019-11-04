@@ -1,15 +1,13 @@
-// Updated. Thanks to: Paul Luna
 import React, { Component } from "react";
+import { BrowserRouter as Router } from "react-router-dom";
 import socketIOClient from "socket.io-client";
-import Toolbar from './components/Toolbar/Toolbar';
 
-import {
-  BrowserRouter as Router
-} from "react-router-dom";
+import Toolbar from './components/Toolbar/Toolbar';
 
 class App extends Component {
   constructor() {
     super();
+
     this.state = {
       endpoint: "localhost:4001",
       color: 'white',

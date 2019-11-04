@@ -1,16 +1,15 @@
-import Select from 'react-select';
-import React, {Component, useState} from 'react';
 import './WindowsApp.css';
 
+import Select from 'react-select';
+import React, {Component} from 'react';
 import { Connector } from 'mqtt-react';
+
+// Redux ( Using Sensors list & Log state )
+import { connect } from 'react-redux';
+
 import MqttConsole from '../Mqtt/MqttConsole';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import jsonConfig from "./../System/config.json";
-
-import ReactJson from 'react-json-view'
-const listSensors = jsonConfig.sensors;
-
 
 const options = [
   { value: '5sec', label: 'Every 5sec' },
@@ -23,57 +22,74 @@ const options = [
 class WAcquire extends Component {
   constructor(props) {
     super(props);
-    this.color = "red";
     this.state = {isToggleOn: true};
-    this.handleClick = this.handleClick.bind(this);
+    this.handleAcquisitionButton = this.handleAcquisitionButton.bind(this);
   }
 
   state = {
     selectedOption: null,
   };
-  handleChange = selectedOption => {
-    this.setState(
-      { selectedOption },
-      () => console.log(`Option selected:`, this.state.selectedOption)
-    );
-  };
-
-  handleClick() {
-    console.log("Click...")
+  
+  handleAcquisitionButton= () => {
+    console.log("Acquisition Click...")
     this.setState(state => ({
       isToggleOn: !state.isToggleOn
     }));
-    if(this.state.isToggleOn) {
-      this.setState(state => ({
-        color: "black"
-      }));
-    }
-    else {
-      document.body.style.backgroundColor = "white";
-    }
   }
 
+  handleSelectChange = selectedOption => {
+    this.setState(
+      { selectedOption },
+      () => console.log("Option selected:", this.state.selectedOption)
+    );
+  };
+
   render(){
+      const { sensors } = this.props;
+      const sensorsList = sensors.length ? ( 
+        sensors.map( sensor => {
+          return(
+            <div className="sensor" key={sensor.id}>
+              <h3>{sensor.name} </h3>
+            </div>
+          )
+        })
+      ) : ( <p> Pas de capteurs identifiés </p>)
+
+
       const { selectedOption } = this.state;
+
       return (
         <div className="WAcquire">
-          <h2>Acquisition - Harvest Data</h2>
-          <h3> Sensors List : Ph - Temperature - Redox - ORP - Oxygen </h3>
-          {/* <ReactJson src={ listSensors }/> */}
-          <Button className="button" onClick={this.handleClick} variant="warning" color={this.state.color}>Load Acquisition {this.state.isToggleOn ? 'ON' : 'OFF'} </Button>
-          {/* <h3> Console Log</h3> */}
+          <h2>Acquisition - Harvest Data {}</h2>
+          {/* <h3> Sensors List : Ph - Temperature - Redox - ORP - Oxygen </h3> */}
+          <h3 className="sensorList"> Sensors List : {sensorsList}  </h3>
+          
+          {/* Launch recording process */}
+          <Button className="button" onClick={this.handleAcquisitionButton} >
+            Load Acquisition {this.state.isToggleOn ? 'ON' : 'OFF'} 
+          </Button>
+          
+          {/* Console login from MQTT */}
           <Connector mqttProps="ws://192.168.0.104:9001/"> 
             <MqttConsole /> 
           </Connector>
-          <Select
-        value={selectedOption}
-        onChange={this.handleChange}
-        options={options}
-      />
 
+          {/* Interval Selector */}
+          <Select
+            value={selectedOption}
+            onChange={this.handleSelectChange}
+            options={options}
+          />
         </div>
         );
   }
 }
 
-export default WAcquire;
+const mapStateToProps = state => {
+  return {
+    sensors: state.sensors
+  };
+};
+
+export default connect(mapStateToProps)(WAcquire);
