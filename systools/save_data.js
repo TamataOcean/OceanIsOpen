@@ -14,6 +14,7 @@ jsonfile.spaces = 4;
 
 var mqtt = require('mqtt'); //includes mqtt server 
 const TamataPostgres = require('./actions/components/TamataPostgres')
+const TamataInfluxDB = require('./actions/components/TamataInflux')
 
 var configFile = "config.json";
 var jsonConfig ;
@@ -90,6 +91,11 @@ async function insertData(topic,message) {
 		console.log("Position : " + JSON.stringify( parsedPosition )) ;
 		posgresDB = new TamataPostgres( jsonConfig.system.postgres );
 		posgresDB.save( parsedMessage, parsedPosition );
+		
+		/* INSERT to influx database */
+		influx = new TamataInfluxDB( jsonConfig.system.influxDB );
+		influx.save( parsedMessage, parsedPosition );
+
 		if (DEBUG) console.log('Inserted datas : ' + JSON.stringify(parsedMessage) ) ;
 		if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
 	})
@@ -99,7 +105,7 @@ async function insertData(topic,message) {
 - function getGpsPosition()
 Return a Promise with position type NMEA */
 function getGpsPosition() {
-	console.log("getGpsPosition 1")
+	console.log("getGpsPosition")
 	return new Promise( (resolve, reject) => {
 		const nmea = require('node-nmea')
 		const gprmc = require('gprmc-parser')
