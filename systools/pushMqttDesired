@@ -1,1 +1,1 @@
-mosquitto_pub -h 192.168.1.41 -t "teensy/sensors" -f ./mqttFormat.json
+mosquitto_pub -h 192.168.0.104 -t "teensy/sensors" -f ./mqttReactApp.json
