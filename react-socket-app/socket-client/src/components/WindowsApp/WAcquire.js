@@ -71,6 +71,7 @@ class WAcquire extends Component {
                 >
                     Load Acquisition {log.isToggleOn ? "ON" : "OFF"}
                 </Button>
+                <div>{log.state}</div>
 
                 {/* Console login from MQTT */}
                 <Connector mqttProps="ws://192.168.0.104:9001/">
