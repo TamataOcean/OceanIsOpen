@@ -2,12 +2,12 @@ import React from 'react'
 import System from '../System/System'
 
 class WSystem extends React.Component {
-    render(){
+    render() {
         return (
-          <div>
-            <h2>System tools</h2>
-            <System />
-          </div>
+            <div>
+                <h2>System tools</h2>
+                <System />
+            </div>
         );
     }
 
