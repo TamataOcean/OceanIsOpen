@@ -6,6 +6,7 @@ import { Connector } from 'mqtt-react';
 
 // Redux ( Using Sensors list & Log state )
 import { connect } from 'react-redux';
+import {logRecord } from '../../actions/logRecord';
 
 import MqttConsole from '../Mqtt/MqttConsole';
 import Button from 'react-bootstrap/Button';
@@ -31,10 +32,9 @@ class WAcquire extends Component {
   };
   
   handleAcquisitionButton= () => {
-    console.log("Acquisition Click...")
-    this.setState(state => ({
-      isToggleOn: !state.isToggleOn
-    }));
+    console.log("Acquisition Click...");
+    // Laucnh Redux Action
+    this.props.sensorsRecord();
   }
 
   handleSelectChange = selectedOption => {
@@ -63,10 +63,9 @@ class WAcquire extends Component {
         <div className="WAcquire">
           <h2>Acquisition - Harvest Data - Log status = {log.state} </h2>
           <h3 className="sensorList"> Sensors List : {sensorsList}  </h3>
-          
           {/* Launch recording process */}
           <Button className="button" onClick={this.handleAcquisitionButton} >
-            Load Acquisition {this.state.isToggleOn ? 'ON' : 'OFF'} 
+            Load Acquisition {log.isToggleOn ? 'ON' : 'OFF'} 
           </Button>
           
           {/* Console login from MQTT */}
@@ -92,4 +91,12 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(WAcquire);
+const mapDispatchToProps = dispatch => {
+  return {
+    sensorsRecord : () => {
+      dispatch ( logRecord() );
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(WAcquire);

@@ -5,10 +5,6 @@ import {connect } from 'react-redux';
 import Sensor from '../Sensors/sensor';
 
 class WCalibration extends Component {
-  calibrate = () => {
-    console.log("Calibration du capteur : ", this.props.sensor.name );
-    this.props.calibrateSensor (this.props.sensor.id)
-  };
 
   render(){
       const { sensors } = this.props;
@@ -36,15 +32,7 @@ const mapStateToProps = state =>  {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    calibrateSensor : id => {
-      dispatch ({type: "CALIBRATE_SENSOR", id: id});
-    }
-  };
-};
-
 export default connect(
-  mapStateToProps, 
-  mapDispatchToProps
+  mapStateToProps 
+  // mapDispatchToProps
 )(WCalibration);

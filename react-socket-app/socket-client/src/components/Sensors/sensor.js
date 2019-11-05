@@ -16,7 +16,7 @@ class sensor extends Component {
       
       return (
           <div>
-            {sensor.name}
+            <p>{sensor.name} - Calibration steps : {sensor.calibrationStep} - Calibration state : {sensor.calibrationState} </p> 
             <button onClick={this.calibrate}> Calibrer </button>
           </div>
         );

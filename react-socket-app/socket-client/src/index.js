@@ -10,7 +10,7 @@ import rootReducer from './reducers/rootReducer';
 
 const store = createStore(
     rootReducer, 
-    // Using Redux devtools for Firefox
+    // Using Redux devtools
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
@@ -20,6 +20,10 @@ ReactDOM.render(
     </Provider>,
     document.getElementById('root')
     );
+
+// store.subscribe( (reactRender) => {
+//     reactRender();
+// } )
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
