@@ -19,8 +19,14 @@ class sensor extends Component {
       return (
           <div className="sensor">
             <img src={sensor.logo} />
-            <p>{sensor.name} - Calibration steps : {sensor.calibrationStep} - Calibration state : {sensor.calibrationState} </p> 
-            <button onClick={this.calibrate}> Calibrer </button>
+            <p>{sensor.name} - Calibration steps : {sensor.calibrationStep} - Calibration current step : {sensor.calibrationCurrentStep} </p> 
+            <button 
+              onClick={this.calibrate} 
+              disabled={sensor.calibrationStep === sensor.calibrationCurrentStep}
+              style={{backgroundColor:this.state.bgColor}}
+            > 
+                Calibrer 
+            </button>
           </div>
         );
   }

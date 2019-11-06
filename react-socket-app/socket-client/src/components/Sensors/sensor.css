@@ -9,3 +9,9 @@
     width: 60px;
     height: 60px;
 }
+
+.sensor button{
+    display: flex;
+    flex-direction: row-reverse;
+    color: #113066;
+}

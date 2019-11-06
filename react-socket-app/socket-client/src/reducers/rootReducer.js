@@ -105,15 +105,30 @@ const rootReducer = (state = initState, action) => {
     console.log("Reducer - Action receieved : ", action.type);
     switch (action.type) {
         case "CALIBRATE_SENSOR":
+
             let sensor = state.sensors.find(sensor => sensor.id === action.id);
+            let calibrationCurrentStep = sensor.calibrationCurrentStep;
+            
             console.log(
                 "Reducer - Calibrate sensor reducer function... ",
                 sensor.name,
                 "/",
-                sensor.id
+                sensor.id, 
+                "/", sensor.calibrationCurrentStep
             );
             // Sending request to Teensy for calibration ok sensor.id
             // return {};
+            
+            return {
+                ...state,
+                sensors: state.sensors.map(sensor => sensor.id === action.id ?
+                    //transform the one with a matching id
+                    { ...sensor, calibrationCurrentStep: calibrationCurrentStep+1 } : 
+                    //otherwise return original todo
+                    sensor
+                ) 
+            };
+
             break;
         case "LOG_RECORDING":
             //debugger;
