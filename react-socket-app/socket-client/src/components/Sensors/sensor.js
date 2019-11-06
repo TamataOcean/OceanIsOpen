@@ -1,3 +1,5 @@
+import './sensor.css';
+
 import React, {Component} from 'react';
 import {connect } from 'react-redux';
 
@@ -15,7 +17,8 @@ class sensor extends Component {
       const { sensor } = this.props;
       
       return (
-          <div>
+          <div className="sensor">
+            <img src={sensor.logo} />
             <p>{sensor.name} - Calibration steps : {sensor.calibrationStep} - Calibration state : {sensor.calibrationState} </p> 
             <button onClick={this.calibrate}> Calibrer </button>
           </div>
