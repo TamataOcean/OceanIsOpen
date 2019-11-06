@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
+import logoRecordOn from "../../images/logoRecording_On.png";
+import logoRecordOff from "../../images/logoRecording_Off.png";
+
 import {
 	BrowserRouter as Router,
 	Switch,
@@ -6,6 +9,8 @@ import {
 	Link,
 	useRouteMatch
   } from "react-router-dom";
+
+import {connect } from 'react-redux';
 
 //App Windows 
 import WAcquire from '../WindowsApp/WAcquire';  
@@ -17,36 +22,55 @@ import WHome from '../WindowsApp/WHome'
 import './Toolbar.css';
 import DrawerToggleButton from '../SideDrawer/DrawerToggleButton';
 
-const toolbar = props => (
-	<header className="toolbar">
+class toolbar extends Component {
+	constructor(props) {
+        super(props);
+    }
+	
+	render(){
+		const {log} = this.props;
 
-		<nav className="toolbar__nav">
-			<div className='toggle-button'>
-				<DrawerToggleButton />
+		return (
+			<div>
+			<header className="toolbar">
+			<nav className="toolbar__nav">
+				<div className='toggle-button'>
+					<DrawerToggleButton />
+				</div>
+				<div className="toolbar__logo"> <a href="/"> OCEAN IS OPEN </a></div>			
+				<div className="spacer" />
+				<img src= { log.state==="Pause" ? logoRecordOff : logoRecordOn } />
+				<div className="toolbar__nav-items">
+					<ul>
+						<li><Link to={"/acquisistion"}> Acquisition</Link> </li>
+						<li><Link to={"/calibration"}> Calibration</Link></li>
+						<li><Link to={"/geopoppy"}> Geopoppy</Link> </li>
+						<li><Link to={"/grafana"}> Grafana</Link> </li>
+						<li><Link to={"/system"}> Systeme</Link> </li>
+					</ul>
+				</div>
+			</nav>
+
+			<Switch>
+			<Route exact path="/" component={WHome} />
+			<Route path="/acquisistion" component= {WAcquire} />
+			<Route path="/calibration" component= {WCalibration} />
+			<Route path="/geopoppy" component= {WGeopoppy} />
+			<Route path="/system" component = {WSystem} />
+			<Route path="/grafana" component = {WGrafana} />
+			</Switch>
+			</header>
 			</div>
-			<div className="toolbar__logo"> <a href="/"> OCEAN IS OPEN </a></div>			
-			<div className="spacer" />
-			<div className="toolbar__nav-items">
-				<ul>
-					<li><Link to={"/acquisistion"}> Acquisition</Link> </li>
-					<li><Link to={"/calibration"}> Calibration</Link></li>
-					<li><Link to={"/geopoppy"}> Geopoppy</Link> </li>
-					<li><Link to={"/grafana"}> Grafana</Link> </li>
-					<li><Link to={"/system"}> Systeme</Link> </li>
-				</ul>
-			</div>
-		</nav>
+		);
+	}
+}
 
-		<Switch>
-          <Route exact path="/" component={WHome} />
-          <Route path="/acquisistion" component= {WAcquire} />
-          <Route path="/calibration" component= {WCalibration} />
-          <Route path="/geopoppy" component= {WGeopoppy} />
-          <Route path="/system" component = {WSystem} />
-          <Route path="/grafana" component = {WGrafana} />
-        </Switch>
-		
-	</header>
-);
+const mapStateToProps = state =>  {
+    return {
+        log : state.log
+    };
+};
 
-export default toolbar;
+export default connect(
+	mapStateToProps
+)(toolbar);

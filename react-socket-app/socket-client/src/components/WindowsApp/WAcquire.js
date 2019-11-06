@@ -64,8 +64,6 @@ class WAcquire extends Component {
             <p> Pas de capteurs identifiés </p>
         );
 
-        const { selectedOption } = this.state;
-
         return (
             <div className="WAcquire">
                 <h2>Acquisition - Harvest Data - Log status = {log.state} - Interval : {log.interval}</h2>

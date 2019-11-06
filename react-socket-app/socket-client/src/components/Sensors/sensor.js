@@ -23,7 +23,7 @@ class sensor extends Component {
             <button 
               onClick={this.calibrate} 
               disabled={sensor.calibrationStep === sensor.calibrationCurrentStep}
-              style={{backgroundColor:this.state.bgColor}}
+              // style={{backgroundColor:this.state.bgColor}}
             > 
                 Calibrer 
             </button>
