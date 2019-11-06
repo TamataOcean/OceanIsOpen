@@ -4,9 +4,12 @@ import Select from "react-select";
 import React, { Component } from "react";
 import { Connector } from "mqtt-react";
 
+//Sensors logos
+// import logoTemperature from "../../images/logoTemperature.png";
+
 // Redux ( Using Sensors list & Log state )
 import { connect } from "react-redux";
-import { logRecord } from "../../actions/logRecord";
+import { logRecord, logInterval } from "../../actions/logRecord";
 
 import MqttConsole from "../Mqtt/MqttConsole";
 import Button from "react-bootstrap/Button";
@@ -23,8 +26,8 @@ const options = [
 class WAcquire extends Component {
     constructor(props) {
         super(props);
-        this.state = { isToggleOn: true };
-        this.handleAcquisitionButton = this.handleAcquisitionButton.bind(this);
+        //this.state = { isToggleOn: true };
+        //this.handleAcquisitionButton = this.handleAcquisitionButton.bind(this);
     }
 
     state = {
@@ -38,19 +41,22 @@ class WAcquire extends Component {
     };
 
     handleSelectChange = selectedOption => {
-        this.setState({ selectedOption }, () =>
-            console.log("Option selected:", this.state.selectedOption)
-        );
+        console.log("Option selected:", selectedOption.value)
+        this.props.selectChange( selectedOption )
+        // this.setState({ selectedOption }, () =>
+        // );
     };
 
     render() {
         const { sensors, log } = this.props;
-        console.log(log);
+        // console.log("Render into WAcquire = ", log.interval);
         const sensorsList = sensors.length ? (
             sensors.map(sensor => {
                 return (
                     <div className="sensor" key={sensor.id}>
-                        <h3>{sensor.name} </h3>
+                        <h4>{sensor.name} </h4>
+                        <img src={sensor.logo}  />
+                        {/* <img src={sensor.logo}  /> */}
                     </div>
                 );
             })
@@ -62,8 +68,9 @@ class WAcquire extends Component {
 
         return (
             <div className="WAcquire">
-                <h2>Acquisition - Harvest Data - Log status = {log.state} </h2>
+                <h2>Acquisition - Harvest Data - Log status = {log.state} - Interval : {log.interval}</h2>
                 <h3 className="sensorList"> Sensors List : {sensorsList} </h3>
+
                 {/* Launch recording process */}
                 <Button
                     className="button"
@@ -71,7 +78,6 @@ class WAcquire extends Component {
                 >
                     Load Acquisition {log.isToggleOn ? "ON" : "OFF"}
                 </Button>
-                <div>{log.state}</div>
 
                 {/* Console login from MQTT */}
                 <Connector mqttProps="ws://192.168.0.104:9001/">
@@ -80,7 +86,8 @@ class WAcquire extends Component {
 
                 {/* Interval Selector */}
                 <Select
-                    value={selectedOption}
+                    // value={selectedOption}
+                    value={log.interval}
                     onChange={this.handleSelectChange}
                     options={options}
                 />
@@ -97,12 +104,24 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
+    console.log("mapDispatchToProps", )
     return {
         sensorsRecord: () => {
             dispatch(logRecord());
+        }, 
+        selectChange: interval => {
+            dispatch({ type: "LOG_INTERVAL_CHANGE", interval: interval });
         }
     };
 };
+
+// const mapDispatchToProps = dispatch => {
+//     return {
+//       calibrateSensor : id => {
+//         dispatch ({type: "CALIBRATE_SENSOR", id: id});
+//       }
+//     };
+//   };
 
 export default connect(
     mapStateToProps,
