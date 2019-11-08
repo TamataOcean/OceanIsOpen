@@ -51,10 +51,11 @@
 #include "SdService.h"
 #include "Debug.h"
 
-// Alias clock module logic as rtc
-//GravityRtc rtc;
-// Alias SD logic as sdService applied to sensors
-//SdService sdService = SdService(sensorHub.sensors);
+/* SOCKET IO --------------- 
+#include <WebSocketClient.h>
+char server[] = "192.168.0.104";
+WebSocketClient clientWS; 
+*/
 
 // Alias sensor logic as sensorHub 
 GravitySensorHub sensorHub ;
@@ -64,24 +65,30 @@ GravitySensorHub sensorHub ;
 //NetworkControl netControl = NetworkControl(sensorHub.sensors);
 //byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 byte mac[] = {   0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02};
-// IPAddress ip(192, 168, 1, 100);
-IPAddress server(192, 168, 1, 41);
-char* outTopic = "sensors";
+
+IPAddress serverMqtt(192, 168, 0, 104);
+char* outTopic = "teensy/sensors";
+char* outTopicLog = "teensy/console";
+
 char* inTopicOrder = "teensy/order";
-char * outTopicOrder = "teensy/check";
+char* outTopicOrder = "teensy/check";
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
-  for (int i=0;i<length;i++) {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
+
+  String order((char *) payload );
+  Serial.println( order);
+  
+  if ( order.equals((String)"phCalibrate") ) {
+    Serial.println("PhCalibrate payload...");
+    }
+    else Serial.println("payload pas compris...");
 }
 
 EthernetClient ethClient;
-PubSubClient client(server, 1883, callback, ethClient);
+PubSubClient client(serverMqtt, 1883, callback, ethClient);
 
 void reconnect(int nbTry) {
   int cpt = 0;
@@ -89,17 +96,16 @@ void reconnect(int nbTry) {
   while (!client.connected() && cpt < nbTry ) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect(server)) {
+    if (client.connect(serverMqtt)) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish(outTopic,sensorHub.getJsonSensorsUpdate().c_str());
+      client.publish(outTopicLog,sensorHub.getJsonSensorsUpdate().c_str());
       // ... and resubscribe
-      //client.subscribe(inTopicOrder);
+      client.subscribe(inTopicOrder);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try "+ (String)cpt + "/"+ (String)nbTry +". Next try in 5 seconds ");
-
       // Wait 5 seconds before retrying
       delay(5000);
       cpt++;
@@ -141,21 +147,16 @@ void setup() {
   /* MQTT                         */
   /*                              */
   if (client.connect("arduinoClient", "testuser", "testpass")) {
-    client.publish("outTopic","hello world");
-    client.subscribe("inTopic");
+    client.publish(outTopicLog,"Teensy arrived...");
+    client.subscribe( inTopicOrder );
   }
-  
-  // if (client.connect("teeeny", "test", "test")) 
-  // {
-  //   client.publish("outTopic", "Test setup mqtt");
-  // }
-   client.setServer(server, 1883);
+   client.setServer(serverMqtt, 1883);
    client.setCallback(callback);
   
-  	/********************************/
-  	/* 			SENSORS SETUP 		*/
-  	/*								*/
-	//Reset and initialize sensors
+	/********************************/
+	/* 			SENSORS SETUP 		*/
+	/*								*/
+  //Reset and initialize sensors
 	Debug::println("... SensorHub setup begin...");
 	sensorHub.setup();
 
@@ -165,38 +166,40 @@ void setup() {
 	Debug::print("pH offset: ");
 	Debug::println(PHOFFSET);
 	
-	
-	
+  /********************************/
+  /*      SOCKET IO               */
+  /*                              
+	clientWS.connect(serverMqtt);
+  if (clientWS.connected()) Serial.println("connected to WebSocket");
+  else Serial.println("WS not connected");*/
 }
 
 //Create variable to track time
 unsigned long updateTime = 0;
+unsigned long logInterval = 5000;
+unsigned long previousLogTime = 0;
+
 /*************************/
 /*        LOOP           */
 /*************************/
 void loop() {
-
 	//MQTT Connection 
 	if (!client.connected()) {
         Serial.println("MQTT not connected");
       	reconnect(5);
   }
+
   client.loop();
 
-	//Update time from clock module
-	//rtc.update();
+  if (  (millis() - previousLogTime) >= logInterval || previousLogTime == 0 ) {
+    //Collect sensor readings
+    sensorHub.update();
+    //Export sensor in JSON
+    Serial.println("Sending to MQTT Topic : " + (String)MQTTTOPIC);
+    Serial.println(sensorHub.getJsonSensorsUpdate().c_str());
+    client.publish(outTopic,sensorHub.getJsonSensorsUpdate().c_str());
+    Serial.println("MQTT message sent");
+    previousLogTime = millis(); 
+    }
 
-	//Collect sensor readings
-	sensorHub.update();
-	
-	//Export sensor in JSON
-	Serial.println("Sending to MQTT Topic : " + (String)MQTTTOPIC);
-	Serial.println(sensorHub.getJsonSensorsUpdate().c_str());
-  client.publish("teensy/sensors",sensorHub.getJsonSensorsUpdate().c_str());
-  Serial.println("MQTT message sent");
-  
-  delay(10000);
-
-	//If no connection... Write data to SD card
-	//sdService.update();
 }

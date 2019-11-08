@@ -79,7 +79,7 @@ class WAcquire extends Component {
 
                 {/* Console login from MQTT */}
                 <Connector mqttProps="ws://192.168.0.104:9001/">
-                    <MqttConsole />
+                    <MqttConsole topic="teensy/sensors" />
                 </Connector>
 
                 {/* Interval Selector */}
@@ -89,6 +89,11 @@ class WAcquire extends Component {
                     onChange={this.handleSelectChange}
                     options={options}
                 />
+
+                {/* Console login from MQTT */}
+                <Connector mqttProps="ws://192.168.0.104:9001/">
+                    <MqttConsole topic="teensy/console" />
+                </Connector>
             </div>
         );
     }

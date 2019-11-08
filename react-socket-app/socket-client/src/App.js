@@ -18,7 +18,6 @@ class App extends Component {
 
     render() {
         // testing for socket connections
-
         const socket = socketIOClient(this.state.endpoint);
 
         return (
