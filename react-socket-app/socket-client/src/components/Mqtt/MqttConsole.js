@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import MqttSubscribe from './MqttSubscribe';
-import MqttSubscribeLog from './MqttSubscribeV2'
 import './Mqtt.css';
 
 class MqttConsole extends Component{
