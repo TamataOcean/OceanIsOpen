@@ -11,3 +11,14 @@ services:
       - "/app/node_modules"
     ports:
       - "3000:3000"
+
+  socket-server:
+    container_name: socket-server
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - "./:/app"
+      - "/app/node_modules"
+    ports:
+      - "4001:4001"
