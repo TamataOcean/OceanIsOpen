@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  socket-client:
+    container_name: socket-client
+    build:
+      context: ./socket-client
+      dockerfile: Dockerfile
+    volumes:
+      - "./socket-client:/app"
+      - "/app/node_modules"
+    ports:
+      - "3000:3000"
