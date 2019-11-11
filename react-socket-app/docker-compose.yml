@@ -1,3 +1,4 @@
+# prettier-ignore
 version: "3.7"
 
 services:
@@ -11,6 +12,8 @@ services:
       - "/app/node_modules"
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=development
 
   socket-server:
     container_name: socket-server
@@ -22,3 +25,5 @@ services:
       - "/app/node_modules"
     ports:
       - "4001:4001"
+    environment:
+      - NODE_ENV=development
