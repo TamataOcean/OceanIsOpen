@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import logoRecordOn from "../../images/logoRecording_On.png";
 import logoRecordOff from "../../images/logoRecording_Off.png";
+import logoAcquisition from "../../images/logoDataAcquisition.png";
+import logoCalibration from "../../images/logoDataCalibration.png";
+import logoGeoloc from "../../images/logoDataGeoloc.png";
+import logoGraf from "../../images/logoDataGraph.png";
+import logoSystem from "../../images/logoDataSystem.png";
 
 import {
 	BrowserRouter as Router,
@@ -42,11 +47,11 @@ class toolbar extends Component {
 				<img src= { log.state==="Pause" ? logoRecordOff : logoRecordOn } />
 				<div className="toolbar__nav-items">
 					<ul>
-						<li><Link to={"/acquisistion"}> Acquisition</Link> </li>
-						<li><Link to={"/calibration"}> Calibration</Link></li>
-						<li><Link to={"/geopoppy"}> Geopoppy</Link> </li>
-						<li><Link to={"/grafana"}> Grafana</Link> </li>
-						<li><Link to={"/system"}> Systeme</Link> </li>
+						<li><Link to={"/acquisistion"}> <img src={logoAcquisition} /> Acquisition</Link> </li>
+						<li><Link to={"/calibration"}> <img src={logoCalibration} />  Calibration</Link></li>
+						<li><Link to={"/geopoppy"}> <img src={logoGeoloc} /> Geopoppy</Link> </li>
+						<li><Link to={"/grafana"}> <img src={logoGraf} /> Grafana</Link> </li>
+						<li><Link to={"/system"}> <img src={logoSystem} /> Systeme</Link> </li>
 					</ul>
 				</div>
 			</nav>
