@@ -132,8 +132,6 @@ const rootReducer = (state = initState, action) => {
               sensor
         )
       };
-
-      break;
     case "LOG_RECORDING":
       //debugger;
       console.log("Reducer - Log recording on/off... ");

@@ -14,8 +14,8 @@ class WGrafana extends React.Component {
           id="myId"
           className=""
           display="block"
+          // display="flex"
           position="relative"
-          display="flex"
           flex-direction="column"
           overflow-y="scroll"
         />

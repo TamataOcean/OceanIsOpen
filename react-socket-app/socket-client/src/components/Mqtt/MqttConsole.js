@@ -3,10 +3,6 @@ import MqttSubscribe from "./MqttSubscribe";
 import "./Mqtt.css";
 
 class MqttConsole extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   //Test
   render() {
     console.log("MqttConsole Topic : ", this.props.topic);

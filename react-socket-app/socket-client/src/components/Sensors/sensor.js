@@ -4,10 +4,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 class sensor extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   calibrate = () => {
     console.log("Calibration du capteur : ", this.props.sensor.name);
     this.props.calibrateSensor(this.props.sensor.id);

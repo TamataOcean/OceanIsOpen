@@ -5,10 +5,6 @@ import "./Mqtt.css";
 const topic = "teensy/console";
 
 export class MqttSubscribe extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div className="subscriber">
