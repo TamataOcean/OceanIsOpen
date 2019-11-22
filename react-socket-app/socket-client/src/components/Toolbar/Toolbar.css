@@ -53,7 +53,19 @@
 	
 }
 
+.toolbar__nav-items img {
+	padding: 10px;
+	color: white;
+	text-decoration: none;
+	
+}
+
+
 .toolbar__nav-items a:hover,
 .tootbar__nav-items a:active {
 	color: #fa923f;
+} 
+
+.toolbar__nav-items img:hover {
+	background: #fa923f;
 } 
