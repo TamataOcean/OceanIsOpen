@@ -12,7 +12,7 @@ export class MqttSubscribe extends Component {
     render(){
         return(
             <div className='subscriber'>
-                <span>Console log</span>
+                <span>Console log for : {this.props.topic}</span>
                 <ul>
                     {this.props.data.map (message => <li> {message} </li>)}
                 </ul>

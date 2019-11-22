@@ -77,11 +77,6 @@ class WAcquire extends Component {
                     Load Acquisition {log.isToggleOn ? "ON" : "OFF"}
                 </Button>
 
-                {/* Console login from MQTT */}
-                <Connector mqttProps="ws://192.168.0.104:9001/">
-                    <MqttConsole topic="teensy/sensors" />
-                </Connector>
-
                 {/* Interval Selector */}
                 <Select
                     // value={selectedOption}
@@ -89,6 +84,11 @@ class WAcquire extends Component {
                     onChange={this.handleSelectChange}
                     options={options}
                 />
+
+                {/* Console login from MQTT */}
+                <Connector mqttProps="ws://192.168.0.104:9001/">
+                    <MqttConsole topic="teensy/sensors" />
+                </Connector>
 
                 {/* Console login from MQTT */}
                 <Connector mqttProps="ws://192.168.0.104:9001/">

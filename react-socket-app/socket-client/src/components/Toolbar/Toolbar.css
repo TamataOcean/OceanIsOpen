@@ -46,6 +46,13 @@
 	padding: 0 0.5rem;
 }
 
+.toolbar__nav-items li:hover {
+	padding: 0 0.5rem;
+	color: #fa923f;
+	background: #fa923f;
+
+}
+
 
 .toolbar__nav-items a {
 	color: white;
@@ -61,11 +68,11 @@
 }
 
 
-.toolbar__nav-items a:hover,
+/* .toolbar__nav-items a:hover,
 .tootbar__nav-items a:active {
 	color: #fa923f;
-} 
-
+}  */
+/* 
 .toolbar__nav-items img:hover {
 	background: #fa923f;
-} 
+}  */
