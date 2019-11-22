@@ -1,38 +1,38 @@
-.WAcquire{
-    display: flex;
-    flex-direction: column;
-    /* align-items: center; */
-    left:50%;
-    padding: 10px;
+.WAcquire {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  left: 50%;
+  padding: 10px;
 }
 
-.sensor{
-    display: flex;
-    flex-direction: row;
-    padding: 0 0.5rem;
-    color: green;
+.sensor {
+  display: flex;
+  flex-direction: row;
+  padding: 0 0.5rem;
+  color: green;
 }
 
-.sensor img{
-    width: 50px;
-    height: 50px;
+.sensor img {
+  width: 50px;
+  height: 50px;
 }
 
-.sensorList{
-    display: flex;
-    flex-direction: row;
+.sensorList {
+  display: flex;
+  flex-direction: row;
 }
-.button{
-    padding: 10px;
-    color: red;
-    height: 50px;
-}
-
-.WAcquire h3{
-    font-size: 20px;
+.button {
+  padding: 10px;
+  color: red;
+  height: 50px;
 }
 
-.WGrafana{
-    height: 800px;
-    width: 100%;
+.WAcquire h3 {
+  font-size: 20px;
+}
+
+.WGrafana {
+  height: 800px;
+  width: 100%;
 }

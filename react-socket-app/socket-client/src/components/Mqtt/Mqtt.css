@@ -1,32 +1,32 @@
-.console{
-	position: relative;
-	padding: 10px;
-	top: 2%;
-	color: rgb(105, 85, 236);
-	width: 100%;
+.console {
+  position: relative;
+  padding: 10px;
+  top: 2%;
+  color: rgb(105, 85, 236);
+  width: 100%;
 }
 
-.subscriber{
-	display:flex;
-	flex-direction: column;
-	overflow-y: scroll;
-	justify-content: center;
-	align-items: center;
-    position: relative;
-	height: 50%;
-	background-color: rgb(72, 77, 83);
-	color: rgb(173, 193, 199);
-	top: 15px;  
-	border-radius: 10px;
-	height: 150px; 
+.subscriber {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  height: 50%;
+  background-color: rgb(72, 77, 83);
+  color: rgb(173, 193, 199);
+  top: 15px;
+  border-radius: 10px;
+  height: 150px;
 }
 
 .subscriber ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .subscriber li {
-	padding: 0 0.5rem;
+  padding: 0 0.5rem;
 }

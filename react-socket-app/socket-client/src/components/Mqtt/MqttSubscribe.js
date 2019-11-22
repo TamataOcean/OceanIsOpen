@@ -1,24 +1,26 @@
-import React, { Component } from 'react';
-import {subscribe} from 'mqtt-react';
-import './Mqtt.css';
+import React, { Component } from "react";
+import { subscribe } from "mqtt-react";
+import "./Mqtt.css";
 
 const topic = "teensy/console";
 
 export class MqttSubscribe extends Component {
-    constructor(props) {
-        super(props);
-    }
+  constructor(props) {
+    super(props);
+  }
 
-    render(){
-        return(
-            <div className='subscriber'>
-                <span>Console log for : {this.props.topic}</span>
-                <ul>
-                    {this.props.data.map (message => <li> {message} </li>)}
-                </ul>
-            </div>
-        );
-    }   
+  render() {
+    return (
+      <div className="subscriber">
+        <span>Console log for : {this.props.topic}</span>
+        <ul>
+          {this.props.data.map(message => (
+            <li> {message} </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 }
 
-export default subscribe ({ topic : topic})(MqttSubscribe)
+export default subscribe({ topic: topic })(MqttSubscribe);

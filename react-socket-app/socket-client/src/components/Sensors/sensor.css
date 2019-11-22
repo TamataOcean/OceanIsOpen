@@ -1,17 +1,17 @@
-.sensor{
-    display: flex;
-    flex-direction: row;
-    padding: 15px;
-    color: black;
+.sensor {
+  display: flex;
+  flex-direction: row;
+  padding: 15px;
+  color: black;
 }
 
-.sensor img{
-    width: 60px;
-    height: 60px;
+.sensor img {
+  width: 60px;
+  height: 60px;
 }
 
-.sensor button{
-    display: flex;
-    flex-direction: row-reverse;
-    color: #113066;
+.sensor button {
+  display: flex;
+  flex-direction: row-reverse;
+  color: #113066;
 }

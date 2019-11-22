@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@trendmicro/react-sidenav": "^0.4.5",
+    "@material-ui/core": "4.7.0",
+    "@material-ui/icons": "4.5.1",
     "bootstrap": "^4.3.1",
     "mqtt-react": "0.0.3",
     "object.omit": "^3.0.0",
@@ -24,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prettier": "prettier --write '**/*.{ts,js,css,html}'"
   },
   "eslintConfig": {
     "extends": "react-app"

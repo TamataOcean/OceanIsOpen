@@ -1,21 +1,21 @@
-import React, {Component} from 'react';
-import MqttSubscribe from './MqttSubscribe';
-import './Mqtt.css';
+import React, { Component } from "react";
+import MqttSubscribe from "./MqttSubscribe";
+import "./Mqtt.css";
 
-class MqttConsole extends Component{
-    constructor(props){
-        super(props);
-    }
+class MqttConsole extends Component {
+  constructor(props) {
+    super(props);
+  }
 
-    //Test
-    render() {
-        console.log("MqttConsole Topic : ", this.props.topic );
-        return (
-            <div className='console'>               
-                <MqttSubscribe topic={this.props.topic} />
-            </div>
-        )
-      }
+  //Test
+  render() {
+    console.log("MqttConsole Topic : ", this.props.topic);
+    return (
+      <div className="console">
+        <MqttSubscribe topic={this.props.topic} />
+      </div>
+    );
+  }
 }
 
 export default MqttConsole;
