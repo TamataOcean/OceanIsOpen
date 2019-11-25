@@ -105,17 +105,17 @@ async function insertData(topic,message) {
 - function getGpsPosition()
 Return a Promise with position type NMEA */
 function getGpsPosition() {
-	console.log("getGpsPosition")
+	console.log("getGpsPosition.... ")
 	return new Promise( (resolve, reject) => {
 		const nmea = require('node-nmea')
 		const gprmc = require('gprmc-parser')
 
 		parser.on('data', function (data) {
-			//console.log("Data from GPS")
-			//console.log(data)
+			// console.log("Data from GPS")
+			// console.log(data)
 			if (data.includes("$GNRMC")) {
-				//console.log(nmea.parse(data))
-				//resolve(nmea.parse(data));
+				// console.log(nmea.parse(data))
+				// resolve(nmea.parse(data));
 				
 				resolve(gprmc(data));
 			}

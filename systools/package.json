@@ -6,7 +6,7 @@
   "dependencies": {
     "@serialport/parser-readline": "^2.0.2",
     "gprmc-parser": "^1.0.2",
-    "influx": "^5.4.2",
+    "influx": "^5.5.1",
     "jsonfile": "^5.0.0",
     "mqtt": "^3.0.0",
     "node-nmea": "^2.0.0",

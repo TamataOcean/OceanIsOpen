@@ -8,7 +8,7 @@
         "mac": "123456789007",
         "interval": 10,
         "mqttUser":"teensy",
-        "mqttServer": "192.168.0.104",
+        "mqttServer": "192.168.0.48",
         "mqttTopic": "teensy/sensors",
         "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
         "mqttTopic": "teensy/sensors",
@@ -23,7 +23,7 @@
 
         "influxDB": {
             "database": "datateensy",
-            "host": "192.168.0.104",
+            "host": "192.168.0.48",
             "port": 8086,
             "username": "test",
             "password": "test"

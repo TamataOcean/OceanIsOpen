@@ -83,12 +83,13 @@ class TamataInfluxDB {
          measurement : "sensor",
          fields: { 
             user :         jsonRecord.state.reported.user,
-            ph:            jsonRecord.state.reported.ph,
-            temperature:   jsonRecord.state.reported.temperature,
-            do:            jsonRecord.state.reported.do,
-            ec:            jsonRecord.state.reported.ec,
-            tds:           jsonRecord.state.reported.tds,
-            orp:           jsonRecord.state.reported.orp, 
+            ph:            jsonRecord.state.reported.phSensor,
+            temperature:   jsonRecord.state.reported.temperatureSensor,
+            do:            jsonRecord.state.reported.doSensor,
+            ec:            jsonRecord.state.reported.ecSensor,
+            tds:           jsonRecord.state.reported.tdsSensor,
+            orp:           jsonRecord.state.reported.orpSensor,
+            turbidity:     jsonRecord.state.reported.turbiditySensor
             /* GPS data */
             // gps_date: jsonPosition.gps.date, 
             // gps_time: jsonPosition.gps.time, 
