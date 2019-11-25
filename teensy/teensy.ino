@@ -66,7 +66,7 @@ GravitySensorHub sensorHub ;
 //byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 byte mac[] = {   0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02};
 
-IPAddress serverMqtt(192, 168, 0, 104);
+IPAddress serverMqtt(192, 168, 0, 48);
 char* outTopic = "teensy/sensors";
 char* outTopicLog = "teensy/console";
 
@@ -176,7 +176,7 @@ void setup() {
 
 //Create variable to track time
 unsigned long updateTime = 0;
-unsigned long logInterval = 5000;
+unsigned long logInterval = 20000;
 unsigned long previousLogTime = 0;
 
 /*************************/

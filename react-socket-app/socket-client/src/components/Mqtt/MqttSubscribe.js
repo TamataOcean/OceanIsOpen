@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { subscribe } from "mqtt-react";
 import "./Mqtt.css";
 
-const topic = "teensy/console";
+const topic = "teensy/sensors";
 
 export class MqttSubscribe extends Component {
   render() {

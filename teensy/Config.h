@@ -9,7 +9,7 @@
 #define NETBUFFERSIZE 3000
 
 //MQTT Config
-#define MQTTSERVER 192.168.0.104
+#define MQTTSERVER 192.168.0.48
 #define MQTTUSER "teensySensors"
 #define	MQTTBUFFERSIZE 3000
 #define MQTTTOPIC "teensy/sensors"
