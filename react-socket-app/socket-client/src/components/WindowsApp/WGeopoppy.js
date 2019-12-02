@@ -5,7 +5,7 @@ class WGeopoppy extends React.Component {
   render() {
     return (
       <div>
-        <h2>Geopoppy iFrame ;) </h2>
+        {/* <h2>Geopoppy iFrame ;) </h2> */}
         {/* <IFrame url="https://oio.tamataocean.fr/index.php/view/map/?repository=oio&project=oio_larochelle" */}
         <IFrame
           url="https://oio.tamataocean.fr/index.php/view/map/?repository=oio&project=oio_larochelle"

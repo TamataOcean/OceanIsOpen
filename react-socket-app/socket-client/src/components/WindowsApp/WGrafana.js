@@ -6,7 +6,7 @@ class WGrafana extends React.Component {
   render() {
     return (
       <div className="WGrafana">
-        <h2>Grafana iFrame ;) </h2>
+        {/* <h2>Grafana iFrame ;) </h2> */}
         <IFrame
           url="http://192.168.0.4:3000/d/acSzEZZRk/teensy-sensors?orgId=1&from=1574675791577&to=1574676091577"
           width="100%"
