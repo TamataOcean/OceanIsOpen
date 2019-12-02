@@ -7,21 +7,21 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
-import CompassCalibrationIcon from "@material-ui/icons/CompassCalibration";
+import UpdateIcon from "@material-ui/icons/Update";
 import PieChartIcon from "@material-ui/icons/PieChart";
 import LocationOnIcon from "@material-ui/icons/LocationOn";
 import SettingsIcon from "@material-ui/icons/Settings";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     position: "fixed",
-    bottom: "0px",
+    bottom: "0",
     width: "100%"
   },
   links: {
     textDecoration: "none"
   }
-});
+}));
 
 export default () => {
   const classes = useStyles();
@@ -39,7 +39,7 @@ export default () => {
         className={classes.root}
       >
         <BottomNavigationAction
-          label="Acquisition"
+          label="Acqu."
           icon={<AddIcon />}
           component={Link}
           to="/acquisition"
@@ -47,7 +47,7 @@ export default () => {
         />
         <BottomNavigationAction
           label="Calibration"
-          icon={<CompassCalibrationIcon />}
+          icon={<UpdateIcon />}
           component={Link}
           to="/calibration"
           className={classes.links}

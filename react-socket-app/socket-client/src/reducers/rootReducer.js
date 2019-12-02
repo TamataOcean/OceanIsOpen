@@ -22,7 +22,7 @@ const initState = {
     {
       id: 1,
       state: "On",
-      name: "temperature",
+      name: "temp",
       logo: logoTemperature,
       ref: "DS18B20",
       link: "",

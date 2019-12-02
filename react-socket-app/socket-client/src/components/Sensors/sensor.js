@@ -1,7 +1,20 @@
-import "./sensor.css";
-
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { withStyles } from "@material-ui/core/styles";
+import { Grid, Paper, Button } from "@material-ui/core";
+
+const styles = theme => {
+  return {
+    paper: {
+      padding: theme.spacing(2),
+      textAlign: "center",
+      color: theme.palette.text.secondary
+    },
+    image: {
+      height: "100px"
+    }
+  };
+};
 
 class sensor extends Component {
   calibrate = () => {
@@ -10,23 +23,27 @@ class sensor extends Component {
   };
 
   render() {
-    const { sensor } = this.props;
+    const { sensor, classes } = this.props;
 
     return (
-      <div className="sensor">
-        <img src={sensor.logo} />
-        <p>
-          {sensor.name} - Calibration steps : {sensor.calibrationStep} -
-          Calibration current step : {sensor.calibrationCurrentStep}{" "}
-        </p>
-        <button
-          onClick={this.calibrate}
-          disabled={sensor.calibrationStep === sensor.calibrationCurrentStep}
-          // style={{backgroundColor:this.state.bgColor}}
-        >
-          Calibrer
-        </button>
-      </div>
+      <Grid item xs={6} sm={6} lg={4} xl={4}>
+        <Paper className={classes.paper}>
+          <img src={sensor.logo} className={classes.image} />
+          <p>
+            {sensor.name} - Calibration : {sensor.calibrationCurrentStep}/
+            {sensor.calibrationStep}
+          </p>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.calibrate}
+            disabled={sensor.calibrationStep === sensor.calibrationCurrentStep}
+            // style={{backgroundColor:this.state.bgColor}}
+          >
+            Calibrer
+          </Button>
+        </Paper>
+      </Grid>
     );
   }
 }
@@ -46,4 +63,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(sensor);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(sensor));

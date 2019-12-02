@@ -12,7 +12,8 @@ import WSystem from "../WindowsApp/WSystem";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(10)
   }
 }));
 
