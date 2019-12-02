@@ -65,8 +65,9 @@ GravitySensorHub sensorHub ;
 //NetworkControl netControl = NetworkControl(sensorHub.sensors);
 //byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 byte mac[] = {   0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02};
+IPAddress ip(192, 168, 0, 5);
 
-IPAddress serverMqtt(192, 168, 0, 48);
+IPAddress serverMqtt(192, 168, 0, 4);
 char* outTopic = "teensy/sensors";
 char* outTopicLog = "teensy/console";
 
@@ -126,7 +127,11 @@ void setup() {
 	/* 			NETWORK SETUP 		*/
 	/*								*/	
   Debug::println("Initialize Ethernet with DHCP:");
-  if (Ethernet.begin(mac) == 0) {
+  /* Static Ip Config */
+  Ethernet.begin(mac, ip);
+  
+  /* DHCP config */
+  /* if (Ethernet.begin(mac) == 0) {
     Serial.println("Failed to configure Ethernet using DHCP");
     if (Ethernet.hardwareStatus() == EthernetNoHardware) {
       Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
@@ -138,6 +143,7 @@ void setup() {
       delay(1);
     }
   }
+  */
   // print your local IP address:
   Serial.print("My IP address: ");
   Serial.println(Ethernet.localIP());
@@ -176,7 +182,7 @@ void setup() {
 
 //Create variable to track time
 unsigned long updateTime = 0;
-unsigned long logInterval = 20000;
+unsigned long logInterval = 10000;
 unsigned long previousLogTime = 0;
 
 /*************************/

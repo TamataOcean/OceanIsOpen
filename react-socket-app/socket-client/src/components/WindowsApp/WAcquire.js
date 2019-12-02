@@ -86,12 +86,12 @@ class WAcquire extends Component {
         />
 
         {/* Console login from MQTT */}
-        <Connector mqttProps="ws://192.168.0.48:9001/">
+        <Connector mqttProps="ws://192.168.0.4:9001/">
           <MqttConsole topic="teensy/sensors" />
         </Connector>
 
         {/* Console login from MQTT */}
-        <Connector mqttProps="ws://192.168.0.48:9001/">
+        <Connector mqttProps="ws://192.168.0.4:9001/">
           <MqttConsole topic="teensy/console" />
         </Connector>
       </div>
