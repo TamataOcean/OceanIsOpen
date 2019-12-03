@@ -12,6 +12,9 @@ const styles = theme => {
     },
     image: {
       height: "100px"
+    },
+    simpleImage: {
+      height: "80px"
     }
   };
 };
@@ -23,9 +26,16 @@ class sensor extends Component {
   };
 
   render() {
-    const { sensor, classes } = this.props;
+    const { sensor, classes, simple } = this.props;
 
-    return (
+    return simple ? (
+      <Grid item xs={6} sm={3} lg={2} xl={2}>
+        <Paper className={classes.paper}>
+          <img src={sensor.logo} className={classes.simpleImage} />
+          <p>{sensor.name}</p>
+        </Paper>
+      </Grid>
+    ) : (
       <Grid item xs={6} sm={6} lg={4} xl={4}>
         <Paper className={classes.paper}>
           <img src={sensor.logo} className={classes.image} />
@@ -38,7 +48,6 @@ class sensor extends Component {
             color="primary"
             onClick={this.calibrate}
             disabled={sensor.calibrationStep === sensor.calibrationCurrentStep}
-            // style={{backgroundColor:this.state.bgColor}}
           >
             Calibrer
           </Button>
