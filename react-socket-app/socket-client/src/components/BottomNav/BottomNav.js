@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
 
 export default () => {
   const classes = useStyles();
+  // FIXME: selects first tab by default
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {

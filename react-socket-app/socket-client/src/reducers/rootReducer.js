@@ -97,7 +97,7 @@ const initState = {
   log: {
     isToggleOn: false,
     state: "Pause", // or Recording
-    interval: "11sec" // or 30sec, 1min, 5min, 1hour, 1day
+    interval: "10sec" // or 30sec, 1min, 5min, 1hour, 1day
   }
 };
 
@@ -154,10 +154,7 @@ const rootReducer = (state = initState, action) => {
     /* Maj de l'interval de log
         --------------------------- */
     case "LOG_INTERVAL_CHANGE":
-      // debugger;
-      // console.log(action);
       const recordingInterval = action.interval.value;
-      console.log("Reducer - Log Interval change", recordingInterval);
       return {
         ...state,
         log: { ...state.log, interval: recordingInterval }

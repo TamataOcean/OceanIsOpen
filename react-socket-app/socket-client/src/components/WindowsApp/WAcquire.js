@@ -1,38 +1,35 @@
-import "./WindowsApp.css";
-
-import Select from "react-select";
 import React, { Component } from "react";
 import { Connector } from "mqtt-react";
-
-//Sensors logos
-// import logoTemperature from "../../images/logoTemperature.png";
-
+import { withStyles } from "@material-ui/core/styles";
+import { Button, Grid, Paper, Select, MenuItem } from "@material-ui/core";
 // Redux ( Using Sensors list & Log state )
 import { connect } from "react-redux";
 import { logRecord, logInterval } from "../../actions/logRecord";
 
 import MqttConsole from "../Mqtt/MqttConsole";
-import Button from "react-bootstrap/Button";
-import "bootstrap/dist/css/bootstrap.min.css";
 
-const options = [
-  { value: "5sec", label: "Every 5sec" },
-  { value: "10sec", label: "Every 10sec" },
-  { value: "1min", label: "Every minute" },
-  { value: "1hour", label: "Every hour" },
-  { value: "1day", label: "Every day" }
-];
+const styles = theme => {
+  return {
+    root: {
+      flexGrow: 1
+    },
+    paper: {
+      padding: theme.spacing(2),
+      textAlign: "center",
+      color: theme.palette.text.secondary
+    }
+  };
+};
 
 class WAcquire extends Component {
   constructor(props) {
     super(props);
     //this.state = { isToggleOn: true };
     //this.handleAcquisitionButton = this.handleAcquisitionButton.bind(this);
+    this.state = {
+      selectedOption: null
+    };
   }
-
-  state = {
-    selectedOption: null
-  };
 
   handleAcquisitionButton = () => {
     console.log("Acquisition Click...");
@@ -41,10 +38,7 @@ class WAcquire extends Component {
   };
 
   handleSelectChange = selectedOption => {
-    console.log("Option selected:", selectedOption.value);
-    this.props.selectChange(selectedOption);
-    // this.setState({ selectedOption }, () =>
-    // );
+    this.props.selectChange(selectedOption.target);
   };
 
   render() {
@@ -73,17 +67,22 @@ class WAcquire extends Component {
         <h3 className="sensorList"> Sensors List : {sensorsList} </h3>
 
         {/* Launch recording process */}
-        <Button className="button" onClick={this.handleAcquisitionButton}>
+        <Button
+          variant="contained"
+          color={log.isToggleOn ? "primary" : "secondary"}
+          onClick={this.handleAcquisitionButton}
+        >
           Load Acquisition {log.isToggleOn ? "ON" : "OFF"}
         </Button>
 
         {/* Interval Selector */}
-        <Select
-          // value={selectedOption}
-          value={log.interval}
-          onChange={this.handleSelectChange}
-          options={options}
-        />
+        <Select value={log.interval} onChange={this.handleSelectChange}>
+          <MenuItem value="5sec">Every 5 seconds</MenuItem>
+          <MenuItem value="10sec">Every 10 seconds</MenuItem>
+          <MenuItem value="1min">Every minute</MenuItem>
+          <MenuItem value="1hour">Every hour</MenuItem>
+          <MenuItem value="1day">Every day</MenuItem>
+        </Select>
 
         {/* Console login from MQTT */}
         <Connector mqttProps="ws://192.168.0.4:9001/">
@@ -126,4 +125,7 @@ const mapDispatchToProps = dispatch => {
 //     };
 //   };
 
-export default connect(mapStateToProps, mapDispatchToProps)(WAcquire);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(WAcquire));
