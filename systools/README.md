@@ -13,6 +13,18 @@ NodeJS program to listen Mosquitto & Saving data on Postgres.
      
 #### Note for issue with serialport librairie : [Check solution here](https://github.com/serialport/node-serialport/issues/1910#issuecomment-524949720)
 
+### DOCKER Install [source from](https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl)
+     curl -sSL https://get.docker.com | sh 
+     sudo usermod -aG docker pi
+#### Test Docker
+     docker run hello-world 
+#### Install dependencies     
+     sudo apt-get install libffi-dev libssl-dev 
+     sudo apt-get install -y python python-pip 
+     sudo apt-get remove python-configparser
+#### Install Docker compose
+     sudo pip install docker-compose 
+
 ### Config.json
 Define your 
 * mqtt config ( in this case mosquitto )
