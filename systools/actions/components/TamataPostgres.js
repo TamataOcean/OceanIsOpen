@@ -38,11 +38,21 @@ class TamataPostgres {
    save( jsonRecord, jsonPosition ) { 
       if (DEBUG) console.log('------------- Postgres save() function ----------------');
       if (DEBUG) console.log("Position data : ");
-      console.log("     date = " + jsonPosition.gps.date );
-      console.log("     time = " + jsonPosition.gps.time );
-      console.log("     latitude = " + jsonPosition.geo.latitude );
-      console.log("     longitude = " + jsonPosition.geo.longitude );
+      
+      /* emLead Format */
+      // console.log("     date = " + jsonPosition.gps.date );
+      // console.log("     time = " + jsonPosition.gps.time );
+      // console.log("     latitude = " + jsonPosition.geo.latitude );
+      // console.log("     longitude = " + jsonPosition.geo.longitude );
+      // console.log("     speed= " + jsonPosition.speed.knots );
+      
+      /* USB GPS Classic Format */
+      console.log("     date = " + jsonPosition.datetime );
+      console.log("     time = " + jsonPosition.datetime );
+      console.log("     latitude = " + jsonPosition.loc.dmm.latitude );
+      console.log("     longitude = " + jsonPosition.loc.dmm.longitude );
       console.log("     speed= " + jsonPosition.speed.knots );
+      
       if (DEBUG) console.log('-------------------------------------------------------');     
 
       const queryText = "INSERT INTO sensors(\"teensy_user\", \"teensy_phsensor\", \"teensy_temperaturesensor\", \"teensy_dosensor\", \"teensy_ecsensor\", \"teensy_tdssensor\", \"teensy_orpsensor\","+
@@ -54,11 +64,22 @@ class TamataPostgres {
             jsonRecord.state.reported.ecSensor + ","+ 
             jsonRecord.state.reported.tdsSensor + ","+ 
             jsonRecord.state.reported.orpSensor + ",'" +
+            
             /* GPS data */
-            jsonPosition.gps.date + "','" + 
-            jsonPosition.gps.time + "'," + 
-            jsonPosition.geo.latitude + "," + 
-            jsonPosition.geo.longitude + "," + 
+            /* emLead format */
+
+            // jsonPosition.gps.date + "','" + 
+            // jsonPosition.gps.time + "'," + 
+            // jsonPosition.geo.latitude + "," + 
+            // jsonPosition.geo.longitude + "," + 
+            // jsonPosition.speed.knots + 
+            
+
+            /* USB GPS Classic */
+            jsonPosition.datetime + "','" +
+            jsonPosition.datetime + "'," +
+            jsonPosition.loc.dmm.latitude + "," +
+            jsonPosition.loc.dmm.longitude + "," +
             jsonPosition.speed.knots + 
       ")";
 

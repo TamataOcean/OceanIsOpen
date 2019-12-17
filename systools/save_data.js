@@ -111,13 +111,20 @@ function getGpsPosition() {
 		const gprmc = require('gprmc-parser')
 
 		parser.on('data', function (data) {
-			// console.log("Data from GPS")
-			// console.log(data)
-			if (data.includes("$GNRMC")) {
-				// console.log(nmea.parse(data))
-				// resolve(nmea.parse(data));
+			//console.log("Data from GPS")
+			//console.log(data)
+			
+			// Using emLead GPS
+			//if (data.includes("$GNRMC")) {
+			
+			// Using USB GPS classic
+			if (data.includes("$GPRMC")) {
+				//console.log(nmea.parse(data))
+				// Using USB GPS classic	
+				resolve(nmea.parse(data));
 				
-				resolve(gprmc(data));
+				// Using emLid GPS 
+				// resolve(gprmc(data));
 			}
 		})
 	})
