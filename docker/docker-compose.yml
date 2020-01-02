@@ -142,7 +142,7 @@ services:
       - 1883:1883
       - 9001:9001
     volumes:
-      - /home/pirate/geopoppy/mosquitto/data:/mosquitto/log
+      - /home/pirate/geopoppy/mosquitto/data:/mosquitto/data
 #      - /home/pirate/geopoppy/mosquitto/config:/mosquitto/config
       - /home/pirate/geopoppy/mosquitto/log:/mosquitto/log
   nodejs:
