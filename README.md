@@ -2,6 +2,7 @@
 
 ## Mise en place d'un dispositif de captation de données environnemental autonome.
 [Data en exemple saisi lors du Hackathon](https://oio.tamataocean.fr/index.php/view/map/?repository=oio&project=oio_larochelle) 
+![LaboAutonome_TamataOcean_OiO](https://user-images.githubusercontent.com/25310798/77906679-a2c29000-7288-11ea-952a-9c5d65065e44.jpeg)
 
 ### Liste des capteurs 
 
