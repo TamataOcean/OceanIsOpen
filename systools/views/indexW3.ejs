@@ -28,7 +28,7 @@
 		
 		<div class="w3-row-padding w3-layout-middle w3-padding-xxlarge">
 			<div class="w3-col w3-layout" style="width:30%" >
-				<h3>Serial control with Arduino</h3>
+				<h3>Serial control for Teensy OiO </h3>
 				<p></p>
 			</div>
 		</div>
@@ -55,7 +55,9 @@
 			<span class="btn-lg ">
 					<a href="/command?cmd_id=stopLog" class="btn btn-info btn-lg"><span class="ion-refresh w3-text-black"> Stop Log </span></a>
 			</span> 
-
+			<span class="btn-lg ">
+					<a href="/server?cmd_id=reconnectSerial" class="btn btn-info btn-lg"><span class="ion-refresh w3-text-black"> Refresh connection</span></a>
+		</span> 
 			<!------Input 'Interval'----->
 			<form action="/command?cmd_id=update_interval" method="post" class="w3-container w3-padding-24 w3-center-height w3-middle">
 				<div class = "w3-col s6 w3-left">						

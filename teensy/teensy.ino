@@ -108,7 +108,9 @@ void loop() {
   }  
 }
 
-// Management Command order
+/********************************/
+/* Management Command order     */
+/********************************/
 int commandManager(String message) {
   DeserializationError error = deserializeJson(jsonDoc, message);
   if(error) {
@@ -121,17 +123,24 @@ int commandManager(String message) {
   
     Serial.print( "config start_log = " );
     Serial.println( start_log );
+    Serial.print( "config loginterval = " );
+    Serial.println( logInterval );
+    
   }
   else if (jsonDoc["order"] == "restart") {
     Serial.println( name + " - RESTART in progress ");
     _reboot_Teensyduino_();
     //ESP.restart();
   }
+  
   else if (jsonDoc["order"] == "calibrate") {
     Serial.println( name + " - CALIBRATE in progress ");
   }
+  
   else if (jsonDoc["order"] == "startLog") {
     Serial.println( name + " - Start log received ");
+    Serial.print( "Using interval : " );
+    Serial.println( logInterval );
     start_log = 1;
   }
 

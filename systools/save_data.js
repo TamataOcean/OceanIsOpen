@@ -58,9 +58,9 @@ function begin() {
 		console.log('MqttTopic ='+ mqttTopic);
 		console.log('Postgres ='+ JSON.stringify(jsonConfig.system.postgres) ) ;
 		console.log('SerialPort TEENSY ='+ JSON.stringify(jsonConfig.system.serialport_TEENSY) ) ;
-		console.log('Baud TEENSY ='+ JSON.stringify(jsonConfig.system.baud_TEENSY) ) ;
+		console.log('Baud TEENSY ='+ JSON.stringify(jsonConfig.system.serialport_TEENSY.baud) ) ;
 		console.log('SerialPort GPS ='+ JSON.stringify(jsonConfig.system.serialport_GPS) ) ;
-		console.log('Baud GPS ='+ JSON.stringify(jsonConfig.system.baud_GPS) ) ;
+		console.log('Baud GPS ='+ JSON.stringify(jsonConfig.system.serialport_GPS.baud) ) ;
 	}
 
     /* LISTENING on SERIAL for TEENSY & GPS */
@@ -82,6 +82,11 @@ function begin() {
         });
 	})
 	
+	port_TEENSY.on('close', function () {
+		console.log("Serial connection closed");
+		open();
+	})
+
 	parser_TEENSY = port_TEENSY.pipe(new Readline({ delimiter: '\r\n' }))
 	console.log("Listening on serial for TEENSY")
 
@@ -136,6 +141,13 @@ function begin() {
             res.redirect('/');
         })
 	})
+	
+	/* ------------------------- Command for SERVER -------------------- */
+	/* ----------------------------------------------------------------- */
+	.get('/server', function(req, res) {
+        console.log('Command server requested : '+ "{\"order\":\"" + req.query.cmd_id + "\"}" );
+        console.log('To see how to implement... ')
+    })
 	
 	.post('/command', function(req, res) {
 		console.log('Command requested with POST Method: '+ req.query.cmd_id);
@@ -232,4 +244,3 @@ function getGpsPosition() {
 		})
 	})
 }
-
