@@ -1,14 +1,10 @@
 /* Manage Script to 
-- Listen to Mqtt Broker
-- On message
-- Analyse message Type ( Sensor, jetpack, ConfigSys, RtcConfig... )
-- Request for save on Mongo
-- Request for save on InFlux
-- If Internet connected, send to Cloud Mqtt Broker
-- Winston Logger to get last actions... ( Debug process )
+- Listen the Teensy'Serial port
+- On message request to get GPS Possition
+- Then save on InFlux
 */
 var DEBUG = true;
-/* TEST */ 
+
 var jsonfile = require('jsonfile')
 jsonfile.spaces = 4;
 
@@ -24,11 +20,14 @@ var mqttServer=""
 var mqttAWS= ""
 var influx;
 var mongo;
-var serialport;
-var baud;
-let parser;
+var serialport_GPS;
+var serialport_TEENSY;
+var baud_TEENSY;
+var baud_GPS;
+let parser_GPS;
+let parser_TEENSY;
 //---------------------
-//get config
+// INITIALISATION
 //---------------------
 jsonfile.readFile(configFile, function(err, data) {
 		jsonConfig = data;
@@ -39,15 +38,17 @@ jsonfile.readFile(configFile, function(err, data) {
 		mqttUser = data.system.mqttUser;
 		mqttAWS = data.system.mqttAWS;
 		user = data.system.user;
-		serialport = data.system.serialport.port;
-		baud = data.system.serialport.baud;
+		serialport_TEENSY = data.system.serialport_TEENSY.port;
+		baud_TEENSY = data.system.serialport_TEENSY.baud;
+		serialport_GPS = data.system.serialport_GPS.port;
+		baud_GPS = data.system.serialport_GPS.baud;
 		begin();
 });
 
 /***************************************
 - function begin())
-- Listening on MQTT & Serial 
-- When MQTT message arrive, => insertData()
+- Listening on Serial for TEENSY & GPS
+- When Data message arrive, => insertData()
  */
 function begin() {
 	if (DEBUG) {
@@ -56,25 +57,107 @@ function begin() {
 		console.log('MqttUser ='+ mqttUser);
 		console.log('MqttTopic ='+ mqttTopic);
 		console.log('Postgres ='+ JSON.stringify(jsonConfig.system.postgres) ) ;
-		console.log('SerialPort ='+ JSON.stringify(jsonConfig.system.serialport) ) ;
+		console.log('SerialPort TEENSY ='+ JSON.stringify(jsonConfig.system.serialport_TEENSY) ) ;
+		console.log('Baud TEENSY ='+ JSON.stringify(jsonConfig.system.baud_TEENSY) ) ;
+		console.log('SerialPort GPS ='+ JSON.stringify(jsonConfig.system.serialport_GPS) ) ;
+		console.log('Baud GPS ='+ JSON.stringify(jsonConfig.system.baud_GPS) ) ;
 	}
-   	
-   	/* LISTENING on MQTT */
-	client = mqtt.connect('mqtt://'+ jsonConfig.system.mqttServer );
-    client.subscribe( jsonConfig.system.mqttTopic ); 
-    client.on('connect', () => { console.log('Mqtt connected to ' + jsonConfig.system.mqttServer + "/ Topic : " + jsonConfig.system.mqttTopic  )} )
-    client.on('message', insertData );
 
-    /* LISTENING on SERIAL */
+    /* LISTENING on SERIAL for TEENSY & GPS */
     const SerialPort = require('serialport')
 	const Readline = require('@serialport/parser-readline')
 	
-	const port = new SerialPort( serialport, { baudRate: baud })
-	port.on('error', function(err) {
+	/* LISTENING TEENSY */
+	const port_TEENSY = new SerialPort( serialport_TEENSY, { baudRate: baud_TEENSY })
+	port_TEENSY.on('error', function(err) {
+		console.log('Error: ', err.message)
+	})
+
+	port_TEENSY.on('open', function () {
+        port_TEENSY.write('Init_connection_from_Raspi', function(err) {
+        if (err) {
+        return console.log('Error: ', err.message);
+        }
+        console.log('message init sent');
+        });
+	})
+	
+	parser_TEENSY = port_TEENSY.pipe(new Readline({ delimiter: '\r\n' }))
+	console.log("Listening on serial for TEENSY")
+
+	parser_TEENSY.on('data', function(data) {
+		console.log(data)
+		if (data.includes("{\"state\":{\"reported\":{")) {
+			console.log('Data sensors arrived')
+			insertData('serial', data)
+		}
+	})
+
+	/* LISTENING GPS */
+	const port_GPS = new SerialPort( serialport_GPS, { baudRate: baud_GPS })
+	port_GPS.on('error', function(err) {
 			console.log('Error: ', err.message)
 	})
 
-	parser = port.pipe(new Readline({ delimiter: '\r\n' }))
+	parser_GPS = port_GPS.pipe(new Readline({ delimiter: '\r\n' }))
+
+	// **************************** 
+    /* EXPRESS.JS -------------- */  
+    // **************************** 
+    var express = require('express');
+    var session = require('cookie-session'); // Charge le middleware de sessions
+    var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
+    var urlencodedParser = bodyParser.urlencoded({ extended: false });
+    var app = express();
+    var ejs_index = 'indexW3.ejs';
+    /* Using sessions */
+    app.use(session({secret: 'SerialCommunication'}))
+    /* --------------------------- Index print ------------------------ */
+    /* ---------------------------------------------------------------- */
+    .get('/', function(req, res) {
+        // console.log('htttp request on / ');
+        res.render(ejs_index, {
+            title : "Serial Com - Home",
+        });
+        
+    })
+
+    /* --------------------------- Command?cmd_id --------------------- */
+    /* ---------------------------------------------------------------- */
+    .get('/command', function(req, res) {
+        console.log('Command requested : '+ req.query.cmd_id);
+        port_TEENSY.write(req.query.cmd_id , function(err){
+            if (err) {
+                return console.log('Error : ', err.message);
+            }
+            console.log('command ' + req.query.cmd_id + 'sent');
+            res.redirect('/');
+        })
+    })
+
+    /* ---------------------- Unknown Page -----------------------------*/
+    /* -----------------------------------------------------------------*/
+    .use(function(req, res, next){
+        console.log('Invalid adress sent !! : '+res);
+        res.redirect('/');
+    });
+    
+    /* -----------------------------------------------------------------*/
+    /* STARTING HTTP SERVER
+    /* -----------------------------------------------------------------*/
+    app.on('connect',function(req,res) {
+        port_TEENSY.write('WebUser_init', function(err) {
+            if (err) {
+            return console.log('Error: ', err.message);
+            }
+            console.log('message login sent');
+        });
+        console.log('new user arrived');
+    });
+    app.listen(8080);
+    console.log('WEB SERVER started on port 8080');
+    console.log('-------------------------------');
+
 }
 
 /***************************************
@@ -84,7 +167,7 @@ async function insertData(topic,message) {
 	var parsedMessage = JSON.parse(message);
 
 	if (DEBUG) console.log('***********************************');
-	if (DEBUG) console.log('Mqtt Message received : ' + message );
+	if (DEBUG) console.log('Serial Data Message received : ' + message );
 
 	getGpsPosition().then( (parsedPosition) => {
 		/* INSERT to Postgres database */
@@ -110,9 +193,9 @@ function getGpsPosition() {
 		const nmea = require('node-nmea')
 		const gprmc = require('gprmc-parser')
 
-		parser.on('data', function (data) {
-			//console.log("Data from GPS")
-			//console.log(data)
+		parser_GPS.on('data', function (data) {
+			console.log("Data from GPS")
+			console.log(data)
 			
 			// Using emLead GPS
 			//if (data.includes("$GNRMC")) {

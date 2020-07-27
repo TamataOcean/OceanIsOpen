@@ -29,9 +29,14 @@
             "password": "test"
         },
 
-        "serialport" : {
+        "serialport_GPS" : {
             "port" : "/dev/ttyACM0",
             "baud" : 4800
+        },
+
+        "serialport_TEENSY" : {
+            "port" : "/dev/tty.usbmodem5905471",
+            "baud" : 9600
         }
     },
     
