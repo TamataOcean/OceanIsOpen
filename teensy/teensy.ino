@@ -50,10 +50,14 @@
 #include "OneWire.h"
 #include "SdService.h"
 #include "Debug.h"
+#include <ArduinoJson.h>
+
+DynamicJsonDocument jsonDoc(256); 
+
 
 //Create variable to track time
 unsigned long updateTime = 0;
-unsigned long logInterval = 10000;
+long logInterval = 10000;
 unsigned long previousLogTime = 0;
 
 // Alias sensor logic as sensorHub 
@@ -66,7 +70,7 @@ int start_log = 0;
 /*************************/
 void setup() {
 	//SERIAL INIT
-	Serial.begin(9600);
+	Serial.begin(11200);
 	delay(1000);
 	Debug::println("INIT_SENSOR_HUB");
 	
@@ -106,30 +110,43 @@ void loop() {
 
 // Management Command order
 int commandManager(String message) {
+  DeserializationError error = deserializeJson(jsonDoc, message);
+  if(error) {
+    Serial.println("parseObject() failed");
+    //return false;
+  }
 
-  if (message == "Init_connection_from_Raspi") {
+  if ( jsonDoc["order"] == "Init_connection_from_Raspi") {
     Serial.println( name + " - INIT Raspi received ");
+  
     Serial.print( "config start_log = " );
     Serial.println( start_log );
   }
-  else if (message == "restart") {
+  else if (jsonDoc["order"] == "restart") {
     Serial.println( name + " - RESTART in progress ");
     _reboot_Teensyduino_();
     //ESP.restart();
   }
-  else if (message == "calibrate") {
+  else if (jsonDoc["order"] == "calibrate") {
     Serial.println( name + " - CALIBRATE in progress ");
   }
-  else if (message == "startLog") {
+  else if (jsonDoc["order"] == "startLog") {
     Serial.println( name + " - Start log received ");
     start_log = 1;
   }
 
-  else if (message == "stopLog") {
+  else if (jsonDoc["order"] == "stopLog") {
     Serial.println( name + " - StopLog received");
     start_log = 0;
   }
 
+  else if (jsonDoc["order"] == "update_interval" ) {
+    Serial.println( name + " - Interval update received");
+    logInterval = jsonDoc["value"].as<long>();
+    Serial.print("New interval : " );
+    Serial.println(logInterval);
+    //logInterval = newInterval;
+  }
   else {
     Serial.println( "Unknown command : " + message );
   }

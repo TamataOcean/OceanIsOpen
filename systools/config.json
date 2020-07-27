@@ -35,8 +35,8 @@
         },
 
         "serialport_TEENSY" : {
-            "port" : "/dev/tty.usbmodem5905471",
-            "baud" : 9600
+            "port" : "/dev/tty.usbmodem5905091",
+            "baud" : 11200 
         }
     },
     

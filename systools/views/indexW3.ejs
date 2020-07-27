@@ -56,7 +56,15 @@
 					<a href="/command?cmd_id=stopLog" class="btn btn-info btn-lg"><span class="ion-refresh w3-text-black"> Stop Log </span></a>
 			</span> 
 
-
+			<!------Input 'Interval'----->
+			<form action="/command?cmd_id=update_interval" method="post" class="w3-container w3-padding-24 w3-center-height w3-middle">
+				<div class = "w3-col s6 w3-left">						
+					<input type="number" name="interval_value">milli second </input>
+				</div>
+				<div class = "w3-row-padding w3-cyan w3-padding-8 w3-center-height w3-right">		
+					<input type="submit" value="Update Interval"/>
+				</div>	
+			</form>
 		</div>
 
 		<div class="w3-container w3-row-padding-12 w3-center-height w3-middle">

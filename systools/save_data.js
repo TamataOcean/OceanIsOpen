@@ -74,11 +74,11 @@ function begin() {
 	})
 
 	port_TEENSY.on('open', function () {
-        port_TEENSY.write('Init_connection_from_Raspi', function(err) {
-        if (err) {
-        return console.log('Error: ', err.message);
-        }
-        console.log('message init sent');
+        port_TEENSY.write('{\"order\":\"Init_connection_from_Raspi\"}', function(err) {
+        	if (err) {
+        		return console.log('Error: ', err.message);
+        	}
+        	console.log('message init sent');
         });
 	})
 	
@@ -111,7 +111,9 @@ function begin() {
     var app = express();
     var ejs_index = 'indexW3.ejs';
     /* Using sessions */
-    app.use(session({secret: 'SerialCommunication'}))
+	app.use(session({secret: 'SerialCommunication'}));
+	app.use(bodyParser.json());
+	app.use(bodyParser.urlencoded({extended: false}))
     /* --------------------------- Index print ------------------------ */
     /* ---------------------------------------------------------------- */
     .get('/', function(req, res) {
@@ -125,20 +127,37 @@ function begin() {
     /* --------------------------- Command?cmd_id --------------------- */
     /* ---------------------------------------------------------------- */
     .get('/command', function(req, res) {
-        console.log('Command requested : '+ req.query.cmd_id);
-        port_TEENSY.write(req.query.cmd_id , function(err){
-            if (err) {
-                return console.log('Error : ', err.message);
+        console.log('Command requested : '+ "{\"order\":\"" + req.query.cmd_id + "\"}" );
+        port_TEENSY.write("{\"order\":\"" + req.query.cmd_id + "\"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
             }
-            console.log('command ' + req.query.cmd_id + 'sent');
+            console.log('command ' + req.query.cmd_id + ' sent');
             res.redirect('/');
         })
-    })
+	})
+	
+	.post('/command', function(req, res) {
+		console.log('Command requested with POST Method: '+ req.query.cmd_id);
+
+		if (req.query.cmd_id = "update_interval") {
+			var new_interval = parseFloat(req.body.interval_value);
+			console.log('interval value : '+ new_interval);
+			
+			port_TEENSY.write("{\"order\":\"" + req.query.cmd_id + "\",\"value\":" + new_interval + "}" , function(err){
+				if (err) {
+					return console.log('Error : ', err.message);
+				}
+				console.log('command ' + req.query.cmd_id + 'sent');
+				res.redirect('/');
+			})
+		}
+	})
 
     /* ---------------------- Unknown Page -----------------------------*/
     /* -----------------------------------------------------------------*/
     .use(function(req, res, next){
-        console.log('Invalid adress sent !! : '+res);
+        //console.log('Invalid adress sent !! : '+res);
         res.redirect('/');
     });
     
@@ -164,24 +183,25 @@ function begin() {
 - function insertData(topic, message)
 Parse message & position and INSERT into Database */
 async function insertData(topic,message) {
-	var parsedMessage = JSON.parse(message);
+	//var parsedMessage = JSON.parse(message);
 
 	if (DEBUG) console.log('***********************************');
 	if (DEBUG) console.log('Serial Data Message received : ' + message );
 
-	getGpsPosition().then( (parsedPosition) => {
-		/* INSERT to Postgres database */
-		console.log("Position : " + JSON.stringify( parsedPosition )) ;
-		posgresDB = new TamataPostgres( jsonConfig.system.postgres );
-		posgresDB.save( parsedMessage, parsedPosition );
+	// getGpsPosition().then( (parsedPosition) => {
+	// 	/* INSERT to Postgres database */
+	// 	console.log("Position : " + JSON.stringify( parsedPosition )) ;
+	// 	posgresDB = new TamataPostgres( jsonConfig.system.postgres );
+	// 	posgresDB.save( parsedMessage, parsedPosition );
 		
-		/* INSERT to influx database */
-		influx = new TamataInfluxDB( jsonConfig.system.influxDB );
-		influx.save( parsedMessage, parsedPosition );
+	// 	/* INSERT to influx database */
+	// 	influx = new TamataInfluxDB( jsonConfig.system.influxDB );
+	// 	influx.save( parsedMessage, parsedPosition );
 
-		if (DEBUG) console.log('Inserted datas : ' + JSON.stringify(parsedMessage) ) ;
-		if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
-	})
+	// 	if (DEBUG) console.log('Inserted datas : ' + JSON.stringify(parsedMessage) ) ;
+	// 	if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
+	// })
+	
 } 
 
 /***************************************
