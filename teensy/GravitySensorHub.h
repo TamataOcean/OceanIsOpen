@@ -19,6 +19,7 @@
 #include "ISensor.h"
 #include "Config.h"
 #include"Arduino.h"		//Arduino Defs
+#include <ArduinoJson.h>
 /*
 sensors :
 0,ph
@@ -56,4 +57,7 @@ public:
 
 	// Get JSON Value of sensors
 	String getJsonSensorsUpdate();
+
+	// Get JSON Name of sensors
+	DynamicJsonDocument getJsonSensorsName();
 };

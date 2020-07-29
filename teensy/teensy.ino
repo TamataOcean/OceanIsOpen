@@ -70,7 +70,7 @@ int start_log = 0;
 /*************************/
 void setup() {
 	//SERIAL INIT
-	Serial.begin(11200);
+	Serial.begin(115200);
 	delay(1000);
 	Debug::println("INIT_SENSOR_HUB");
 	
@@ -120,12 +120,7 @@ int commandManager(String message) {
 
   if ( jsonDoc["order"] == "Init_connection_from_Raspi") {
     Serial.println( name + " - INIT Raspi received ");
-  
-    Serial.print( "config start_log = " );
-    Serial.println( start_log );
-    Serial.print( "config loginterval = " );
-    Serial.println( logInterval );
-    
+    configToSerial();
   }
   else if (jsonDoc["order"] == "restart") {
     Serial.println( name + " - RESTART in progress ");
@@ -156,7 +151,29 @@ int commandManager(String message) {
     Serial.println(logInterval);
     //logInterval = newInterval;
   }
+  else if (jsonDoc["order"] == "config" ) {
+    Serial.println(name + " - config requested");
+    configToSerial();
+  }
   else {
     Serial.println( "Unknown command : " + message );
   }
+}
+
+void configToSerial(){
+    DynamicJsonDocument doc(1024);
+    doc["config"] = "Config_Teensy";
+    doc["start_log"] = start_log;
+    doc["logInterval"] = logInterval;
+    serializeJson(doc, Serial);
+    Serial.println();
+
+    char SensorName[] = "{\"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\", \"turbiditySensor\"}";
+	  //deserializeJson(doc, SensorName);
+    JsonArray sensor  = doc.createNestedArray(SensorName);
+    //deserializeJson(doc,Serial);
+
+    serializeJson(doc, Serial);
+    Serial.println();
+
 }

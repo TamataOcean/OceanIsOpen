@@ -4,6 +4,7 @@
 - Then save on InFlux
 */
 var DEBUG = true;
+var DEBUG_GPS = false;
 
 var jsonfile = require('jsonfile')
 jsonfile.spaces = 4;
@@ -195,14 +196,15 @@ function begin() {
 - function insertData(topic, message)
 Parse message & position and INSERT into Database */
 async function insertData(topic,message) {
-	//var parsedMessage = JSON.parse(message);
+	var parsedMessage = JSON.parse(message);
 
 	if (DEBUG) console.log('***********************************');
 	if (DEBUG) console.log('Serial Data Message received : ' + message );
+	
+	getGpsPosition().then( (parsedPosition) => {
+		console.log("Position get " + JSON.stringify( parsedPosition )) ;
 
-	// getGpsPosition().then( (parsedPosition) => {
 	// 	/* INSERT to Postgres database */
-	// 	console.log("Position : " + JSON.stringify( parsedPosition )) ;
 	// 	posgresDB = new TamataPostgres( jsonConfig.system.postgres );
 	// 	posgresDB.save( parsedMessage, parsedPosition );
 		
@@ -210,9 +212,12 @@ async function insertData(topic,message) {
 	// 	influx = new TamataInfluxDB( jsonConfig.system.influxDB );
 	// 	influx.save( parsedMessage, parsedPosition );
 
-	// 	if (DEBUG) console.log('Inserted datas : ' + JSON.stringify(parsedMessage) ) ;
-	// 	if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
-	// })
+		if (DEBUG) console.log('Inserted datas : ' + JSON.stringify(parsedMessage) ) ;
+		// Classic GPS on USB
+		if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.loc.dmm.latitude) + ' LON=' + JSON.stringify(parsedPosition.loc.dmm.longitude) ) ;
+		// EmLid GPS 
+		// if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
+	})
 	
 } 
 
@@ -220,15 +225,17 @@ async function insertData(topic,message) {
 - function getGpsPosition()
 Return a Promise with position type NMEA */
 function getGpsPosition() {
-	console.log("getGpsPosition.... ")
+	if (DEBUG_GPS) {console.log("getGpsPosition.... ")}
 	return new Promise( (resolve, reject) => {
 		const nmea = require('node-nmea')
 		const gprmc = require('gprmc-parser')
 
 		parser_GPS.on('data', function (data) {
-			console.log("Data from GPS")
-			console.log(data)
-			
+			if (DEBUG_GPS) {
+				console.log("Data from GPS")
+				console.log(data)
+			}
+
 			// Using emLead GPS
 			//if (data.includes("$GNRMC")) {
 			

@@ -154,6 +154,14 @@ String GravitySensorHub::getJsonSensorsUpdate()
 	return json;
 }
 
+DynamicJsonDocument GravitySensorHub::getJsonSensorsName(){
+	char SensorName[SENSORCOUNT] = "{\"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\", \"turbiditySensor\"}";
+	DynamicJsonDocument doc(1024);
+	deserializeJson(doc, SensorName);
+	//doc["sensors"] = SensorName;
+	//JsonObject sensor = doc.createNestedOject("SensorName");
+	return doc;
+}
 //sending jetpackStatus over MQTT
 /* 
 String jsonJetpackStatus="{\"state\":{\"reported\":";
