@@ -54,9 +54,23 @@ class WAcquire extends Component {
       selectedOption: null
     };
   }
+  componentDidMount() {
+    this.callApi()
+      .then(res => this.setState({ response: res.express }))
+      .catch(err => console.log(err));
+  }
+  
+  callApi = async () => {
+    const response = await fetch('/api/hello');
+    const body = await response.json();
+    if (response.status !== 200) throw Error(body.message);
+    
+    return body;
+  };
 
   handleAcquisitionButton = () => {
     console.log("Acquisition Click...");
+    
     // Laucnh Redux Action
     this.props.sensorsRecord();
   };
@@ -64,6 +78,56 @@ class WAcquire extends Component {
   handleSelectChange = selectedOption => {
     this.props.selectChange(selectedOption.target);
   };
+
+  // handleSubmit On / off a recode pour prise en compte du state... 
+  handleSubmit = async e => {
+    e.preventDefault();
+    const response = await fetch('/api/command', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ post: this.state.post }),
+    });
+    const body = await response.text();
+    
+    this.setState({ responseToPost: body });
+  };
+
+  handleSubmitOn = async e => {
+    e.preventDefault();
+    const response = await fetch('/api/command?cmd_id=startLog', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // récupération de la réponse du serveur http
+      body: JSON.stringify({ post: this.state.post }),
+    });
+    const body = await response.text();
+    
+    this.setState({ responseToPost: body });
+    // Laucnh Redux Action
+    this.props.sensorsRecord();
+  };
+
+  handleSubmitOff = async e => {
+    e.preventDefault();
+    const response = await fetch('/api/command?cmd_id=stopLog', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // récupération de la réponse du serveur http
+      body: JSON.stringify({ post: this.state.post }),
+    });
+    const body = await response.text();
+    
+    this.setState({ responseToPost: body });
+    // Laucnh Redux Action
+    this.props.sensorsRecord();
+  };
+  
 
   render() {
     const { sensors, log, classes } = this.props;
@@ -97,9 +161,11 @@ class WAcquire extends Component {
         {/* Launch recording process */}
         {log.isToggleOn && (
           <Button
+            type="submit"
             variant="contained"
             color="primary"
-            onClick={this.handleAcquisitionButton}
+            // onClick={this.handleAcquisitionButton}
+            onClick={this.handleSubmitOff}
             className={classes.button}
             startIcon={<PauseIcon />}
           >
@@ -108,9 +174,11 @@ class WAcquire extends Component {
         )}
         {!log.isToggleOn && (
           <Button
+            type="submit"
             variant="contained"
             color="secondary"
-            onClick={this.handleAcquisitionButton}
+            // onClick={this.handleAcquisitionButton}
+            onClick={this.handleSubmitOn}
             className={classes.button}
             startIcon={<PlayArrowIcon />}
           >
@@ -120,22 +188,35 @@ class WAcquire extends Component {
 
         {/* Interval Selector */}
         <Select value={log.interval} onChange={this.handleSelectChange}>
-          <MenuItem value="5sec">Every 5 seconds</MenuItem>
-          <MenuItem value="10sec">Every 10 seconds</MenuItem>
-          <MenuItem value="1min">Every minute</MenuItem>
-          <MenuItem value="1hour">Every hour</MenuItem>
-          <MenuItem value="1day">Every day</MenuItem>
+          <MenuItem value="1000">Every second</MenuItem>
+          <MenuItem value="5000">Every 5 seconds</MenuItem>
+          <MenuItem value="10000">Every 10 seconds</MenuItem>
+          <MenuItem value="60000">Every minute</MenuItem>
+          <MenuItem value="3600000">Every hour</MenuItem>
         </Select>
 
         {/* Console login from MQTT */}
-        <Connector mqttProps="ws://192.168.0.4:9001/">
+        {/* <Connector mqttProps="ws://192.168.0.4:9001/">
           <MqttConsole topic="teensy/sensors" />
-        </Connector>
+        </Connector> */}
 
         {/* Console login from MQTT */}
-        <Connector mqttProps="ws://192.168.0.4:9001/">
+        {/* <Connector mqttProps="ws://192.168.0.4:9001/">
           <MqttConsole topic="teensy/console" />
-        </Connector>
+        </Connector> */}
+
+        <form onSubmit={this.handleSubmit}>
+          <p>
+            <strong>Post to Server:</strong>
+          </p>
+          <input
+            type="text"
+            value={this.state.post}
+            onChange={e => this.setState({ post: e.target.value })}
+          />
+          <button type="submit">Submit</button>
+        </form>
+        <p>{this.state.responseToPost}</p>
       </div>
     );
   }

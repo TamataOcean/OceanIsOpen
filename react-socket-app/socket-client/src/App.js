@@ -25,7 +25,13 @@ class App extends Component {
         palette: {
           type: "light"
         }
-      }
+      },
+      isDataLogging: false,
+      logInterval: 10000,
+      response: '',
+      post: '',
+      responseToPost: '',
+
     };
   }
 

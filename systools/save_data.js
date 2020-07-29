@@ -127,7 +127,6 @@ function begin() {
         res.render(ejs_index, {
             title : "Serial Com - Home",
         });
-        
     })
 
     /* --------------------------- Command?cmd_id --------------------- */
@@ -149,10 +148,9 @@ function begin() {
         console.log('Command server requested : '+ "{\"order\":\"" + req.query.cmd_id + "\"}" );
         console.log('To see how to implement... ')
     })
-	
 	.post('/command', function(req, res) {
 		console.log('Command requested with POST Method: '+ req.query.cmd_id);
-
+		
 		if (req.query.cmd_id = "update_interval") {
 			var new_interval = parseFloat(req.body.interval_value);
 			console.log('interval value : '+ new_interval);
@@ -167,6 +165,27 @@ function begin() {
 		}
 	})
 
+	/* ---------------------- API Service for REACT APP -----------------*/
+	/* ------------------------------------------------------------------*/
+	.get('/api/hello', (req, res) => {
+		console.log('API Command requested with GET Method: ' + req.query.cmd_id);
+		res.send({ express: 'Hello From Express' });
+	})
+
+	.post('/api/command', ( req, res ) => {
+		console.log('API Command requested with POST Method: ' + req.query.cmd_id);
+		console.log('Command requested : '+ "{\"order\":\"" + req.query.cmd_id + "\"}" );
+       	port_TEENSY.write("{\"order\":\"" + req.query.cmd_id + "\"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+       	   	}
+          	console.log('command ' + req.query.cmd_id + ' sent');
+           	//res.redirect('/');
+       	})
+		console.log(req.body);
+		res.send(`Server received your POST request. This : ${req.body.post}`);
+	})
+	
     /* ---------------------- Unknown Page -----------------------------*/
     /* -----------------------------------------------------------------*/
     .use(function(req, res, next){
@@ -186,10 +205,9 @@ function begin() {
         });
         console.log('new user arrived');
     });
-    app.listen(8080);
-    console.log('WEB SERVER started on port 8080');
+    app.listen(8080, () => console.log('Web server listening on 8080'));
+    //console.log('WEB SERVER started on port 3000');
     console.log('-------------------------------');
-
 }
 
 /***************************************
@@ -207,7 +225,6 @@ async function insertData(topic,message) {
 	// 	/* INSERT to Postgres database */
 	// 	posgresDB = new TamataPostgres( jsonConfig.system.postgres );
 	// 	posgresDB.save( parsedMessage, parsedPosition );
-		
 	// 	/* INSERT to influx database */
 	// 	influx = new TamataInfluxDB( jsonConfig.system.influxDB );
 	// 	influx.save( parsedMessage, parsedPosition );
@@ -218,7 +235,6 @@ async function insertData(topic,message) {
 		// EmLid GPS 
 		// if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
 	})
-	
 } 
 
 /***************************************
@@ -238,7 +254,6 @@ function getGpsPosition() {
 
 			// Using emLead GPS
 			//if (data.includes("$GNRMC")) {
-			
 			// Using USB GPS classic
 			if (data.includes("$GPRMC")) {
 				//console.log(nmea.parse(data))
