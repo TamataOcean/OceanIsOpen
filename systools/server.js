@@ -1,7 +1,13 @@
-/* Manage Script to 
+/* Node Server to 
 - Listen the Teensy'Serial port
-- On message request to get GPS Possition
-- Then save on InFlux
+- On message request, get GPS Possition
+- Then save on InFlux / postGres
+
+- Execute also an Express Server to answer ReactApp Request(
+	- logStart / logStop
+	- Calibrate
+	- ...
+)
 */
 var DEBUG = true;
 var DEBUG_GPS = false;
@@ -27,6 +33,8 @@ var baud_TEENSY;
 var baud_GPS;
 let parser_GPS;
 let parser_TEENSY;
+
+var apiAnswer = "";
 //---------------------
 // INITIALISATION
 //---------------------
@@ -64,7 +72,9 @@ function begin() {
 		console.log('Baud GPS ='+ JSON.stringify(jsonConfig.system.serialport_GPS.baud) ) ;
 	}
 
-    /* LISTENING on SERIAL for TEENSY & GPS */
+	/* ************************************ */
+	/* LISTENING on SERIAL for TEENSY & GPS */
+	/* ************************************ */
     const SerialPort = require('serialport')
 	const Readline = require('@serialport/parser-readline')
 	
@@ -96,6 +106,11 @@ function begin() {
 		if (data.includes("{\"state\":{\"reported\":{")) {
 			console.log('Data sensors arrived')
 			insertData('serial', data)
+		} 
+		
+		if (data.includes("Config_Teensy")) {
+			console.log('Api answer received')
+			apiAnswer = data;
 		}
 	})
 
@@ -168,8 +183,22 @@ function begin() {
 	/* ---------------------- API Service for REACT APP -----------------*/
 	/* ------------------------------------------------------------------*/
 	.get('/api/hello', (req, res) => {
-		console.log('API Command requested with GET Method: ' + req.query.cmd_id);
+		console.log('API hello requested with GET Method: ' + req.query.cmd_id);
 		res.send({ express: 'Hello From Express' });
+	})
+
+	// Return Teensy config to ReactApp in JSON Format
+	.get('/api/getConfig', (req, res) => {
+		console.log('API getConfig requested with GET Method: ');
+		port_TEENSY.write("{\"order\":\"getConfig\"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+       	   	}
+          	console.log('command getConfig sent');
+           	//res.redirect('/');
+		   })
+		   // Initiate when the server is lauching... 
+		res.send({ apiAnswer: apiAnswer })
 	})
 
 	.post('/api/command', ( req, res ) => {
@@ -193,7 +222,6 @@ function begin() {
         res.redirect('/');
     });
     
-    /* -----------------------------------------------------------------*/
     /* STARTING HTTP SERVER
     /* -----------------------------------------------------------------*/
     app.on('connect',function(req,res) {
@@ -205,9 +233,8 @@ function begin() {
         });
         console.log('new user arrived');
     });
-    app.listen(8080, () => console.log('Web server listening on 8080'));
-    //console.log('WEB SERVER started on port 3000');
     console.log('-------------------------------');
+    app.listen(8080, () => console.log('Web server listening on 8080'));
 }
 
 /***************************************
@@ -217,10 +244,11 @@ async function insertData(topic,message) {
 	var parsedMessage = JSON.parse(message);
 
 	if (DEBUG) console.log('***********************************');
-	if (DEBUG) console.log('Serial Data Message received : ' + message );
+	if (DEBUG) console.log(' Serial Data Message received : ' + message );
+	if (DEBUG) console.log('***********************************');
 	
 	getGpsPosition().then( (parsedPosition) => {
-		console.log("Position get " + JSON.stringify( parsedPosition )) ;
+		if (DEBUG) console.log("Position get " + JSON.stringify( parsedPosition )) ;
 
 	// 	/* INSERT to Postgres database */
 	// 	posgresDB = new TamataPostgres( jsonConfig.system.postgres );

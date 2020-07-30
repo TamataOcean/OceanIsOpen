@@ -122,6 +122,10 @@ int commandManager(String message) {
     Serial.println( name + " - INIT Raspi received ");
     configToSerial();
   }
+  else if ( jsonDoc["order"] == "getConfig") {
+    Serial.println( name + " - getConfig received ");
+    configToSerial();
+  }
   else if (jsonDoc["order"] == "restart") {
     Serial.println( name + " - RESTART in progress ");
     _reboot_Teensyduino_();
@@ -162,17 +166,20 @@ int commandManager(String message) {
 
 void configToSerial(){
     DynamicJsonDocument doc(1024);
+    
+    char SensorName[] = "{\"sensor1\":\"phSensor\", \"sensor2\":\"temperatureSensor\", \"sensor3\":\"doSensor\", \"sensor4\":\"ecSensor\", \"sensor5\":\"tdsSensor\", \"sensor6\":\"orpSensor\", \"sensor7\":\"turbiditySensor\"}";
+	  DeserializationError err= deserializeJson(doc, SensorName);
+    if(err) {
+      Serial.print(F("deserializeJson() failed with code "));
+      Serial.println(err.c_str());
+    } 
+    
     doc["config"] = "Config_Teensy";
     doc["start_log"] = start_log;
     doc["logInterval"] = logInterval;
-    serializeJson(doc, Serial);
-    Serial.println();
-
-    char SensorName[] = "{\"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\", \"turbiditySensor\"}";
-	  //deserializeJson(doc, SensorName);
-    JsonArray sensor  = doc.createNestedArray(SensorName);
-    //deserializeJson(doc,Serial);
-
+    
+    //JsonArray sensor  = doc.createNestedArray(sensors);
+    
     serializeJson(doc, Serial);
     Serial.println();
 
