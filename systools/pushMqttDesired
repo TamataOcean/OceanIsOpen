@@ -1,1 +1,0 @@
-mosquitto_pub -h localhost -t "teensy/sensors" -f ./mqttReactApp.json

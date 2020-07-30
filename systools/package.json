@@ -2,7 +2,7 @@
   "name": "systools",
   "version": "1.0.0",
   "description": "Manage Mqtt data to Postgres with GPS Position data sync",
-  "main": "save_data.js",
+  "main": "server.js",
   "dependencies": {
     "@serialport/parser-readline": "^2.0.2",
     "cookie-session": "^1.4.0",
@@ -19,7 +19,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "node save_data.js"
+    "test": "node server.js"
   },
   "repository": {
     "type": "git",
