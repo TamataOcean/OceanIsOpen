@@ -33,7 +33,7 @@ sudo ./deployment.sh <br><br>
 
 ### Architecture
 
-![Sch_Infrastructure](https://user-images.githubusercontent.com/25310798/66127651-7fc26680-e5ec-11e9-853d-109e7026b98e.png)
+![image](https://user-images.githubusercontent.com/25310798/89012702-ddaa0280-d312-11ea-9652-b433bb14eac3.png)
 
 ### [Champ d'application](https://github.com/TamataOcean/OceanIsOpen/wiki/Data-Interpretation)
 
