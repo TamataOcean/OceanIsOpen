@@ -18,7 +18,7 @@ import PauseIcon from "@material-ui/icons/Pause";
 import { connect } from "react-redux";
 import { logRecord, logInterval } from "../../actions/logRecord";
 import Sensor from "../Sensors/sensor";
-import MqttConsole from "../Mqtt/MqttConsole";
+import MqttConsole from "../Console/MqttConsole";
 
 const styles = theme => {
   return {
@@ -75,9 +75,29 @@ class WAcquire extends Component {
     this.props.sensorsRecord();
   };
 
-  handleSelectChange = selectedOption => {
+  // Normal version... without connection to Teensy
+  // handleSelectChange = selectedOption => {
+  //   this.props.selectChange(selectedOption.target);
+  // };
+  
+  // Try to send to Teensy...
+
+  handleSelectChange = async selectedOption => {
+    console.log("handleSelectChange... " + selectedOption)
+    const response = await fetch('/api/updateLogInterval?cmd_id=update_interval&interval=' + this.state.interval, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // récupération de la réponse du serveur http
+      body: JSON.stringify({ post: this.state.post }),
+      //interval: { interval : this.state.log.interval }, 
+    });
+    const body = await response.text();
     this.props.selectChange(selectedOption.target);
   };
+
+
 
   // handleSubmit On / off a recode pour prise en compte du state... 
   handleSubmit = async e => {
@@ -103,6 +123,7 @@ class WAcquire extends Component {
       },
       // récupération de la réponse du serveur http
       body: JSON.stringify({ post: this.state.post }),
+      //interval: { interval : this.state.log.interval }, 
     });
     const body = await response.text();
     
@@ -225,7 +246,8 @@ class WAcquire extends Component {
 const mapStateToProps = state => {
   return {
     sensors: state.sensors,
-    log: state.log
+    log: state.log,
+    interval : state.interval
   };
 };
 

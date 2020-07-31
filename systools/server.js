@@ -204,16 +204,39 @@ function begin() {
 	.post('/api/command', ( req, res ) => {
 		console.log('API Command requested with POST Method: ' + req.query.cmd_id);
 		console.log('Command requested : '+ "{\"order\":\"" + req.query.cmd_id + "\"}" );
+		console.log('Interval requested : '+ "{\"interval\":\"" + req.query.interval + "\"}" );
+		
        	port_TEENSY.write("{\"order\":\"" + req.query.cmd_id + "\"}" , function(err){
 			if (err) {
 				return console.log('Error : ', err.message);
        	   	}
           	console.log('command ' + req.query.cmd_id + ' sent');
            	//res.redirect('/');
-       	})
+		   })
+		   
 		console.log(req.body);
+		console.log("Interval : ", req.interval);
 		res.send(`Server received your POST request. This : ${req.body.post}`);
 	})
+
+	.post('/api/updateLogInterval', ( req, res ) => {
+		console.log('API Command requested with POST Method: ' + req.query.cmd_id); // update_interval
+		console.log('Interval requested : '+ "{\"interval\":\"" + req.query.interval + "\"}" );
+		
+       	port_TEENSY.write("{\"order\":\"" + req.query.cmd_id + "\",\"value\":\""+ req.query.interval + "\" }" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+       	   	}
+          	console.log('command ' + req.query.cmd_id + ' sent');
+           	//res.redirect('/');
+		   })
+		   
+		console.log(req.body);
+		console.log("Interval : ", req.interval);
+		res.send(`Server received your POST request. This : ${req.body.post}`);
+	})
+
+	
 	
     /* ---------------------- Unknown Page -----------------------------*/
     /* -----------------------------------------------------------------*/

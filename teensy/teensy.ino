@@ -150,7 +150,12 @@ int commandManager(String message) {
 
   else if (jsonDoc["order"] == "update_interval" ) {
     Serial.println( name + " - Interval update received");
-    logInterval = jsonDoc["value"].as<long>();
+    if (jsonDoc["value"].as<long>() > 500 ) {
+      logInterval = jsonDoc["value"].as<long>();
+    }
+    else { 
+      Serial.println("INterval < 500 limit");
+    }
     Serial.print("New interval : " );
     Serial.println(logInterval);
     //logInterval = newInterval;
