@@ -81,7 +81,6 @@ class WAcquire extends Component {
   // };
   
   // Try to send to Teensy...
-
   handleSelectChange = async selectedOption => {
     console.log("handleSelectChange... " + selectedOption)
     const response = await fetch('/api/updateLogInterval?cmd_id=update_interval&interval=' + this.state.interval, {
@@ -96,8 +95,6 @@ class WAcquire extends Component {
     const body = await response.text();
     this.props.selectChange(selectedOption.target);
   };
-
-
 
   // handleSubmit On / off a recode pour prise en compte du state... 
   handleSubmit = async e => {

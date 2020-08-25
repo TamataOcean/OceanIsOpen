@@ -138,7 +138,7 @@ int commandManager(String message) {
   
   else if (jsonDoc["order"] == "startLog") {
     Serial.println( name + " - Start log received ");
-    Serial.print( "Using interval : " );
+    Serial.print( name + " - Using interval : " );
     Serial.println( logInterval );
     start_log = 1;
   }
@@ -154,9 +154,9 @@ int commandManager(String message) {
       logInterval = jsonDoc["value"].as<long>();
     }
     else { 
-      Serial.println("INterval < 500 limit");
+      Serial.println("Interval < 500 limit");
     }
-    Serial.print("New interval : " );
+    Serial.print(name + " - New interval : " );
     Serial.println(logInterval);
     //logInterval = newInterval;
   }
@@ -165,7 +165,7 @@ int commandManager(String message) {
     configToSerial();
   }
   else {
-    Serial.println( "Unknown command : " + message );
+    Serial.println(name + " - Unknown command : " + message );
   }
 }
 
@@ -175,7 +175,7 @@ void configToSerial(){
     char SensorName[] = "{\"sensor1\":\"phSensor\", \"sensor2\":\"temperatureSensor\", \"sensor3\":\"doSensor\", \"sensor4\":\"ecSensor\", \"sensor5\":\"tdsSensor\", \"sensor6\":\"orpSensor\", \"sensor7\":\"turbiditySensor\"}";
 	  DeserializationError err= deserializeJson(doc, SensorName);
     if(err) {
-      Serial.print(F("deserializeJson() failed with code "));
+      Serial.print(F(" - deserializeJson() failed with code "));
       Serial.println(err.c_str());
     } 
     
