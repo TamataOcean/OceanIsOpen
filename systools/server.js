@@ -186,6 +186,21 @@ function begin() {
 		console.log('API hello requested with GET Method: ' + req.query.cmd_id);
 		res.send({ express: 'Hello From Express' });
 	})
+	
+	// Sending calibrate order to Teensy
+	.get('/api/calibratePh', (req, res) => {
+		console.log('API calibrate requested with GET Method: ' + req.query.cmd_id);
+		port_TEENSY.write("{\"order\":\"calibratePh\"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+       	   	}
+          	console.log('command getConfig sent');
+           	//res.redirect('/');
+		   })
+		   // Initiate when the server is lauching... 
+		res.send({ apiAnswer: apiAnswer })
+	})
+
 
 	// Return Teensy config to ReactApp in JSON Format
 	.get('/api/getConfig', (req, res) => {

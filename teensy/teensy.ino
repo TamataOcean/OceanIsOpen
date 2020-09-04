@@ -132,8 +132,11 @@ int commandManager(String message) {
     //ESP.restart();
   }
   
-  else if (jsonDoc["order"] == "calibrate") {
-    Serial.println( name + " - CALIBRATE in progress ");
+  else if (jsonDoc["order"] == "calibratePh") {
+    Serial.println( name + " - CALIBRATE PH in progress ");
+    ((GravityPh*)(sensorHub.sensors[phSensor]))->setOffset(PHOFFSET);
+    Debug::print("pH offset: ");
+    Debug::println(PHOFFSET);
   }
   
   else if (jsonDoc["order"] == "startLog") {
@@ -149,7 +152,8 @@ int commandManager(String message) {
   }
 
   else if (jsonDoc["order"] == "update_interval" ) {
-    Serial.println( name + " - Interval update received");
+    Serial.print( name + " - Interval update received = ");
+    Serial.println( jsonDoc["value"].as<long>() );
     if (jsonDoc["value"].as<long>() > 500 ) {
       logInterval = jsonDoc["value"].as<long>();
     }

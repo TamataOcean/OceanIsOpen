@@ -30,54 +30,54 @@ const initState = {
       calibrationCurrentStep: 0,
       calibrationState: "Never"
     },
-    {
-      id: 2,
-      state: "On",
-      name: "Do",
-      logo: logoDo,
-      ref: "",
-      link: "",
-      calibrationStep: 0,
-      calibrationCurrentStep: 0,
-      calibrationState: "Never"
-    },
-    {
-      id: 3,
-      state: "On",
-      name: "EC",
-      logo: logoEc,
-      ref: "",
-      link: "",
-      calibrationStep: 3,
-      calibrationCurrentStep: 0,
-      calibrationState: "Never"
-    },
-    {
-      id: 4,
-      state: "On",
-      name: "TDS",
-      logo: logoTds,
-      ref: "",
-      link: "",
-      calibrationStep: 0,
-      calibrationCurrentStep: 0,
-      calibrationState: "Never"
-    },
-    {
-      id: 5,
-      state: "On",
-      name: "ORP",
-      logo: logoOrp,
-      ref: "",
-      link: "",
-      calibrationStep: 0,
-      calibrationCurrentStep: 0,
-      calibrationState: "Never"
-    },
+    // {
+    //   id: 2,
+    //   state: "On",
+    //   name: "Do",
+    //   logo: logoDo,
+    //   ref: "",
+    //   link: "",
+    //   calibrationStep: 0,
+    //   calibrationCurrentStep: 0,
+    //   calibrationState: "Never"
+    // },
+    // {
+    //   id: 3,
+    //   state: "On",
+    //   name: "Electrical Conductivity",
+    //   logo: logoEc,
+    //   ref: "",
+    //   link: "",
+    //   calibrationStep: 3,
+    //   calibrationCurrentStep: 0,
+    //   calibrationState: "Never"
+    // },
+    // {
+    //   id: 4,
+    //   state: "Off",
+    //   name: "TDS",
+    //   logo: logoTds,
+    //   ref: "",
+    //   link: "",
+    //   calibrationStep: 0,
+    //   calibrationCurrentStep: 0,
+    //   calibrationState: "Never"
+    // },
+    // {
+    //   id: 5,
+    //   state: "Off",
+    //   name: "ORP",
+    //   logo: logoOrp,
+    //   ref: "",
+    //   link: "",
+    //   calibrationStep: 0,
+    //   calibrationCurrentStep: 0,
+    //   calibrationState: "Never"
+    // },
     {
       id: 6,
       state: "On",
-      name: "turbidity",
+      name: "Turbidity",
       logo: logoTurbidity,
       ref: "",
       link: "",
@@ -117,7 +117,20 @@ const rootReducer = (state = initState, action) => {
         sensor.calibrationCurrentStep
       );
       // Sending request to Teensy for calibration ok sensor.id
-      // return {};
+      // NOT WORKING... 
+      // Need to send to server.js 
+      // const sendOrder = async dispatch => {
+      //   console.log("Send Order async function");
+      //   e.preventDefault();
+      //   const response = await fetch('/api/calibratePh', {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify({ post: this.state.post }),
+      //   });
+      //   const body = await response.text();
+      // }
 
       return {
         ...state,
