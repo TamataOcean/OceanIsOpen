@@ -1,40 +1,39 @@
 {
-    "AppName": "OceanIsOpen",
-    "Version": "1.0.0",
-    "Copyright": "Copyright Open Source - W3Licence",
-    "system": {
-        "user": "OceanIsOpen",
-        "id": "teensySensors",
-        "mac": "123456789007",
-        "interval": 10,
-        "mqttUser":"teensy",
-        "mqttServer": "192.168.1.41",
-        "mqttTopic": "teensy/sensors",
-        "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
-        "mqttTopic": "teensy/sensors",
+  "AppName": "OceanIsOpen",
+  "Version": "1.0.0",
+  "Copyright": "Copyright Open Source - W3Licence",
+  "system": {
+    "user": "OceanIsOpen",
+    "id": "teensySensors",
+    "mac": "123456789007",
+    "interval": 10,
+    "mqttUser": "teensy",
+    "mqttServer": "192.168.1.41",
+    "mqttTopic": "teensy/sensors",
+    "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
+    "mqttTopic": "teensy/sensors",
 
-        "postgres": {
-            "user": "docker",
-            "host": "postgis",
-            "database": "oio",
-            "password": "docker",
-            "port": "5432"
-        },
-
-        "serialport" : {
-            "port" : "/dev/ttyACM0",
-            "baud" : 4800
-        }
+    "postgres": {
+      "user": "docker",
+      "host": "postgis",
+      "database": "oio",
+      "password": "docker",
+      "port": "5432"
     },
-    
-    "sensors": {
-        "phSensor": 0,
-        "temperatureSensor": 1,
-        "doSensor": 2,
-        "ecSensor": 3,
-        "tdsSensor": 4,
-        "orpSensor": 5,
-        "turbiditySensor": 6
+
+    "serialport": {
+      "port": "/dev/ttyACM0",
+      "baud": 4800
     }
-    
+  },
+
+  "sensors": {
+    "phSensor": 0,
+    "temperatureSensor": 1,
+    "doSensor": 2,
+    "ecSensor": 3,
+    "tdsSensor": 4,
+    "orpSensor": 5,
+    "turbiditySensor": 6
+  }
 }

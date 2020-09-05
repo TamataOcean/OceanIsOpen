@@ -8,7 +8,7 @@ class WGrafana extends React.Component {
       <div className="WGrafana">
         {/* <h2>Grafana iFrame ;) </h2> */}
         <IFrame
-	  url="http://172.24.1.1:3000"
+          url="http://172.24.1.1:3000"
           //url="http://192.168.0.4:3000/d/acSzEZZRk/teensy-sensors?orgId=1&from=1574675791577&to=1574676091577"
           width="100%"
           height="100%"

@@ -10,11 +10,11 @@ import WGeopoppy from "../WindowsApp/WGeopoppy";
 import WGrafana from "../WindowsApp/WGrafana";
 import WSystem from "../WindowsApp/WSystem";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(10)
-  }
+    marginBottom: theme.spacing(10),
+  },
 }));
 
 export default ({ theme, toggleDarkTheme }) => {

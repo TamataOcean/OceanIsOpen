@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   BottomNavigation,
   BottomNavigationAction,
-  Hidden
+  Hidden,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
@@ -12,15 +12,15 @@ import PieChartIcon from "@material-ui/icons/PieChart";
 import LocationOnIcon from "@material-ui/icons/LocationOn";
 import SettingsIcon from "@material-ui/icons/Settings";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     position: "fixed",
     bottom: "0",
-    width: "100%"
+    width: "100%",
   },
   links: {
-    textDecoration: "none"
-  }
+    textDecoration: "none",
+  },
 }));
 
 export default () => {

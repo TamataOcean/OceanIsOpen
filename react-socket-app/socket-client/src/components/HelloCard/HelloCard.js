@@ -5,7 +5,7 @@ import {
   CardContent,
   Typography,
   Switch,
-  FormControlLabel
+  FormControlLabel,
 } from "@material-ui/core";
 
 export default ({ theme, toggleDarkTheme }) => {

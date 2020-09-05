@@ -5,22 +5,22 @@ import {
   IconButton,
   Typography,
   Button,
-  Hidden
+  Hidden,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import MenuIcon from "@material-ui/icons/Menu";
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   title: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   links: {
-    color: "white"
-  }
+    color: "white",
+  },
 }));
 
 export default ({ toggleDrawer }) => {

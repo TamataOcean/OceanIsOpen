@@ -17,7 +17,7 @@ const initState = {
       link: "",
       calibrationStep: 2,
       calibrationCurrentStep: 0,
-      calibrationState: "Never"
+      calibrationState: "Never",
     },
     {
       id: 1,
@@ -28,7 +28,7 @@ const initState = {
       link: "",
       calibrationStep: 0,
       calibrationCurrentStep: 0,
-      calibrationState: "Never"
+      calibrationState: "Never",
     },
     // {
     //   id: 2,
@@ -83,29 +83,29 @@ const initState = {
       link: "",
       calibrationStep: 0,
       calibrationCurrentStep: 0,
-      calibrationState: "Never"
-    }
+      calibrationState: "Never",
+    },
   ],
 
   position: {
     lon: "",
     lat: "",
     speed: "",
-    cap: ""
+    cap: "",
   },
 
   log: {
     isToggleOn: false,
     state: "Pause", // or Recording
-    interval: "10sec" // or 30sec, 1min, 5min, 1hour, 1day
-  }
+    interval: "10sec", // or 30sec, 1min, 5min, 1hour, 1day
+  },
 };
 
 const rootReducer = (state = initState, action) => {
   console.log("Reducer - Action receieved : ", action.type);
   switch (action.type) {
     case "CALIBRATE_SENSOR":
-      let sensor = state.sensors.find(sensor => sensor.id === action.id);
+      let sensor = state.sensors.find((sensor) => sensor.id === action.id);
       let calibrationCurrentStep = sensor.calibrationCurrentStep;
 
       console.log(
@@ -117,8 +117,8 @@ const rootReducer = (state = initState, action) => {
         sensor.calibrationCurrentStep
       );
       // Sending request to Teensy for calibration ok sensor.id
-      // NOT WORKING... 
-      // Need to send to server.js 
+      // NOT WORKING...
+      // Need to send to server.js
       // const sendOrder = async dispatch => {
       //   console.log("Send Order async function");
       //   e.preventDefault();
@@ -134,16 +134,16 @@ const rootReducer = (state = initState, action) => {
 
       return {
         ...state,
-        sensors: state.sensors.map(sensor =>
+        sensors: state.sensors.map((sensor) =>
           sensor.id === action.id
             ? //transform the one with a matching id
               {
                 ...sensor,
-                calibrationCurrentStep: calibrationCurrentStep + 1
+                calibrationCurrentStep: calibrationCurrentStep + 1,
               }
             : //otherwise return original todo
               sensor
-        )
+        ),
       };
     case "LOG_RECORDING":
       //debugger;
@@ -155,7 +155,7 @@ const rootReducer = (state = initState, action) => {
       const recordingState = state.log.isToggleOn ? "Recording" : "Pause";
       console.log({
         ...state,
-        log: { ...state.log, state: recordingState }
+        log: { ...state.log, state: recordingState },
       });
       /* l'expression en dessous correspond à
             { ...tout le reste de state, log: { ...tout le reste de state.log, state: la valeur voulue }}
@@ -170,7 +170,7 @@ const rootReducer = (state = initState, action) => {
       const recordingInterval = action.interval.value;
       return {
         ...state,
-        log: { ...state.log, interval: recordingInterval }
+        log: { ...state.log, interval: recordingInterval },
       };
 
     default:

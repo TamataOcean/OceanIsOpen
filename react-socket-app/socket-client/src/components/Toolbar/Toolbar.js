@@ -12,7 +12,7 @@ import {
   Switch,
   Route,
   Link,
-  useRouteMatch
+  useRouteMatch,
 } from "react-router-dom";
 
 import { connect } from "react-redux";
@@ -98,9 +98,9 @@ class toolbar extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    log: state.log
+    log: state.log,
   };
 };
 

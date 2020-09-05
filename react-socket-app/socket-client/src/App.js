@@ -3,7 +3,7 @@ import socketIOClient from "socket.io-client";
 import {
   MuiThemeProvider,
   createMuiTheme,
-  CssBaseline
+  CssBaseline,
 } from "@material-ui/core";
 import { BrowserRouter as Router } from "react-router-dom";
 import AppBar from "./AppBar/AppBar";
@@ -23,15 +23,14 @@ class App extends Component {
       isDrawerOpen: false,
       theme: {
         palette: {
-          type: "light"
-        }
+          type: "light",
+        },
       },
       isDataLogging: false,
       logInterval: 10000,
-      response: '',
-      post: '',
-      responseToPost: '',
-
+      response: "",
+      post: "",
+      responseToPost: "",
     };
   }
 
@@ -40,16 +39,16 @@ class App extends Component {
     this.setState({
       theme: {
         palette: {
-          type: newTheme
-        }
-      }
+          type: newTheme,
+        },
+      },
     });
   };
 
   toggleDrawer = () => {
-    this.setState(oldState => {
+    this.setState((oldState) => {
       return {
-        isDrawerOpen: !oldState.isDrawerOpen
+        isDrawerOpen: !oldState.isDrawerOpen,
       };
     });
   };

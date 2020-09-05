@@ -7,7 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
-  Switch
+  Switch,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
@@ -22,21 +22,21 @@ import BrightnessHighIcon from "@material-ui/icons/BrightnessHigh";
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex"
+    display: "flex",
   },
   drawer: {
     width: drawerWidth,
-    flexShrink: 0
+    flexShrink: 0,
   },
   drawerHeader: {
     display: "flex",
     alignItems: "center",
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-    justifyContent: "flex-end"
-  }
+    justifyContent: "flex-end",
+  },
 }));
 
 export default ({ isOpen, toggleDrawer, theme, toggleDarkTheme }) => {

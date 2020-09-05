@@ -9,7 +9,7 @@ import {
   MenuItem,
   ExpansionPanel,
   ExpansionPanelSummary,
-  ExpansionPanelDetails
+  ExpansionPanelDetails,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
@@ -20,30 +20,30 @@ import { logRecord, logInterval } from "../../actions/logRecord";
 import Sensor from "../Sensors/sensor";
 import MqttConsole from "../Console/MqttConsole";
 
-const styles = theme => {
+const styles = (theme) => {
   return {
     root: {
       flexGrow: 1,
-      marginBottom: theme.spacing(2)
+      marginBottom: theme.spacing(2),
     },
     expansion: {
       width: "100%",
-      marginBottom: theme.spacing(2)
+      marginBottom: theme.spacing(2),
     },
     paper: {
       padding: theme.spacing(2),
       textAlign: "center",
-      color: theme.palette.text.secondary
+      color: theme.palette.text.secondary,
     },
     button: {
-      marginBottom: theme.spacing(2)
+      marginBottom: theme.spacing(2),
     },
     container: {
       display: "flex",
       flexDirection: "column",
       left: "50%",
-      padding: "10px"
-    }
+      padding: "10px",
+    },
   };
 };
 
@@ -51,26 +51,26 @@ class WAcquire extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedOption: null
+      selectedOption: null,
     };
   }
   componentDidMount() {
     this.callApi()
-      .then(res => this.setState({ response: res.express }))
-      .catch(err => console.log(err));
+      .then((res) => this.setState({ response: res.express }))
+      .catch((err) => console.log(err));
   }
-  
+
   callApi = async () => {
-    const response = await fetch('/api/hello');
+    const response = await fetch("/api/hello");
     const body = await response.json();
     if (response.status !== 200) throw Error(body.message);
-    
+
     return body;
   };
 
   handleAcquisitionButton = () => {
     console.log("Acquisition Click...");
-    
+
     // Laucnh Redux Action
     this.props.sensorsRecord();
   };
@@ -79,73 +79,76 @@ class WAcquire extends Component {
   // handleSelectChange = selectedOption => {
   //   this.props.selectChange(selectedOption.target);
   // };
-  
+
   // Try to send to Teensy...
-  handleSelectChange = async selectedOption => {
-    console.log("handleSelectChange... " + selectedOption)
-    const response = await fetch('/api/updateLogInterval?cmd_id=update_interval&interval=' + this.state.interval, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // récupération de la réponse du serveur http
-      body: JSON.stringify({ post: this.state.post }),
-      //interval: { interval : this.state.log.interval }, 
-    });
+  handleSelectChange = async (selectedOption) => {
+    console.log("handleSelectChange... " + selectedOption);
+    const response = await fetch(
+      "/api/updateLogInterval?cmd_id=update_interval&interval=" +
+        this.state.interval,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // récupération de la réponse du serveur http
+        body: JSON.stringify({ post: this.state.post }),
+        //interval: { interval : this.state.log.interval },
+      }
+    );
     const body = await response.text();
     this.props.selectChange(selectedOption.target);
   };
 
-  // handleSubmit On / off a recode pour prise en compte du state... 
-  handleSubmit = async e => {
+  // handleSubmit On / off a recode pour prise en compte du state...
+  handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('/api/command', {
-      method: 'POST',
+    const response = await fetch("/api/command", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ post: this.state.post }),
     });
     const body = await response.text();
-    
+
     this.setState({ responseToPost: body });
   };
 
-  handleSubmitOn = async e => {
+  handleSubmitOn = async (e) => {
     e.preventDefault();
-    const response = await fetch('/api/command?cmd_id=startLog', {
-      method: 'POST',
+    const response = await fetch("/api/command?cmd_id=startLog", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       // récupération de la réponse du serveur http
       body: JSON.stringify({ post: this.state.post }),
-      //interval: { interval : this.state.log.interval }, 
+      //interval: { interval : this.state.log.interval },
     });
     const body = await response.text();
-    
+
     this.setState({ responseToPost: body });
     // Laucnh Redux Action
     this.props.sensorsRecord();
   };
 
-  handleSubmitOff = async e => {
+  handleSubmitOff = async (e) => {
     e.preventDefault();
-    const response = await fetch('/api/command?cmd_id=stopLog', {
-      method: 'POST',
+    const response = await fetch("/api/command?cmd_id=stopLog", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       // récupération de la réponse du serveur http
       body: JSON.stringify({ post: this.state.post }),
     });
     const body = await response.text();
-    
+
     this.setState({ responseToPost: body });
     // Laucnh Redux Action
     this.props.sensorsRecord();
   };
-  
 
   render() {
     const { sensors, log, classes } = this.props;
@@ -153,7 +156,7 @@ class WAcquire extends Component {
     const sensorsList = sensors.length ? (
       <div className={classes.root}>
         <Grid container spacing={3}>
-          {sensors.map(sensor => {
+          {sensors.map((sensor) => {
             return <Sensor simple id={sensor.id} key={sensor.id} />;
           })}
         </Grid>
@@ -230,7 +233,7 @@ class WAcquire extends Component {
           <input
             type="text"
             value={this.state.post}
-            onChange={e => this.setState({ post: e.target.value })}
+            onChange={(e) => this.setState({ post: e.target.value })}
           />
           <button type="submit">Submit</button>
         </form>
@@ -240,23 +243,23 @@ class WAcquire extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sensors: state.sensors,
     log: state.log,
-    interval : state.interval
+    interval: state.interval,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   console.log("mapDispatchToProps");
   return {
     sensorsRecord: () => {
       dispatch(logRecord());
     },
-    selectChange: interval => {
+    selectChange: (interval) => {
       dispatch({ type: "LOG_INTERVAL_CHANGE", interval: interval });
-    }
+    },
   };
 };
 

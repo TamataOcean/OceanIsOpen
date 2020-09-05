@@ -6,11 +6,11 @@ import { withStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 import Sensor from "../Sensors/sensor";
 
-const styles = theme => {
+const styles = (theme) => {
   return {
     root: {
-      flexGrow: 1
-    }
+      flexGrow: 1,
+    },
   };
 };
 
@@ -20,7 +20,7 @@ class WCalibration extends Component {
     const sensorsList = sensors.length ? (
       <div className={classes.root}>
         <Grid container spacing={3}>
-          {sensors.map(sensor => {
+          {sensors.map((sensor) => {
             return <Sensor id={sensor.id} />;
           })}
         </Grid>
@@ -33,9 +33,9 @@ class WCalibration extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    sensors: state.sensors
+    sensors: state.sensors,
   };
 };
 

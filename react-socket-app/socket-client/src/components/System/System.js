@@ -19,7 +19,7 @@ class System extends Component {
           left: "1%",
           borderRadius: "10px",
           margin: "10px 0px",
-          overflow: "scroll"
+          overflow: "scroll",
         }}
       />
     );

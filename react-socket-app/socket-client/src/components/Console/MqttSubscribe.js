@@ -10,7 +10,7 @@ export class MqttSubscribe extends Component {
       <div className="subscriber">
         <span>Console log for : {this.props.topic}</span>
         <ul>
-          {this.props.data.map(message => (
+          {this.props.data.map((message) => (
             <li> {message} </li>
           ))}
         </ul>

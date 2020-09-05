@@ -3,19 +3,19 @@ import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import { Grid, Paper, Button } from "@material-ui/core";
 
-const styles = theme => {
+const styles = (theme) => {
   return {
     paper: {
       padding: theme.spacing(2),
       textAlign: "center",
-      color: theme.palette.text.secondary
+      color: theme.palette.text.secondary,
     },
     image: {
-      height: "100px"
+      height: "100px",
     },
     simpleImage: {
-      height: "80px"
-    }
+      height: "80px",
+    },
   };
 };
 
@@ -60,15 +60,15 @@ class sensor extends Component {
 const mapStateToProps = (state, ownProps) => {
   let { id } = ownProps;
   return {
-    sensor: state.sensors.find(sensor => sensor.id === id)
+    sensor: state.sensors.find((sensor) => sensor.id === id),
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    calibrateSensor: id => {
+    calibrateSensor: (id) => {
       dispatch({ type: "CALIBRATE_SENSOR", id: id });
-    }
+    },
   };
 };
 
