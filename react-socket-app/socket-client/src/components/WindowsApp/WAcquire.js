@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import { Connector } from "mqtt-react";
 import { withStyles } from "@material-ui/core/styles";
 import {
   Button,
   Grid,
-  Paper,
   Select,
   MenuItem,
   ExpansionPanel,
@@ -16,9 +14,8 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 // Redux ( Using Sensors list & Log state )
 import { connect } from "react-redux";
-import { logRecord, logInterval } from "../../actions/logRecord";
+import { logRecord } from "../../actions/logRecord";
 import Sensor from "../Sensors/sensor";
-import MqttConsole from "../Console/MqttConsole";
 
 const styles = (theme) => {
   return {

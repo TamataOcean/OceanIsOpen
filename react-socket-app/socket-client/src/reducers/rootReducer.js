@@ -1,9 +1,9 @@
 import logoTemperature from "./../images/logoTemperature.png";
 import logoPh from "./../images/logoPh.png";
-import logoDo from "./../images/logoDo.png";
-import logoEc from "./../images/logoEc.png";
-import logoTds from "./../images/logoTds.png";
-import logoOrp from "./../images/logoOrp.png";
+// import logoDo from "./../images/logoDo.png";
+// import logoEc from "./../images/logoEc.png";
+// import logoTds from "./../images/logoTds.png";
+// import logoOrp from "./../images/logoOrp.png";
 import logoTurbidity from "./../images/logoTurbidity.png";
 
 const initState = {
@@ -97,7 +97,7 @@ const initState = {
   log: {
     isToggleOn: false,
     state: "Pause", // or Recording
-    interval: "10sec", // or 30sec, 1min, 5min, 1hour, 1day
+    interval: "10000", // or 30sec, 1min, 5min, 1hour, 1day
   },
 };
 
@@ -178,5 +178,3 @@ const rootReducer = (state = initState, action) => {
       return state;
   }
 };
-
-export default rootReducer;
