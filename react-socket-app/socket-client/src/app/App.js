@@ -1,15 +1,14 @@
 import React, { Component } from "react";
-import socketIOClient from "socket.io-client";
 import {
   MuiThemeProvider,
   createMuiTheme,
   CssBaseline,
 } from "@material-ui/core";
 import { BrowserRouter as Router } from "react-router-dom";
-import AppBar from "./AppBar/AppBar";
-import Drawer from "./components/SideDrawer/Drawer";
-import BottomNav from "./components/BottomNav/BottomNav";
-import ContentContainer from "./components/ContentContainer/ContentContainer";
+import AppBar from "../components/AppBar/AppBar";
+import Drawer from "../components/SideDrawer/Drawer";
+import BottomNav from "../components/BottomNav/BottomNav";
+import ContentContainer from "../components/ContentContainer/ContentContainer";
 
 class App extends Component {
   constructor() {
@@ -56,9 +55,6 @@ class App extends Component {
   render() {
     const { theme, isDrawerOpen } = this.state;
     const muiTheme = createMuiTheme(theme);
-
-    // testing for socket connections
-    const socket = socketIOClient(this.state.endpoint);
 
     return (
       <MuiThemeProvider theme={muiTheme}>
