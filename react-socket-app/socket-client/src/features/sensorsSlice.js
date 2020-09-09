@@ -99,7 +99,7 @@ const initialState = {
   log: {
     isToggleOn: false,
     state: "Pause", // or Recording
-    interval: "10sec", // or 30sec, 1min, 5min, 1hour, 1day
+    interval: "10000", // or 30sec, 1min, 5min, 1hour, 1day
   },
 };
 
@@ -113,14 +113,16 @@ const sensorsSlice = createSlice({
       state.log.isToggleOn = !state.log.isToggleOn;
       state.log.state = state.log.isToggleOn ? "Recording" : "Pause";
     },
-    logIntervalChange(state, action) {},
+    changeLogsInterval(state, action) {
+      state.log.interval = action.payload;
+    },
   },
 });
 
 export const {
   calibrateSensor,
   toggleLogs,
-  logIntervalChange,
+  changeLogsInterval,
 } = sensorsSlice.actions;
 
 export default sensorsSlice.reducer;
