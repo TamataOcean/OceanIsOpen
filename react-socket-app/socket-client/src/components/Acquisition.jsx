@@ -14,7 +14,11 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import PauseIcon from "@material-ui/icons/Pause";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Sensor from "./Sensors/sensor";
-import { toggleLogs } from "../features/sensorsSlice";
+import {
+  ApiSayHello,
+  ApiChangeLogsInterval,
+  ApiToggleLogs,
+} from "../features/sensorsAPI";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -44,18 +48,18 @@ const useStyles = makeStyles((theme) => {
 });
 
 const Acquisition = () => {
+  // Material ui style classnames
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const [selectedOption, setSelectedOption] = useState(null);
+  // Simple state management for post and response from server
   const [post, setPost] = useState("");
   const [resToPost, setResToPost] = useState("");
-
+  // The redux dispatch function
+  const dispatch = useDispatch();
+  // Redux selectors to access the state
   const sensors = useSelector((state) => state.sensors);
   const log = useSelector((state) => state.log);
-  const interval = useSelector((state) => state.interval);
 
-  console.log({ sensors, log, interval });
-
+  // Send message to server
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -66,65 +70,37 @@ const Acquisition = () => {
       },
       body: JSON.stringify({ post }),
     });
-
     const body = await response.text();
+    if (response.status !== 200) throw Error(body.message);
+
     setResToPost(body);
-    // TODO: changer état redux
   };
 
-  const handleStartLog = async (e) => {
+  // Toggles the acquisition of data
+  // and display response from server
+  const handleToggleLogs = async (e) => {
     e.preventDefault();
-    const response = await fetch("/api/command?cmd_id=startLog", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // récupération de la réponse du serveur http
-      body: JSON.stringify({ post }),
-      //interval: { interval : this.state.log.interval },
-    });
-    const body = await response.text();
-
-    setResToPost(body);
-    dispatch(toggleLogs(body));
+    const serverResponse = await dispatch(ApiToggleLogs(post));
+    setResToPost(serverResponse);
   };
 
-  const handleStopLog = async (e) => {
-    e.preventDefault();
-    const response = await fetch("/api/command?cmd_id=stopLog", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // récupération de la réponse du serveur http
-      body: JSON.stringify({ post }),
-    });
-    const body = await response.text();
-
-    setResToPost(body);
-    dispatch(toggleLogs(body));
-  };
-
+  // Change acquisition interval
   const handleSelectChange = async (e) => {
     e.preventDefault();
+    const newInterval = e.target.value;
+    dispatch(ApiChangeLogsInterval(newInterval, post));
   };
 
+  // On mount say hello to server
+  // TODO: fetch server current config to update reddit store
   useEffect(() => {
     async function helloServer() {
-      const hello = await callApi();
+      const hello = await ApiSayHello();
       console.log({ hello });
     }
 
     helloServer();
   }, []);
-
-  const callApi = async () => {
-    const response = await fetch("/api/hello");
-    const body = await response.json();
-    if (response.status !== 200) throw Error(body.message);
-
-    return body;
-  };
 
   const sensorsList = sensors.length ? (
     <div className={classes.root}>
@@ -153,26 +129,24 @@ const Acquisition = () => {
       </Accordion>
 
       {/* Launch recording process */}
-      {log.isToggleOn && (
+      {log.isToggleOn ? (
         <Button
           type="submit"
           variant="contained"
           color="secondary"
           // onClick={this.handleAcquisitionButton}
-          onClick={handleStopLog}
+          onClick={handleToggleLogs}
           className={classes.button}
           startIcon={<PauseIcon />}
         >
           Stop acquisition
         </Button>
-      )}
-      {!log.isToggleOn && (
+      ) : (
         <Button
           type="submit"
           variant="contained"
           color="primary"
-          // onClick={this.handleAcquisitionButton}
-          onClick={handleStartLog}
+          onClick={handleToggleLogs}
           className={classes.button}
           startIcon={<PlayArrowIcon />}
         >
@@ -193,16 +167,6 @@ const Acquisition = () => {
         <MenuItem value="60000">Every minute</MenuItem>
         <MenuItem value="3600000">Every hour</MenuItem>
       </TextField>
-
-      {/* Console login from MQTT */}
-      {/* <Connector mqttProps="ws://192.168.0.4:9001/">
-          <MqttConsole topic="teensy/sensors" />
-        </Connector> */}
-
-      {/* Console login from MQTT */}
-      {/* <Connector mqttProps="ws://192.168.0.4:9001/">
-          <MqttConsole topic="teensy/console" />
-        </Connector> */}
 
       <form onSubmit={handleSubmit}>
         <TextField
