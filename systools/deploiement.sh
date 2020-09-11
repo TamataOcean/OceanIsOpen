@@ -12,9 +12,12 @@ sudo apt-get install make gcc g++
 
 ### Création d'un dossier OceanIsOpen et récupération du GitHub
 # Création du dossier OceanIsOpen
-mkdir OceanIsOpen
+mkdir /home/pi/OceanIsOpen
 # Clonage du GitHub dans le dossier
-cd OceanIsOpen && git clone https://github.com/TamataOcean/OceanIsOpen.git
+cd /home/pi/OceanIsOpen
+git clone https://github.com/TamataOcean/OceanIsOpen.git
+
+# Deploy node.js libs
 cd /home/pi/OceanIsOpen/systools
 npm install
 cd /home/pi/OceanIsOpen/react-socket-app/socket-client
