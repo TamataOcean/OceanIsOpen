@@ -10,11 +10,8 @@ sudo cp -R * /usr/local/
 # Installation des librairies npm
 sudo apt-get install make gcc g++
 
-### Création d'un dossier OceanIsOpen et récupération du GitHub
-# Création du dossier OceanIsOpen
-mkdir /home/pi/OceanIsOpen
 # Clonage du GitHub dans le dossier
-cd /home/pi/OceanIsOpen
+cd /home/pi
 git clone https://github.com/TamataOcean/OceanIsOpen.git
 
 # Deploy node.js libs
