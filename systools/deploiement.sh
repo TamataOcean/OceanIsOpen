@@ -26,6 +26,8 @@ mkdir OceanIsOpen
 # Clonage du GitHub dans le dossier
 cd OceanIsOpen && git clone https://github.com/TamataOcean/OceanIsOpen.git
 
+
+
 ### Configuration des librairies SaveData et automatisation du démarrage des services au démarrage du Raspberry
 # Création du service oceanisopen
 cd /etc/systemd/system && touch oceanisopen.service
@@ -36,7 +38,7 @@ After=multi-user.target
 
 [Service]
 WorkingDirectory=/home/$utilisateur/code/OceanIsOpen/systools
-ExecStart=node /home/$utilisateur/code/OceanIsOpen/systools/save_data.js
+ExecStart=node /home/$utilisateur/code/OceanIsOpen/systools/server.js
 Restart=on-failure
 
 [Install]
