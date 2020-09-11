@@ -14,7 +14,7 @@ CREATE TABLE public.sensors
 	nmea_latitude double precision,			--latitude GPS
 	nmea_longitude double precision,		--Longitude GPS
 	nmea_speed double precision,			--Vitesse
---	precision_nmea double precision, 		--Si besoin et si rajouté dans TamataPostres.js
+	nmea_accuracy double precision, 		--//TODO rajouter accuracy dans TamataPostres.js quand il sera dipo dans la trame NMEA
 	geom geometry(Point,4326),			--Geométrie fabrique avec les long lat
 	    CONSTRAINT sensors_pkey PRIMARY KEY (id)
 );
