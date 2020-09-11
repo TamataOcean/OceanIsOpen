@@ -8,7 +8,7 @@ tar -xzf node-v8.9.0-linux-armv6l.tar.gz
 cd node-v8.9.0-linux-armv6l/
 sudo cp -R * /usr/local/
 # Installation des librairies npm
-apt-get install make gcc g++
+sudo apt-get install make gcc g++
 
 ### Création d'un dossier OceanIsOpen et récupération du GitHub
 # Création du dossier OceanIsOpen
