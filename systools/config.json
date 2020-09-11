@@ -26,12 +26,12 @@
     },
 
     "serialport_GPS": {
-      "port": "/dev/tty.SLAB_USBtoUART",
+      "port": "/dev/ttyUSB0",
       "baud": 4800
     },
 
     "serialport_TEENSY": {
-      "port": "COM6",
+      "port": "/dev/ttyACM0",
       "baud": 115200
     }
   },

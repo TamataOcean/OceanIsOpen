@@ -289,8 +289,8 @@ async function insertData(topic,message) {
 		if (DEBUG) console.log("Position get " + JSON.stringify( parsedPosition )) ;
 
 	// 	/* INSERT to Postgres database */
-	// 	posgresDB = new TamataPostgres( jsonConfig.system.postgres );
-	// 	posgresDB.save( parsedMessage, parsedPosition );
+	 	posgresDB = new TamataPostgres( jsonConfig.system.postgres );
+	 	posgresDB.save( parsedMessage, parsedPosition );
 	// 	/* INSERT to influx database */
 	// 	influx = new TamataInfluxDB( jsonConfig.system.influxDB );
 	// 	influx.save( parsedMessage, parsedPosition );

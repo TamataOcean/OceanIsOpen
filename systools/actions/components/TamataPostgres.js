@@ -5,7 +5,7 @@ const pg = require('pg')
 
 const pool = new pg.Pool({
 user: "docker",
-host: "192.168.1.41",
+host: "192.168.0.34",
 database: "oio",
 password: "docker",
 port: "5432"});
@@ -36,7 +36,9 @@ class TamataPostgres {
    }
 
    save( jsonRecord, jsonPosition ) { 
+      if (DEBUG) console.log('------------- ------------------------ ----------------');
       if (DEBUG) console.log('------------- Postgres save() function ----------------');
+      if (DEBUG) console.log('------------- ------------------------ ----------------');
       if (DEBUG) console.log("Position data : ");
       
       /* emLead Format */
@@ -50,13 +52,15 @@ class TamataPostgres {
       console.log("     date = " + jsonPosition.datetime );
       console.log("     time = " + jsonPosition.datetime );
       console.log("     latitude = " + jsonPosition.loc.dmm.latitude );
+      console.log("     coordinates[0] = " + jsonPosition.loc.geojson.coordinates[0]);
       console.log("     longitude = " + jsonPosition.loc.dmm.longitude );
+      console.log("     coordinates[1] = " + jsonPosition.loc.geojson.coordinates[1] );
       console.log("     speed= " + jsonPosition.speed.knots );
       
       if (DEBUG) console.log('-------------------------------------------------------');     
 
       const queryText = "INSERT INTO sensors(\"teensy_user\", \"teensy_phsensor\", \"teensy_temperaturesensor\", \"teensy_dosensor\", \"teensy_ecsensor\", \"teensy_tdssensor\", \"teensy_orpsensor\","+
-            "\"nmea_date\", \"nmea_time\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
+            "\"nmea_date\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
             jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
             jsonRecord.state.reported.phSensor + ","+ 
             jsonRecord.state.reported.temperatureSensor + ","+ 
@@ -76,12 +80,13 @@ class TamataPostgres {
             
 
             /* USB GPS Classic */
-            jsonPosition.datetime + "','" +
             jsonPosition.datetime + "'," +
-            jsonPosition.loc.dmm.latitude + "," +
-            jsonPosition.loc.dmm.longitude + "," +
-            jsonPosition.speed.knots + 
-      ")";
+            // jsonPosition.datetime + "'," +
+            jsonPosition.loc.geojson.coordinates[0] +"," +
+            jsonPosition.loc.geojson.coordinates[1] + "," +
+            // jsonPosition.loc.dmm.latitude + "," +
+            // jsonPosition.loc.dmm.longitude + "," +
+            jsonPosition.speed.knots + ")";
 
       if (DEBUG) console.log("queryText " + queryText);
       pool.query(queryText, (err, res) => {
