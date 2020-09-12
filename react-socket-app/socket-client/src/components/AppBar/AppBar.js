@@ -6,10 +6,14 @@ import {
   Typography,
   Button,
   Hidden,
+  CircularProgress,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import MenuIcon from "@material-ui/icons/Menu";
 import { makeStyles } from "@material-ui/core/styles";
+import { red, green } from "@material-ui/core/colors";
+import { useSelector, useDispatch } from "react-redux";
+import { ApiGetServerConfig } from "../../features/sensorsAPI";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -21,10 +25,39 @@ const useStyles = makeStyles((theme) => ({
   links: {
     color: "white",
   },
+  serverConnected: {
+    color: theme.palette.getContrastText(green[500]),
+    backgroundColor: green[500],
+    "&:hover": {
+      backgroundColor: green[700],
+    },
+  },
+  serverDisconnected: {
+    color: theme.palette.getContrastText(red[500]),
+    backgroundColor: red[500],
+    "&:hover": {
+      backgroundColor: red[700],
+    },
+  },
 }));
 
 export default ({ toggleDrawer }) => {
   const classes = useStyles();
+
+  const serverConnected = useSelector((state) => state.server.isConnected);
+  const isFetching = useSelector((state) => state.server.isFetching);
+  const dispatch = useDispatch();
+
+  const ServerButton = () => (
+    <Button
+      onClick={() => dispatch(ApiGetServerConfig())}
+      className={
+        serverConnected ? classes.serverConnected : classes.serverDisconnected
+      }
+    >
+      Serveur
+    </Button>
+  );
 
   return (
     <AppBar position="static">
@@ -58,6 +91,8 @@ export default ({ toggleDrawer }) => {
             <Button className={classes.links}>Système</Button>
           </Link>
         </Hidden>
+        <ServerButton />
+        {isFetching ? <CircularProgress color="inherit" size="1.5rem" /> : null}
       </Toolbar>
     </AppBar>
   );

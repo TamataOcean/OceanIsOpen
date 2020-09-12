@@ -18,6 +18,7 @@ import {
   ApiSayHello,
   ApiChangeLogsInterval,
   ApiToggleLogs,
+  ApiGetServerConfig,
 } from "../features/sensorsAPI";
 
 const useStyles = makeStyles((theme) => {
@@ -59,23 +60,6 @@ const Acquisition = () => {
   const sensors = useSelector((state) => state.sensors);
   const log = useSelector((state) => state.log);
 
-  // Send message to server
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const response = await fetch("/api/command", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ post }),
-    });
-    const body = await response.text();
-    if (response.status !== 200) throw Error(body.message);
-
-    setResToPost(body);
-  };
-
   // Toggles the acquisition of data
   // and display response from server
   const handleToggleLogs = async (e) => {
@@ -97,10 +81,11 @@ const Acquisition = () => {
     async function helloServer() {
       const hello = await ApiSayHello();
       console.log({ hello });
+      dispatch(ApiGetServerConfig());
     }
 
     helloServer();
-  }, []);
+  }, [dispatch]);
 
   const sensorsList = sensors.length ? (
     <div className={classes.root}>
@@ -168,16 +153,12 @@ const Acquisition = () => {
         <MenuItem value="3600000">Every hour</MenuItem>
       </TextField>
 
-      <form onSubmit={handleSubmit}>
-        <TextField
-          type="text"
-          label="Post to Server"
-          value={post}
-          onChange={(e) => setPost(e.target.value)}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-      <p>{resToPost}</p>
+      <div>
+        <p>
+          <strong>Server answer:</strong>
+        </p>
+        <p>{resToPost}</p>
+      </div>
     </div>
   );
 };
