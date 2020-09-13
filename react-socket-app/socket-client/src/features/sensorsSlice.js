@@ -101,6 +101,10 @@ const initialState = {
     state: "Pause", // or Recording
     interval: "10000", // or 30sec, 1min, 5min, 1hour, 1day
   },
+  server: {
+    isConnected: false,
+    isFetching: false,
+  },
 };
 
 const sensorsSlice = createSlice({
@@ -116,6 +120,18 @@ const sensorsSlice = createSlice({
     changeLogsInterval(state, action) {
       state.log.interval = action.payload;
     },
+    fetchingData(state) {
+      state.server.isFetching = true;
+    },
+    fetchedData(state) {
+      state.server.isFetching = false;
+    },
+    serverConnected(state) {
+      state.server.isConnected = true;
+    },
+    serverDisconnected(state) {
+      state.server.isConnected = false;
+    },
   },
 });
 
@@ -123,6 +139,10 @@ export const {
   calibrateSensor,
   toggleLogs,
   changeLogsInterval,
+  serverConnected,
+  serverDisconnected,
+  fetchedData,
+  fetchingData,
 } = sensorsSlice.actions;
 
 export default sensorsSlice.reducer;

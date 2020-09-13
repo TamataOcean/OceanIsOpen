@@ -1,4 +1,11 @@
-import { changeLogsInterval, toggleLogs } from "./sensorsSlice";
+import {
+  changeLogsInterval,
+  toggleLogs,
+  serverConnected,
+  serverDisconnected,
+  fetchedData,
+  fetchingData,
+} from "./sensorsSlice";
 
 export const ApiSayHello = () => async (dispatch, getState) => {
   try {
@@ -6,6 +13,33 @@ export const ApiSayHello = () => async (dispatch, getState) => {
     const body = await response.json();
     if (response.status !== 200) throw Error(body.message);
   } catch (err) {}
+};
+
+export const ApiGetServerConfig = () => async (dispatch, getState) => {
+  try {
+    dispatch(fetchingData());
+    const response = await fetch("/api/getConfig");
+    const body = await response.json();
+    const serverConfig = JSON.parse(body.apiAnswer);
+
+    // console.log(serverConfig);
+    const { logInterval, start_log } = serverConfig;
+    dispatch(serverConnected());
+    dispatch(changeLogsInterval(logInterval));
+
+    const isAcquisitionOn = !!start_log;
+    if (getState().log.isToggleOn !== isAcquisitionOn) {
+      dispatch(toggleLogs());
+    }
+
+    dispatch(fetchedData());
+
+    if (response.status !== 200) {
+      throw Error(body.message);
+    }
+  } catch (err) {
+    dispatch(serverDisconnected());
+  }
 };
 
 export const ApiChangeLogsInterval = (newInterval, post) => async (
@@ -25,7 +59,9 @@ export const ApiChangeLogsInterval = (newInterval, post) => async (
     const body = await response.text();
     if (response.status !== 200) throw Error(body.message);
     dispatch(changeLogsInterval(newInterval));
-  } catch (err) {}
+  } catch (err) {
+    dispatch(serverDisconnected());
+  }
 };
 
 export const ApiToggleLogs = (post) => async (dispatch, getState) => {
@@ -45,5 +81,7 @@ export const ApiToggleLogs = (post) => async (dispatch, getState) => {
     if (response.status !== 200) throw Error(body.message);
     dispatch(toggleLogs(body));
     return body;
-  } catch (err) {}
+  } catch (err) {
+    dispatch(serverDisconnected());
+  }
 };
