@@ -27,9 +27,10 @@ NodeJS program to listen Serialport & Saving data on Postgres.
 
 ### Config.json
 Define your 
-* mqtt config ( in this case mosquitto )
+* serial port for GPS
+* serial port for Teensy
 * postgres access
-* serialport for GPS ( modele should be : "standard" / "emLead" / "drotek" )
+* GPS modele ( modele should be : "standard" / "emLead" / "drotek" )
 
 ### save_data.js
 
