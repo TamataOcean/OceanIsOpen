@@ -18,6 +18,17 @@ void GravityTurbidity::setPin(int pin)
 void GravityTurbidity::setup()
 {
 		Debug::println("Initializing Turbidity Sensor");
+		this->calibrationStep = TURB_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
+
 	    pinMode(this->ledPin,INPUT);	 // Set ledPin to output mode
 	    pinMode(this->sensorIn, INPUT);       //Set the turbidity sensor pin to input mode
 

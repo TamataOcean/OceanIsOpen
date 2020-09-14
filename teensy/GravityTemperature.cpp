@@ -22,6 +22,9 @@
 
 GravityTemperature::GravityTemperature(int pin)
 {
+	this->calibrationStep = 0;
+	this->calibrationCurrentStep = TEMP_CALIBRATION_STEP;
+	
 	this->oneWire = new OneWire(pin);
 	this->update();
 }
@@ -37,6 +40,16 @@ GravityTemperature::~GravityTemperature()
 //********************************************************************************************
 void GravityTemperature::setup()
 {
+	this->calibrationStep = TEMP_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
 
 }
 

@@ -17,6 +17,17 @@ GravityEc::~GravityEc()
 
 void GravityEc::setup()
 {
+	this->calibrationStep = EC_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
+
 	pinMode(pin, INPUT);
 }
 

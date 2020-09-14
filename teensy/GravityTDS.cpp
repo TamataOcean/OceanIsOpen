@@ -18,6 +18,17 @@ void GravityTDS::setPin(int pin)
 
 void GravityTDS::setup()
 {
+		this->calibrationStep = TDS_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
+
 	    pinMode(this->pin,INPUT);
 
 }

@@ -13,10 +13,11 @@ public:
 public:
 	void setup();
 	void update();
-    void setPin(int pin);
+  void setPin(int pin);
 	double getValue();
-    float getTemperature() const;
-    void setTemperature(float temperature);
+  int getCalibrationStep();
+  float getTemperature() const;
+  void setTemperature(float temperature);
 
 private:
     int    _pin;
@@ -28,4 +29,3 @@ private:
     float  _saturationDoTemperature;
     float  _averageVoltage;
 };  
-

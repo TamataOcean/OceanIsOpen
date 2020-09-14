@@ -21,4 +21,14 @@ public:
 	virtual void setup()		= 0;
 	virtual void update()		= 0;
 	virtual double getValue()	= 0;
+
+   int getCalibrationStep();
+   int getCalibrationCurrentStep();
+   void setCalibrationCurrentStep(int stepNumber);
+   int calibrationStep;
+   int calibrationCurrentStep;
+   bool sensorIsCalibrate;
+
+private:
+
 };

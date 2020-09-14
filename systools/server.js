@@ -329,13 +329,13 @@ function getGpsPosition() {
 			// Using USB GPS classic
 			if ( GPS_Modele == "standard" ) {
 				if (data.includes("$GPRMC")) {
-					console.log("Using standard GPS : "+ GPS_Modele);
+					//console.log("Using standard GPS : "+ GPS_Modele);
 					resolve(nmea.parse(data));
 				}
 			}
 			// Using emLead GPS
 			else if ( GPS_Modele == "emLead") {
-				console.log("Using emLead GPS");
+				//console.log("Using emLead GPS");
 				if (data.includes("$GNRMC")) {
 				resolve(gprmc(data)); 
 				}

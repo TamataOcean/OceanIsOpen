@@ -14,7 +14,6 @@
 #define	MQTTBUFFERSIZE 3000
 #define MQTTTOPIC "teensy/sensors"
 
-
 //The maximum length of the sensor filter array
 #define ARRAYLENGTH 10
 
@@ -25,8 +24,6 @@
 #define SELECTEC 
 //TDS sensor comment this line if you not use TDS sensor
 #define SELECTTDS
-
-
 
 //Sensor pin settings
 #define PHPIN  35
@@ -56,3 +53,11 @@ enum SensorNumber
 	orpSensor = 5,			//ORP Sensor
 	turbiditySensor = 6		//Turbidity Sensor
 };
+
+#define PH_CALIBRATION_STEP 2
+#define TEMP_CALIBRATION_STEP 0
+#define DO_CALIBRATION_STEP 0
+#define EC_CALIBRATION_STEP 0
+#define TDS_CALIBRATION_STEP 2
+#define ORP_CALIBRATION_STEP 0
+#define TURB_CALIBRATION_STEP 3

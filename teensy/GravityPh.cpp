@@ -33,6 +33,16 @@ GravityPh::GravityPh():pin(PHPIN), offset(0.0f),pHValue(0)
 //********************************************************************************************
 void GravityPh::setup()
 {
+	this->calibrationStep = PH_CALIBRATION_STEP;
+	this->calibrationCurrentStep = 0;
+	if (this->calibrationCurrentStep == this->calibrationStep )
+	{
+		this->sensorIsCalibrate = true;
+	}
+	else
+	{
+		this->sensorIsCalibrate = false;
+	}
 	pinMode(pin, INPUT);
 }
 

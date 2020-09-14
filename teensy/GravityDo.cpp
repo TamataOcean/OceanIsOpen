@@ -30,7 +30,7 @@ GravityDo::GravityDo()
     _vref = 5000;
     _temperature = 25;
     _doValue = 0;
-
+    
 	_saturationDoVoltage = 1127.6;
 	_saturationDoTemperature = 25.0;
     _averageVoltage = 0;
@@ -54,6 +54,17 @@ void GravityDo::setTemperature(float temperature)
 
 void GravityDo::setup()
 {
+	this->calibrationStep = DO_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
+
 	pinMode(this->_pin, INPUT);
 }
 
