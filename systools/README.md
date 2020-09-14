@@ -26,11 +26,10 @@ NodeJS program to listen Serialport & Saving data on Postgres.
      sudo pip install docker-compose 
 
 ### Config.json
-Define your 
-<<<<<<< HEAD
-=======
 * serial port for GPS
 * serial port for Teensy
+* postgres database
+* GPS modele ( standard, emLead, Drotek )
 
 ### save_data.js
 
