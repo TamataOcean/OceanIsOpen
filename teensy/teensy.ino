@@ -176,7 +176,7 @@ int commandManager(String message) {
 void configToSerial(){
     DynamicJsonDocument doc(1024);
     
-    char SensorName[] = "{\"sensor1\":\"phSensor\", \"sensor2\":\"temperatureSensor\", \"sensor3\":\"doSensor\", \"sensor4\":\"ecSensor\", \"sensor5\":\"tdsSensor\", \"sensor6\":\"orpSensor\", \"sensor7\":\"turbiditySensor\"}";
+    char SensorName[] = "{\"sensor1\":{\"name\":\"phSensor\", \"calibrationStep\":2}, \"sensor2\":{\"name\":\"temperatureSensor\",\"calibrationStep\":0}, \"sensor3\":{\"name\":\"doSensor\",\"calibrationStep\":0},\"sensor4\":{\"name\":\"ecSensor\",\"calibrationStep\":0}, \"sensor5\":{\"name\":\"tdsSensor\",\"calibrationStep\":2}, \"sensor6\":{\"name\":\"orpSensor\",\"calibrationStep\":0}, \"sensor7\":{\"name\":\"turbiditySensor\",\"calibrationStep\":0}}";
 	  DeserializationError err= deserializeJson(doc, SensorName);
     if(err) {
       Serial.print(F(" - deserializeJson() failed with code "));

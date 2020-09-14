@@ -33,6 +33,7 @@ var baud_TEENSY;
 var baud_GPS;
 let parser_GPS;
 let parser_TEENSY;
+var GPS_Modele;
 
 var apiAnswer = "";
 //---------------------
@@ -51,6 +52,7 @@ jsonfile.readFile(configFile, function(err, data) {
 		baud_TEENSY = data.system.serialport_TEENSY.baud;
 		serialport_GPS = data.system.serialport_GPS.port;
 		baud_GPS = data.system.serialport_GPS.baud;
+		GPS_Modele = data.system.serialport_GPS.modele;
 		begin();
 });
 
@@ -62,14 +64,15 @@ jsonfile.readFile(configFile, function(err, data) {
 function begin() {
 	if (DEBUG) {
 		console.log('.............. CONFIG .............');
-		console.log('MqttServer ='+ mqttServer);
-		console.log('MqttUser ='+ mqttUser);
-		console.log('MqttTopic ='+ mqttTopic);
-		console.log('Postgres ='+ JSON.stringify(jsonConfig.system.postgres) ) ;
-		console.log('SerialPort TEENSY ='+ JSON.stringify(jsonConfig.system.serialport_TEENSY) ) ;
-		console.log('Baud TEENSY ='+ JSON.stringify(jsonConfig.system.serialport_TEENSY.baud) ) ;
-		console.log('SerialPort GPS ='+ JSON.stringify(jsonConfig.system.serialport_GPS) ) ;
-		console.log('Baud GPS ='+ JSON.stringify(jsonConfig.system.serialport_GPS.baud) ) ;
+		console.log('MqttServer = '+ mqttServer);
+		console.log('MqttUser = '+ mqttUser);
+		console.log('MqttTopic = '+ mqttTopic);
+		console.log('Postgres = '+ JSON.stringify(jsonConfig.system.postgres) ) ;
+		console.log('SerialPort TEENSY = '+ JSON.stringify(jsonConfig.system.serialport_TEENSY) ) ;
+		console.log('Baud TEENSY = '+ JSON.stringify(jsonConfig.system.serialport_TEENSY.baud) ) ;
+		console.log('SerialPort GPS = '+ JSON.stringify(jsonConfig.system.serialport_GPS) ) ;
+		console.log('Baud GPS = '+ JSON.stringify(jsonConfig.system.serialport_GPS.baud) ) ;
+		console.log('GPS Modele = '+ GPS_Modele ) ;
 	}
 
 	/* ************************************ */
@@ -312,6 +315,7 @@ async function insertData(topic,message) {
 Return a Promise with position type NMEA */
 function getGpsPosition() {
 	if (DEBUG_GPS) {console.log("getGpsPosition.... ")}
+	console.log("GPS MODELE in config.json : " + GPS_Modele);
 	return new Promise( (resolve, reject) => {
 		const nmea = require('node-nmea')
 		const gprmc = require('gprmc-parser')
@@ -322,17 +326,32 @@ function getGpsPosition() {
 				console.log(data)
 			}
 
+			// Using USB GPS classic
+			if ( GPS_Modele = "standard") {
+				console.log("Using standard GPS : "+ GPS_Modele);
+				if (data.includes("$GPRMC")) {
+					resolve(nmea.parse(data));
+				}
+			}
+			// Using emLead GPS
+			else if ( GPS_Modele = "emLead") {
+				console.log("Using emLead GPS");
+				if (data.includes("$GNRMC")) {
+				resolve(gprmc(data)); 
+				}
+			}
+
 			// Using emLead GPS
 			//if (data.includes("$GNRMC")) {
 			// Using USB GPS classic
-			if (data.includes("$GPRMC")) {
-				//console.log(nmea.parse(data))
-				// Using USB GPS classic	
-				resolve(nmea.parse(data));
+			// if (data.includes("$GPRMC")) {
+			// 	//console.log(nmea.parse(data))
+			// 	// Using USB GPS classic	
+			// 	resolve(nmea.parse(data));
 				
-				// Using emLid GPS 
-				//resolve(gprmc(data));
-			}
+			// 	// Using emLid GPS 
+			// 	//resolve(gprmc(data));
+			// }
 		})
 	})
 }
