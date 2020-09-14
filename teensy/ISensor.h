@@ -22,6 +22,7 @@ public:
 	virtual void update()		= 0;
 	virtual double getValue()	= 0;
 
+int isCalibrate();
    int getCalibrationStep();
    int getCalibrationCurrentStep();
    void setCalibrationCurrentStep(int stepNumber);

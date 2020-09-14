@@ -28,6 +28,10 @@ int ISensor::getCalibrationCurrentStep()
 	return this->calibrationCurrentStep;
 }
 
+int ISensor::isCalibrate() {
+    return this->sensorIsCalibrate;
+}
+
 void ISensor::setCalibrationCurrentStep(int step)
 {
 	this->calibrationCurrentStep = step;

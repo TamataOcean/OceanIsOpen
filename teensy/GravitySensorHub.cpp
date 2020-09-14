@@ -160,11 +160,11 @@ String GravitySensorHub::getCalibrationStatus(){
 	{
 		if (i == SensorCount-2 ) {
 			if (this->sensors[i]){
-				json += "\""+ SensorName[i] + "\":{\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + "}";
+				json += "\""+ SensorName[i] + "\":{\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate() + "}";
 			}	
 		}
 		else if (this->sensors[i]){
-			json += "\""+ SensorName[i] + "\":{\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + "}" + ",";
+			json += "\""+ SensorName[i] + "\":{\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate() + "}" + ",";
 		}
 	}
 	json += "} }";
