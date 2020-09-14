@@ -4,10 +4,10 @@ var DEBUG = true;
 const pg = require('pg')
 
 const pool = new pg.Pool({
-user: "docker",
-host: "192.168.0.34",
-database: "oio",
-password: "docker",
+user: "postgres",
+host: "192.168.0.113",
+database: "postgis_oceanSensors",
+password: "postgres",
 port: "5432"});
 
 class TamataPostgres {
@@ -49,12 +49,11 @@ class TamataPostgres {
       // console.log("     speed= " + jsonPosition.speed.knots );
       
       /* USB GPS Classic Format */
-      console.log("     date = " + jsonPosition.datetime );
-      console.log("     time = " + jsonPosition.datetime );
-      console.log("     latitude = " + jsonPosition.loc.dmm.latitude );
+      console.log("     datetime = " + JSON.stringify(jsonPosition.datetime) );
       console.log("     coordinates[0] = " + jsonPosition.loc.geojson.coordinates[0]);
-      console.log("     longitude = " + jsonPosition.loc.dmm.longitude );
       console.log("     coordinates[1] = " + jsonPosition.loc.geojson.coordinates[1] );
+      console.log("     latitude = " + jsonPosition.loc.dmm.latitude );
+      console.log("     longitude = " + jsonPosition.loc.dmm.longitude );
       console.log("     speed= " + jsonPosition.speed.knots );
       
       if (DEBUG) console.log('-------------------------------------------------------');     
@@ -80,10 +79,9 @@ class TamataPostgres {
             
 
             /* USB GPS Classic */
-            jsonPosition.datetime + "'," +
-            // jsonPosition.datetime + "'," +
-            jsonPosition.loc.geojson.coordinates[0] +"," +
+            JSON.stringify(jsonPosition.datetime) + "'," +
             jsonPosition.loc.geojson.coordinates[1] + "," +
+            jsonPosition.loc.geojson.coordinates[0] +"," +
             // jsonPosition.loc.dmm.latitude + "," +
             // jsonPosition.loc.dmm.longitude + "," +
             jsonPosition.speed.knots + ")";

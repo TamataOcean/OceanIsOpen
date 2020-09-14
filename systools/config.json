@@ -10,28 +10,28 @@
 
     "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
     "postgres": {
-      "user": "docker",
-      "host": "postgis",
-      "database": "oio",
-      "password": "docker",
+      "user": "postgres",
+      "host": "192.168.0.113",
+      "database": "OCEANWATER",
+      "password": "postgres",
       "port": "5432"
     },
 
     "influxDB": {
       "database": "datateensy",
-      "host": "192.168.0.48",
+      "host": "192.168.0.104",
       "port": 8086,
       "username": "test",
       "password": "test"
     },
 
     "serialport_GPS": {
-      "port": "/dev/ttyUSB0",
+      "port": "/dev/tty.SLAB_USBtoUART",
       "baud": 4800
     },
 
     "serialport_TEENSY": {
-      "port": "/dev/ttyACM0",
+      "port": "/dev/tty.usbmodem5905471",
       "baud": 115200
     }
   },

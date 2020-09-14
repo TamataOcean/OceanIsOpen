@@ -79,15 +79,16 @@ function begin() {
 	const Readline = require('@serialport/parser-readline')
 	
 	/* LISTENING TEENSY */
+	/* **************** */
 	const port_TEENSY = new SerialPort( serialport_TEENSY, { baudRate: baud_TEENSY })
 	port_TEENSY.on('error', function(err) {
 		console.log('Error: ', err.message)
 	})
-
+	
 	port_TEENSY.on('open', function () {
-        port_TEENSY.write('{\"order\":\"Init_connection_from_Raspi\"}', function(err) {
-        	if (err) {
-        		return console.log('Error: ', err.message);
+		port_TEENSY.write('{\"order\":\"Init_connection_from_Raspi\"}', function(err) {
+			if (err) {
+				return console.log('Error: ', err.message);
         	}
         	console.log('message init sent');
         });
@@ -97,10 +98,10 @@ function begin() {
 		console.log("Serial connection closed");
 		open();
 	})
-
+	
 	parser_TEENSY = port_TEENSY.pipe(new Readline({ delimiter: '\r\n' }))
 	console.log("Listening on serial for TEENSY")
-
+	
 	parser_TEENSY.on('data', function(data) {
 		console.log(data)
 		if (data.includes("{\"state\":{\"reported\":{")) {
@@ -113,14 +114,17 @@ function begin() {
 			apiAnswer = data;
 		}
 	})
-
+	
+	/* ************* */
 	/* LISTENING GPS */
+	/* ************* */
 	const port_GPS = new SerialPort( serialport_GPS, { baudRate: baud_GPS })
 	port_GPS.on('error', function(err) {
 			console.log('Error: ', err.message)
 	})
 
 	parser_GPS = port_GPS.pipe(new Readline({ delimiter: '\r\n' }))
+	getGpsPosition()
 
 	// **************************** 
     /* EXPRESS.JS -------------- */  
@@ -327,7 +331,7 @@ function getGpsPosition() {
 				resolve(nmea.parse(data));
 				
 				// Using emLid GPS 
-				// resolve(gprmc(data));
+				//resolve(gprmc(data));
 			}
 		})
 	})
