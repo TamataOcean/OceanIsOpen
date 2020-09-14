@@ -1,7 +1,7 @@
 # Sytools component 
 
 Config service to keep data.
-NodeJS program to listen Mosquitto & Saving data on Postgres.
+NodeJS program to listen Serialport & Saving data on Postgres.
 
 ![save_data_JS_Architecture](https://user-images.githubusercontent.com/25310798/66206025-1a837980-e6af-11e9-9402-aa3d28ff5975.png)
 ### node installed ( [v12.9.1 armv7](https://nodejs.org/en/download/) )
@@ -29,7 +29,7 @@ NodeJS program to listen Mosquitto & Saving data on Postgres.
 Define your 
 * mqtt config ( in this case mosquitto )
 * postgres access
-* serialport for GPS
+* serialport for GPS ( modele should be : "standard" / "emLead" / "drotek" )
 
 ### save_data.js
 
