@@ -27,8 +27,10 @@ NodeJS program to listen Serialport & Saving data on Postgres.
 
 ### Config.json
 Define your 
-* postgres access
-* serialport for GPS ( modele should be : "standard" / "emLead" / "drotek" )
+<<<<<<< HEAD
+=======
+* serial port for GPS
+* serial port for Teensy
 
 ### save_data.js
 
