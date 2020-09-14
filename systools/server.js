@@ -223,6 +223,20 @@ function begin() {
 		res.send({ apiAnswer: apiAnswer })
 	})
 
+	// Return Calibration config to ReactApp in JSON Format
+	.get('/api/getCalibrationStatus', (req, res) => {
+		console.log('API getCalibrationStatus requested with GET Method: ');
+		port_TEENSY.write("{\"order\":\"calibrationStatus\"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+					}
+				console.log('command calibrationStatus sent');
+				//res.redirect('/');
+			})
+			// Initiate when the server is lauching... 
+		res.send({ apiAnswer: apiAnswer })
+	})
+
 	.post('/api/command', ( req, res ) => {
 		console.log('API Command requested with POST Method: ' + req.query.cmd_id);
 		console.log('Command requested : '+ "{\"order\":\"" + req.query.cmd_id + "\"}" );

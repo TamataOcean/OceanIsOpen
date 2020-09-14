@@ -85,6 +85,9 @@ void setup() {
 	((GravityPh*)(sensorHub.sensors[phSensor]))->setOffset(PHOFFSET);
 	Debug::print("pH offset: ");
 	Debug::println(PHOFFSET);
+
+	Debug::println("Calibration Step to Serial ");
+  sensorCalibrationStepToSerial();
 }
 
 /*************************/
@@ -140,7 +143,13 @@ int commandManager(String message) {
     //((GravityPh*)(sensorHub.sensors[phSensor]))->setOffset(PHOFFSET);
     Debug::println("Calibration step... ");
   }
-  
+  else if (jsonDoc["order"] == "calibrationStatus") {
+    Serial.println( name + " - CALIBRATE Info received");
+    Serial.println(sensorHub.getCalibrationStatus().c_str());
+  }
+
+  /* START / STOP LOG */
+  /********************/
   else if (jsonDoc["order"] == "startLog") {
     Serial.println( name + " - Start log received ");
     Serial.print( name + " - Using interval : " );
@@ -174,7 +183,7 @@ int commandManager(String message) {
 void configToSerial(){
     DynamicJsonDocument doc(1024);
     
-    char SensorName[] = "{\"sensors\":{\"sensor1\":{\"name\":\"phSensor\", \"calibrationStep\":2, \"calibrationCurrentStep\":0}, \"sensor2\":{\"name\":\"temperatureSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0}, \"sensor3\":{\"name\":\"doSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0},\"sensor4\":{\"name\":\"ecSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0}, \"sensor5\":{\"name\":\"tdsSensor\",\"calibrationStep\":2, \"calibrationCurrentStep\":0}, \"sensor6\":{\"name\":\"orpSensor\",\"calibrationStep\":0, \"calibrationCurrentStep\":0}, \"sensor7\":{\"name\":\"turbiditySensor\",\"calibrationStep\":0, \"calibrationCurrentStep\":0}}}";
+    char SensorName[] = "{\"sensors\":{\"sensor1\":{\"name\":\"phSensor\", \"calibrationStep\":2, \"calibrationCurrentStep\":0 }, \"sensor2\":{\"name\":\"temperatureSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0}, \"sensor3\":{\"name\":\"doSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0},\"sensor4\":{\"name\":\"ecSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0}, \"sensor5\":{\"name\":\"tdsSensor\",\"calibrationStep\":2, \"calibrationCurrentStep\":0}, \"sensor6\":{\"name\":\"orpSensor\",\"calibrationStep\":0, \"calibrationCurrentStep\":0}, \"sensor7\":{\"name\":\"turbiditySensor\",\"calibrationStep\":0, \"calibrationCurrentStep\":0}}}";
 	  DeserializationError err= deserializeJson(doc, SensorName);
     if(err) {
       Serial.print(F(" - deserializeJson() failed with code "));
@@ -189,5 +198,8 @@ void configToSerial(){
     
     serializeJson(doc, Serial);
     Serial.println();
+}
 
+void sensorCalibrationStepToSerial(){
+  Serial.println(sensorHub.getCalibrationStatus().c_str());
 }
