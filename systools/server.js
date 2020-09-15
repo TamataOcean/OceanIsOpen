@@ -194,46 +194,78 @@ function begin() {
 		res.send({ express: 'Hello From Express' });
 	})
 	
-	// Sending calibrate order to Teensy
-	.get('/api/calibratePh', (req, res) => {
-		console.log('API calibrate requested with GET Method: ' + req.query.cmd_id);
-		port_TEENSY.write("{\"order\":\"calibratePh\"}" , function(err){
-			if (err) {
-				return console.log('Error : ', err.message);
-       	   	}
-          	console.log('command getConfig sent');
-           	//res.redirect('/');
-		   })
-		   // Initiate when the server is lauching... 
-		res.send({ apiAnswer: apiAnswer })
-	})
-
-
+	
+	
 	// Return Teensy config to ReactApp in JSON Format
 	.get('/api/getConfig', (req, res) => {
 		console.log('API getConfig requested with GET Method: ');
 		port_TEENSY.write("{\"order\":\"getConfig\"}" , function(err){
 			if (err) {
 				return console.log('Error : ', err.message);
-       	   	}
-          	console.log('command getConfig sent');
-           	//res.redirect('/');
-		   })
-		   // Initiate when the server is lauching... 
+			}
+			console.log('command getConfig sent');
+			//res.redirect('/');
+		})
+		// Initiate when the server is lauching... 
 		res.send({ apiAnswer: apiAnswer })
 	})
-
+	
 	// Return Calibration config to ReactApp in JSON Format
 	.get('/api/getCalibrationStatus', (req, res) => {
 		console.log('API getCalibrationStatus requested with GET Method: ');
 		port_TEENSY.write("{\"order\":\"calibrationStatus\"}" , function(err){
 			if (err) {
 				return console.log('Error : ', err.message);
-					}
-				console.log('command calibrationStatus sent');
-				//res.redirect('/');
-			})
-			// Initiate when the server is lauching... 
+			}
+			console.log('command calibrationStatus sent');
+			//res.redirect('/');
+		})
+		// Initiate when the server is lauching... 
+		res.send({ apiAnswer: apiAnswer })
+	})
+	
+	// Sending calibrate order to Teensy
+	.get('/api/calibrate', (req, res) => {
+		var sensorId = req.query.sensorId
+		console.log('API calibrate requested with GET Method: ' + req.query.sensorId);
+		port_TEENSY.write("{\"order\":\"calibrate\", \"sensorId\":"+ sensorId +"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+				  }
+			  console.log('command calibrate for sensor '+ sensorId +' sent');
+			   //res.redirect('/');
+		   })
+		   // Initiate when the server is lauching... 
+		res.send({ apiAnswer: apiAnswer })
+	})
+
+	// Init calibration ( sensorId ) will push 0 to currentCalibrationStep
+	.get('/api/initCalibration', (req, res) => {
+		var sensorId = req.query.sensorId
+		console.log('API initCalibration requested with GET Method: ' + req.query.sensorId);
+		port_TEENSY.write("{\"order\":\"initCalibration\", \"sensorId\":"+ sensorId +"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+				  }
+			  console.log('command calibrate for sensor '+ sensorId +' sent');
+			   //res.redirect('/');
+		   })
+		   // Initiate when the server is lauching... 
+		res.send({ apiAnswer: apiAnswer })
+	})
+
+	// get SensorInformation ( sensorId )
+	.get('/api/sensorInfo', (req, res) => {
+		var sensorId = req.query.sensorId
+		console.log('API sensorInfo requested with GET Method: ' + req.query.sensorId);
+		port_TEENSY.write("{\"order\":\"sensorInfo\", \"sensorId\":"+ sensorId +"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+				  }
+			  console.log('command sensorInfo for sensor '+ sensorId +' sent');
+			   //res.redirect('/');
+		   })
+		   // Initiate when the server is lauching... 
 		res.send({ apiAnswer: apiAnswer })
 	})
 
@@ -318,9 +350,18 @@ async function insertData(topic,message) {
 
 		if (DEBUG) console.log('Inserted datas : ' + JSON.stringify(parsedMessage) ) ;
 		// Classic GPS on USB
-		if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.loc.dmm.latitude) + ' LON=' + JSON.stringify(parsedPosition.loc.dmm.longitude) ) ;
-		// EmLid GPS 
-		// if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
+		if( GPS_Modele == "standard" ) {
+			if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.loc.dmm.latitude) + ' LON=' + JSON.stringify(parsedPosition.loc.dmm.longitude) ) ;
+		}
+		else if ( GPS_Modele == "emLead") {
+			// EmLid GPS 
+			if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
+		}
+		else if ( GPS_Modele == "Drotek" ) {
+			//Drotek modele
+			if (DEBUG) console.log('At GPS position : LAT = ' + JSON.stringify(parsedPosition.geo.latitude) + ' LON=' + JSON.stringify(parsedPosition.geo.longitude) ) ;
+		}
+
 	})
 } 
 
@@ -354,18 +395,6 @@ function getGpsPosition() {
 				resolve(gprmc(data)); 
 				}
 			}
-
-			// Using emLead GPS
-			//if (data.includes("$GNRMC")) {
-			// Using USB GPS classic
-			// if (data.includes("$GPRMC")) {
-			// 	//console.log(nmea.parse(data))
-			// 	// Using USB GPS classic	
-			// 	resolve(nmea.parse(data));
-				
-			// 	// Using emLid GPS 
-			// 	//resolve(gprmc(data));
-			// }
 		})
 	})
 }

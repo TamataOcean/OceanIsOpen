@@ -136,16 +136,34 @@ int commandManager(String message) {
   }
   /* CALIBRATION WORKFLOW */
   /* ******************** */
+  else if (jsonDoc["order"] == "initCalibration") {
+    int Sensor = jsonDoc["sensorId"].as<int>();
+    Serial.println( name + " - initCalibration order received for sensor : " + Sensor);
+    (sensorHub.sensors[Sensor])->setCalibrationCurrentStep( 0 );
+    Debug::print(name + " Sensor setCalibration = " );
+    Debug::println((sensorHub.sensors[Sensor])->getCalibrationCurrentStep() );
+  }
   else if (jsonDoc["order"] == "calibrate") {
-    int Sensor = jsonDoc["sensorNumber"].as<int>();
+    int Sensor = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - CALIBRATE order received for sensor : " + Sensor);
 
+    (sensorHub.sensors[Sensor])->setCalibrationCurrentStep( (sensorHub.sensors[Sensor])->getCalibrationCurrentStep()+1);
+    Debug::print(name + " - Sensor setCalibration = " );
+    Debug::println((sensorHub.sensors[Sensor])->getCalibrationCurrentStep() );
     //((GravityPh*)(sensorHub.sensors[phSensor]))->setOffset(PHOFFSET);
-    Debug::println("Calibration step... ");
+    Debug::println( name + " Calibration step... ");
   }
   else if (jsonDoc["order"] == "calibrationStatus") {
     Serial.println( name + " - CALIBRATE Info received");
     Serial.println(sensorHub.getCalibrationStatus().c_str());
+  }
+
+  else if (jsonDoc["order"] == "sensorInfo") {
+    int sensorId = jsonDoc["sensorId"].as<int>();
+    Serial.println( name + " - sensorInfo order received for sensor : " + sensorId);
+    sensorHub.getSensorInfo( sensorId );
+    Debug::print(name + " Sensor info = " );
+    Debug::println( sensorHub.getSensorInfo(sensorId) );
   }
 
   /* START / STOP LOG */

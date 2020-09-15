@@ -22,13 +22,13 @@ public:
 	virtual void update()		= 0;
 	virtual double getValue()	= 0;
 
-int isCalibrate();
-   int getCalibrationStep();
-   int getCalibrationCurrentStep();
-   void setCalibrationCurrentStep(int stepNumber);
-   int calibrationStep;
-   int calibrationCurrentStep;
-   bool sensorIsCalibrate;
+	int isCalibrate();
+   	int getCalibrationStep();
+   	int getCalibrationCurrentStep();
+   	void setCalibrationCurrentStep(int stepNumber);
+   	int calibrationStep;
+   	int calibrationCurrentStep;
+   	bool sensorIsCalibrate;
 
 private:
 

@@ -172,6 +172,14 @@ String GravitySensorHub::getCalibrationStatus(){
 	return json;
 }
 
+String GravitySensorHub::getSensorInfo(int sensorId){
+	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
+	
+	String json = "{\"sensor\":{";	
+	json += "\"sensorId\":"+ (String)sensorId + ",\"sensorName\":\""+ SensorName[sensorId] + "\",\"calibrationStep\":" + this->sensors[sensorId]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[sensorId]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[sensorId]->isCalibrate() + "}}";
+	return json;
+}
+
 DynamicJsonDocument GravitySensorHub::getJsonSensorsName(){
 	char SensorName[SENSORCOUNT] = "{\"phSensor\", \"temperatureSensor\", \"doSensor\", \"ecSensor\", \"tdsSensor\", \"orpSensor\", \"turbiditySensor\"}";
 	DynamicJsonDocument doc(1024);
