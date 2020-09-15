@@ -9,6 +9,7 @@ import WGeopoppy from "../WindowsApp/WGeopoppy";
 import WGrafana from "../WindowsApp/WGrafana";
 import WSystem from "../WindowsApp/WSystem";
 import Acquisition from "../Acquisition";
+import Calibration from "../Calibration";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,7 +27,7 @@ export default ({ theme, toggleDarkTheme }) => {
         <HelloCard theme={theme} toggleDarkTheme={toggleDarkTheme} />
       </Route>
       <Route exact path="/acquisition" component={Acquisition} />
-      <Route exact path="/calibration" component={WCalibration} />
+      <Route exact path="/calibration" component={Calibration} />
       <Route exact path="/geopoppy" component={WGeopoppy} />
       <Route exact path="/system" component={WSystem} />
       <Route exact path="/grafana" component={WGrafana} />
