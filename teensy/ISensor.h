@@ -15,6 +15,9 @@
 * date    :  2017-04-06
 **********************************************************************/
 #pragma once
+
+#include "Arduino.h"
+
 class ISensor
 {
 public:
@@ -26,6 +29,7 @@ public:
    	int getCalibrationStep();
    	int getCalibrationCurrentStep();
    	void setCalibrationCurrentStep(int stepNumber);
+	String getCalibrationMessage(int stepNumber);
    	int calibrationStep;
    	int calibrationCurrentStep;
    	bool sensorIsCalibrate;

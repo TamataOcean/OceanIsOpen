@@ -105,17 +105,14 @@ function begin() {
 	parser_TEENSY = port_TEENSY.pipe(new Readline({ delimiter: '\r\n' }))
 	console.log("Listening on serial for TEENSY")
 	
+	/* ECOUTE LE PORT TEENSY */
+	/* ********************* */
 	parser_TEENSY.on('data', function(data) {
 		console.log(data)
 		if (data.includes("{\"state\":{\"reported\":{")) {
 			console.log('Data sensors arrived')
 			insertData('serial', data)
 		} 
-		
-		if (data.includes("Config_Teensy")) {
-			console.log('Api answer received')
-			apiAnswer = data;
-		}
 	})
 	
 	/* ************* */
@@ -176,13 +173,8 @@ function begin() {
 		if (req.query.cmd_id = "update_interval") {
 			var new_interval = parseFloat(req.body.interval_value);
 			console.log('interval value : '+ new_interval);
-			
-			port_TEENSY.write("{\"order\":\"" + req.query.cmd_id + "\",\"value\":" + new_interval + "}" , function(err){
-				if (err) {
-					return console.log('Error : ', err.message);
-				}
-				console.log('command ' + req.query.cmd_id + 'sent');
-				res.redirect('/');
+			writeToTeensy(port_TEENSY, "update_interval" ).then((data) => {
+				res.send({ apiAnswer:data})
 			})
 		}
 	})
@@ -194,103 +186,58 @@ function begin() {
 		res.send({ express: 'Hello From Express' });
 	})
 	
-	
-	
 	// Return Teensy config to ReactApp in JSON Format
 	.get('/api/getConfig', (req, res) => {
 		console.log('API getConfig requested with GET Method: ');
-		port_TEENSY.write("{\"order\":\"getConfig\"}" , function(err){
-			if (err) {
-				return console.log('Error : ', err.message);
-			}
-			console.log('command getConfig sent');
-			//res.redirect('/');
+		writeToTeensy(port_TEENSY, "getConfig" ).then((data) => {
+			res.send({ apiAnswer:data})
 		})
-		// Initiate when the server is lauching... 
-		res.send({ apiAnswer: apiAnswer })
 	})
 	
 	// Return Calibration config to ReactApp in JSON Format
 	.get('/api/getCalibrationStatus', (req, res) => {
 		console.log('API getCalibrationStatus requested with GET Method: ');
-		port_TEENSY.write("{\"order\":\"calibrationStatus\"}" , function(err){
-			if (err) {
-				return console.log('Error : ', err.message);
-			}
-			console.log('command calibrationStatus sent');
-			//res.redirect('/');
+		writeToTeensy(port_TEENSY, "getCalibrationStatus" ).then((data) => {
+			res.send({ apiAnswer:data})
 		})
-		// Initiate when the server is lauching... 
-		res.send({ apiAnswer: apiAnswer })
 	})
 	
 	// Sending calibrate order to Teensy
 	.get('/api/calibrate', (req, res) => {
 		var sensorId = req.query.sensorId
 		console.log('API calibrate requested with GET Method: ' + req.query.sensorId);
-		port_TEENSY.write("{\"order\":\"calibrate\", \"sensorId\":"+ sensorId +"}" , function(err){
-			if (err) {
-				return console.log('Error : ', err.message);
-				  }
-			  console.log('command calibrate for sensor '+ sensorId +' sent');
-			   //res.redirect('/');
-		   })
-		   // Initiate when the server is lauching... 
-		res.send({ apiAnswer: apiAnswer })
+		writeToTeensy(port_TEENSY, "calibrate", sensorId).then((data)=> {
+			res.send({ apiAnswer: data })
+		})
 	})
 
 	// Init calibration ( sensorId ) will push 0 to currentCalibrationStep
 	.get('/api/initCalibration', (req, res) => {
 		var sensorId = req.query.sensorId
 		console.log('API initCalibration requested with GET Method: ' + req.query.sensorId);
-		port_TEENSY.write("{\"order\":\"initCalibration\", \"sensorId\":"+ sensorId +"}" , function(err){
-			if (err) {
-				return console.log('Error : ', err.message);
-				  }
-			  console.log('command calibrate for sensor '+ sensorId +' sent');
-			   //res.redirect('/');
-		   })
-		   // Initiate when the server is lauching... 
-		res.send({ apiAnswer: apiAnswer })
+		writeToTeensy(port_TEENSY, "initCalibration", sensorId).then((data)=> {
+			res.send({ apiAnswer: data })
+		})
 	})
 
+	// **********************************
 	// get SensorInformation ( sensorId )
+	// **********************************
 	.get('/api/sensorInfo', (req, res) => {
 		var sensorId = req.query.sensorId
 		console.log('API sensorInfo requested with GET Method: ' + req.query.sensorId);
-		port_TEENSY.write("{\"order\":\"sensorInfo\", \"sensorId\":"+ sensorId +"}" , function(err){
-			if (err) {
-				return console.log('Error : ', err.message);
-				  }
-			  console.log('command sensorInfo for sensor '+ sensorId +' sent');
-			   //res.redirect('/');
-		   })
-		   // Initiate when the server is lauching... 
-		res.send({ apiAnswer: apiAnswer })
-	})
-
-	.post('/api/command', ( req, res ) => {
-		console.log('API Command requested with POST Method: ' + req.query.cmd_id);
-		console.log('Command requested : '+ "{\"order\":\"" + req.query.cmd_id + "\"}" );
-		console.log('Interval requested : '+ "{\"interval\":\"" + req.query.interval + "\"}" );
-		
-       	port_TEENSY.write("{\"order\":\"" + req.query.cmd_id + "\"}" , function(err){
-			if (err) {
-				return console.log('Error : ', err.message);
-       	   	}
-          	console.log('command ' + req.query.cmd_id + ' sent');
-           	//res.redirect('/');
-		   })
-		   
-		console.log(req.body);
-		console.log("Interval : ", req.interval);
-		res.send(`Server received your POST request. This : ${req.body.post}`);
+		writeToTeensy(port_TEENSY, "sensorInfo", sensorId).then( (data) => {
+			res.send({ apiAnswer: data })
+		})
 	})
 
 	.post('/api/updateLogInterval', ( req, res ) => {
-		console.log('API Command requested with POST Method: ' + req.query.cmd_id); // update_interval
 		console.log('Interval requested : '+ "{\"interval\":\"" + req.query.interval + "\"}" );
 		
+		// writeToTeensy(port_TEENSY, "update_interval", req.query.interval).then( (data) => {
+		// 	res.send({ apiAnswer: data })
+		// })
+
        	port_TEENSY.write("{\"order\":\"" + req.query.cmd_id + "\",\"value\":\""+ req.query.interval + "\" }" , function(err){
 			if (err) {
 				return console.log('Error : ', err.message);
@@ -397,4 +344,119 @@ function getGpsPosition() {
 			}
 		})
 	})
+}
+
+/***************************************
+- function writeToTeensy()
+Return a Promise when Teensy answer */
+async function writeToTeensy(port_TEENSY, messageType, sensorId) {
+	if (DEBUG_GPS) {console.log("writeToTeensy.... ")}
+	
+	if (messageType == "sensorInfo") {
+		port_TEENSY.write("{\"order\":\"sensorInfo\", \"sensorId\":"+ sensorId +"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+			}
+			console.log('command sensorInfo for sensor '+ sensorId +' sent');
+		})
+
+		return new Promise( (resolve, reject) => {
+			parser_TEENSY.on('data', function (data) {
+				if (data.includes("sensorInfoAnswer")) {
+					console.log('Api answer sensorInfo received')
+					resolve(data);
+				}	
+			})
+		})
+	}
+
+	if (messageType == "getConfig") {
+		port_TEENSY.write("{\"order\":\"getConfig\"}" , function(err){
+			if (err) {
+					return console.log('Error : ', err.message);
+				}
+				console.log('command getConfig sent');
+		})
+		return new Promise( (resolve, reject) => {
+			parser_TEENSY.on('data', function (data) {
+				if (data.includes("Config_Teensy")) {
+					console.log('Api answer Config_Teensy received')
+					resolve(data);
+				}	
+			})
+		})
+	}
+
+	if (messageType == "getCalibrationStatus") {
+		port_TEENSY.write("{\"order\":\"calibrationStatus\"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+			}
+			console.log('command calibrationStatus sent');
+		})
+		return new Promise( (resolve, reject) => {
+			parser_TEENSY.on('data', function (data) {
+				if (data.includes("calibrationStatusAnswer")) {
+					console.log('Api answer calibrationStatusAnswer received')
+					resolve(data);
+				}	
+			})
+		})
+	}
+
+	if (messageType == "calibrate") {
+		port_TEENSY.write("{\"order\":\"calibrate\", \"sensorId\":"+ sensorId +"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+				  }
+			  console.log('command calibrate for sensor '+ sensorId +' sent');
+			   //res.redirect('/');
+		})
+
+		return new Promise( (resolve, reject) => {
+			parser_TEENSY.on('data', function (data) {
+				if (data.includes("calibrateAnswer")) {
+					console.log('Api answer calibrateAnswer received')
+					resolve(data);
+				}	
+			})
+		})
+	}
+
+	if (messageType == "initCalibration") {
+		port_TEENSY.write("{\"order\":\"initCalibration\", \"sensorId\":"+ sensorId +"}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+				  }
+			  console.log('command calibrate for sensor '+ sensorId +' sent');
+		})
+
+		return new Promise( (resolve, reject) => {
+			parser_TEENSY.on('data', function (data) {
+				if (data.includes("initCalibrationAnswer")) {
+					console.log('Api answer calibrateAnswer received')
+					resolve(data);
+				}	
+			})
+		})
+	}
+
+	if (messageType == "update_interval") {
+		port_TEENSY.write("{\"order\":\"" + sensorId + "\",\"value\":" + new_interval + "}" , function(err){
+			if (err) {
+				return console.log('Error : ', err.message);
+			}
+			console.log('command update_interval sent');
+		})
+
+		return new Promise( (resolve, reject) => {
+			parser_TEENSY.on('data', function (data) {
+				if (data.includes("update_intervalAnswer")) {
+					console.log('Api answer update_intervalAnswer received')
+					resolve(data);
+				}	
+			})
+		})
+	}
+
 }

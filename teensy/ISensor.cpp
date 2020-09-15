@@ -32,6 +32,18 @@ int ISensor::isCalibrate() {
     return this->sensorIsCalibrate;
 }
 
+String ISensor::getCalibrationMessage(int stepNumber) {
+    if ( stepNumber == 0 ) {
+    return "{\"initCalibrationAnswer\":{\"message\":\"Message INIT Calibration step0 ready\"}}";
+
+    }
+    else
+    {
+    return "{\"calibrateAnswer\":{\"message\":\"Message TEST Calibration step1\"}}";
+    }
+    
+}
+
 void ISensor::setCalibrationCurrentStep(int step)
 {
     //if ( step <= this->calibrationStep  )

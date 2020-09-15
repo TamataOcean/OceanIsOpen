@@ -141,18 +141,19 @@ int commandManager(String message) {
     int Sensor = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - initCalibration order received for sensor : " + Sensor);
     (sensorHub.sensors[Sensor])->setCalibrationCurrentStep( 0 );
-    Debug::print(name + " Sensor setCalibration = " );
-    Debug::println((sensorHub.sensors[Sensor])->getCalibrationCurrentStep() );
+    Debug::println(name + " Sensor setCalibration = " );
+    Debug::println((sensorHub.sensors[Sensor])->getCalibrationMessage(0) );
   }
   else if (jsonDoc["order"] == "calibrate") {
     int Sensor = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - CALIBRATE order received for sensor : " + Sensor);
 
     (sensorHub.sensors[Sensor])->setCalibrationCurrentStep( (sensorHub.sensors[Sensor])->getCalibrationCurrentStep()+1);
-    Debug::print(name + " - Sensor setCalibration = " );
+    Debug::println(name + " - Sensor setCalibration = " );
     Debug::println((sensorHub.sensors[Sensor])->getCalibrationCurrentStep() );
+    Debug::println((sensorHub.sensors[Sensor])->getCalibrationMessage(1) );
+    
     //((GravityPh*)(sensorHub.sensors[phSensor]))->setOffset(PHOFFSET);
-    Debug::println( name + " Calibration step... ");
   }
   else if (jsonDoc["order"] == "calibrationStatus") {
     Serial.println( name + " - CALIBRATE Info received");
@@ -190,8 +191,9 @@ int commandManager(String message) {
     else { 
       Serial.println("Interval < 500 limit");
     }
-    Serial.print(name + " - New interval : " );
+    Serial.print(name + " - new Interval log set : " );
     Serial.println(logInterval);
+    Serial.println("{\"update_intervalAnswer\":{\"newInterval\":"+(String)logInterval + "}}");
     //logInterval = newInterval;
   }
   else {
