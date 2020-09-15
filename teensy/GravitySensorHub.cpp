@@ -175,9 +175,16 @@ String GravitySensorHub::getCalibrationStatus(){
 String GravitySensorHub::getSensorInfo(int sensorId){
 	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
 	
-	String json = "{\"sensor\":{";	
-	json += "\"sensorId\":"+ (String)sensorId + ",\"sensorName\":\""+ SensorName[sensorId] + "\",\"calibrationStep\":" + this->sensors[sensorId]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[sensorId]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[sensorId]->isCalibrate() + "}}";
+	String json = "{";	
+	json += "\"sensorId\":"+ (String)sensorId + ",\"sensorName\":\""+ SensorName[sensorId] + "\",\"calibrationStep\":" + this->sensors[sensorId]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[sensorId]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[sensorId]->isCalibrate();
+	json += ",\"value\":"+ (String)this->sensors[sensorId]->getValue() ;
+	json += "}";
 	return json;
+}
+
+String GravitySensorHub::getSensorName(int sensorId){
+	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
+	return SensorName[sensorId];
 }
 
 DynamicJsonDocument GravitySensorHub::getJsonSensorsName(){

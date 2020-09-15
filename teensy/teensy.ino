@@ -134,6 +134,7 @@ int commandManager(String message) {
     _reboot_Teensyduino_();
     //ESP.restart();
   }
+
   /* CALIBRATION WORKFLOW */
   /* ******************** */
   else if (jsonDoc["order"] == "initCalibration") {
@@ -161,8 +162,8 @@ int commandManager(String message) {
   else if (jsonDoc["order"] == "sensorInfo") {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - sensorInfo order received for sensor : " + sensorId);
-    sensorHub.getSensorInfo( sensorId );
-    Debug::print(name + " Sensor info = " );
+    //sensorHub.getSensorInfo( sensorId );
+    Debug::println(name + " - Sensor info for " + sensorHub.getSensorName(sensorId) );
     Debug::println( sensorHub.getSensorInfo(sensorId) );
   }
 

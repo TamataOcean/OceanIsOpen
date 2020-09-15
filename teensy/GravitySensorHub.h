@@ -62,4 +62,5 @@ public:
 	DynamicJsonDocument getJsonSensorsName();
 	String getCalibrationStatus();
 	String getSensorInfo(int i);
+	String getSensorName(int sensorId);
 };
