@@ -18,6 +18,7 @@ public:
     void setPin(int pin);
     float setTemperature(float temp);
     float setVref(float value);
+    String getCalibrationMessage();
 
 
 private:

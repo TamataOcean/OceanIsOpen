@@ -81,3 +81,13 @@ void GravityPh::setOffset(float offset)
 {
 	this->offset = offset;
 }
+
+String GravityPh::getCalibrationMessage() {
+    if ( this->calibrationCurrentStep == 0 ) {
+    	return "{\"initCalibrationAnswer\":{\"message\":\"Message INIT Calibration step0 GravityPh\"}}";
+    }
+    else
+    {
+    	return "{\"calibrateAnswer\":{\"message\":\"Message TEST Calibration GravityPh step1\"}}";
+    }
+}

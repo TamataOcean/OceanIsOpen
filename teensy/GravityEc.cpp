@@ -56,3 +56,13 @@ void GravityEc::setKValue(float value)
 {
 	this->kValue = value;
 }
+
+String GravityEc::getCalibrationMessage() {
+    if ( this->calibrationCurrentStep == 0 ) {
+    	return "{\"initCalibrationAnswer\":{\"message\":\"Message INIT Calibration step0 GravityEc\"}}";
+    }
+    else
+    {
+    return "{\"calibrateAnswer\":{\"message\":\"Message TEST Calibration GravityEc step1\"}}";
+    }
+}

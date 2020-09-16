@@ -106,3 +106,12 @@ uint16_t GravityTDS::readMedianValue(int* dataArray, uint16_t arrayLength)
 	return tempValue;
 }
 
+String GravityTDS::getCalibrationMessage() {
+    if ( this->calibrationCurrentStep == 0 ) {
+    	return "{\"initCalibrationAnswer\":{\"message\":\"Message INIT Calibration step0 GravityTDS\"}}";
+    }
+    else
+    {
+    	return "{\"calibrateAnswer\":{\"message\":\"Message TEST Calibration GravityTDS step1\"}}";
+    }
+}

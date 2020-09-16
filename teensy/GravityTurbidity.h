@@ -15,6 +15,7 @@ public:
 	void update();
 	double getValue();
     void setPin(int sensorIn);
+  	String getCalibrationMessage();
 
 private:
     int ledPin;

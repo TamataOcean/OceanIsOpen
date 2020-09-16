@@ -76,3 +76,13 @@ double GravityOrp::getValue()
 {
 	return this->orpValue;
 }
+
+String GravityOrp::getCalibrationMessage() {
+    if ( this->calibrationCurrentStep == 0 ) {
+    	return "{\"initCalibrationAnswer\":{\"message\":\"Message INIT Calibration step0 GravityOrp\"}}";
+    }
+    else
+    {
+    	return "{\"calibrateAnswer\":{\"message\":\"Message TEST Calibration GravityOrp step1\"}}";
+    }
+}

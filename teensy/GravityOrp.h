@@ -55,5 +55,7 @@ public:
 
 	// Get sensor data
 	double getValue();
+	String getCalibrationMessage();
+
 };
 

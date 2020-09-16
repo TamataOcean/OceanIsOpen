@@ -51,5 +51,8 @@ public:
 
 	//set offset
 	void setOffset(float offset);
+
+	String getCalibrationMessage();
+
 };
 

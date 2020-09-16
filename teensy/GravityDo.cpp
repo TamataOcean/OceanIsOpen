@@ -93,3 +93,13 @@ float GravityDo::getTemperature() const
 {
     return this->_temperature;
 }
+
+String GravityDo::getCalibrationMessage() {
+    if ( this->calibrationCurrentStep == 0 ) {
+    	return "{\"initCalibrationAnswer\":{\"message\":\"Message INIT Calibration step0 Gravity DO\"}}";
+    }
+    else
+    {
+    return "{\"calibrateAnswer\":{\"message\":\"Message TEST Calibration GravityDo step1\"}}";
+    }
+}

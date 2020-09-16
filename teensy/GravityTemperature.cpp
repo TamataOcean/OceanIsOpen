@@ -122,3 +122,13 @@ double GravityTemperature::TempProcess(bool ch)
 	}
 	return TemperatureSum;
 }
+
+String GravityTemperature::getCalibrationMessage() {
+    if ( this->calibrationCurrentStep == 0 ) {
+    	return "{\"initCalibrationAnswer\":{\"message\":\"Message INIT Temperature\"}}";
+    }
+    else
+    {
+    	return "{\"calibrateAnswer\":{\"message\":\"Message TEST Calibration Temperature step1\"}}";
+    }
+}

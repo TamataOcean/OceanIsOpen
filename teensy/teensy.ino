@@ -141,17 +141,18 @@ int commandManager(String message) {
     int Sensor = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - initCalibration order received for sensor : " + Sensor);
     (sensorHub.sensors[Sensor])->setCalibrationCurrentStep( 0 );
-    Debug::println(name + " Sensor setCalibration = " );
-    Debug::println((sensorHub.sensors[Sensor])->getCalibrationMessage(0) );
+    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[Sensor])->getCalibrationCurrentStep());
+    Debug::println((sensorHub.sensors[Sensor])->getCalibrationMessage() );
   }
   else if (jsonDoc["order"] == "calibrate") {
     int Sensor = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - CALIBRATE order received for sensor : " + Sensor);
 
     (sensorHub.sensors[Sensor])->setCalibrationCurrentStep( (sensorHub.sensors[Sensor])->getCalibrationCurrentStep()+1);
-    Debug::println(name + " - Sensor setCalibration = " );
+    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[Sensor])->getCalibrationCurrentStep());
+    // Debug::println(name + " - Sensor setCalibration = " );
     Debug::println((sensorHub.sensors[Sensor])->getCalibrationCurrentStep() );
-    Debug::println((sensorHub.sensors[Sensor])->getCalibrationMessage(1) );
+    Debug::println((sensorHub.sensors[Sensor])->getCalibrationMessage() );
     
     //((GravityPh*)(sensorHub.sensors[phSensor]))->setOffset(PHOFFSET);
   }

@@ -18,6 +18,7 @@ public:
   int getCalibrationStep();
   float getTemperature() const;
   void setTemperature(float temperature);
+  String getCalibrationMessage();
 
 private:
     int    _pin;

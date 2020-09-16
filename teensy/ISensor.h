@@ -24,12 +24,12 @@ public:
 	virtual void setup()		= 0;
 	virtual void update()		= 0;
 	virtual double getValue()	= 0;
+	virtual String getCalibrationMessage() = 0;
 
 	int isCalibrate();
    	int getCalibrationStep();
    	int getCalibrationCurrentStep();
    	void setCalibrationCurrentStep(int stepNumber);
-	String getCalibrationMessage(int stepNumber);
    	int calibrationStep;
    	int calibrationCurrentStep;
    	bool sensorIsCalibrate;
