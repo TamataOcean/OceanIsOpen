@@ -26,13 +26,16 @@ public:
 	virtual double getValue()	= 0;
 	virtual String getCalibrationMessage() = 0;
 
+	int _sensorId;
+   	int calibrationStep;
+   	int calibrationCurrentStep;
+   	bool sensorIsCalibrate;
+	   
 	int isCalibrate();
    	int getCalibrationStep();
    	int getCalibrationCurrentStep();
    	void setCalibrationCurrentStep(int stepNumber);
-   	int calibrationStep;
-   	int calibrationCurrentStep;
-   	bool sensorIsCalibrate;
+
 
 private:
 

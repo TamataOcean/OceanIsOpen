@@ -46,8 +46,10 @@ int ISensor::isCalibrate() {
 
 void ISensor::setCalibrationCurrentStep(int step)
 {
-    //if ( step <= this->calibrationStep  )
-	this->calibrationCurrentStep = step;
+    // control on max calibration step.
+    if ( step <= this->calibrationStep  ){
+	    this->calibrationCurrentStep = step;
+    }
     if (this->calibrationCurrentStep == this->calibrationStep )
     {
         this->sensorIsCalibrate = true;

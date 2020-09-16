@@ -433,8 +433,8 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
 
 		return new Promise( (resolve, reject) => {
 			parser_TEENSY.on('data', function (data) {
-				if (data.includes("calibrateAnswer")) {
-					console.log('Api answer calibrateAnswer received')
+				if (data.includes("calibrationAnswer")) {
+					console.log('Api answer calibrationAnswer received')
 					resolve(data);
 				}	
 			})
@@ -451,8 +451,8 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
 
 		return new Promise( (resolve, reject) => {
 			parser_TEENSY.on('data', function (data) {
-				if (data.includes("initCalibrationAnswer")) {
-					console.log('Api answer calibrateAnswer received')
+				if (data.includes("calibrationAnswer")) {
+					console.log('Api answer calibrationAnswer received')
 					resolve(data);
 				}	
 			})

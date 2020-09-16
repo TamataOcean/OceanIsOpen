@@ -24,7 +24,7 @@ private:
     int    _pin;
     int    _vref;
     float  _temperature;
-	double _doValue;
+	  double _doValue;
 
     float  _saturationDoVoltage;
     float  _saturationDoTemperature;

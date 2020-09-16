@@ -26,6 +26,7 @@ extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 
 GravityOrp::GravityOrp():pin(ORPPIN), voltage(3.3), offset(0), orpValue(0.0)
 {
+	_sensorId = orpSensor;
 }
 
 GravityOrp::~GravityOrp()
@@ -78,11 +79,24 @@ double GravityOrp::getValue()
 }
 
 String GravityOrp::getCalibrationMessage() {
-    if ( this->calibrationCurrentStep == 0 ) {
-    	return "{\"initCalibrationAnswer\":{\"message\":\"Message INIT Calibration step0 GravityOrp\"}}";
-    }
-    else
-    {
-    	return "{\"calibrateAnswer\":{\"message\":\"Message TEST Calibration GravityOrp step1\"}}";
-    }
+	const String calibrationMessage[ORP_CALIBRATION_STEP] = {
+		"\"message\":\" INIT Calibration ORP step 0\"",
+		"\"message\":\" calibration Gravity ORP step 1 \"",
+		"\"message\":\" calibration Gravity ORP step 2  \""
+	};
+	
+	String json = "{\"calibrationAnswer\":{";
+	json += "\"sensorId\":"+ (String)_sensorId + ",";
+	json += "\"calibrationCurrentStep\":" + (String)this->calibrationCurrentStep +",";
+	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
+	
+	if (this->isCalibrate()) {
+		json += "\"message\":\"Sensor is calibrate \"";
+	}
+	else {
+		json += calibrationMessage[this->calibrationCurrentStep];
+	}
+
+	json += "}}";
+	return json;
 }

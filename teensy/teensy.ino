@@ -138,24 +138,23 @@ int commandManager(String message) {
   /* CALIBRATION WORKFLOW */
   /* ******************** */
   else if (jsonDoc["order"] == "initCalibration") {
-    int Sensor = jsonDoc["sensorId"].as<int>();
-    Serial.println( name + " - initCalibration order received for sensor : " + Sensor);
-    (sensorHub.sensors[Sensor])->setCalibrationCurrentStep( 0 );
-    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[Sensor])->getCalibrationCurrentStep());
-    Debug::println((sensorHub.sensors[Sensor])->getCalibrationMessage() );
+    int sensorId = jsonDoc["sensorId"].as<int>();
+    Serial.println( name + " - initCalibration order received for sensor : " + sensorId);
+    (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 0 );
+    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
+    Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );
   }
-  else if (jsonDoc["order"] == "calibrate") {
-    int Sensor = jsonDoc["sensorId"].as<int>();
-    Serial.println( name + " - CALIBRATE order received for sensor : " + Sensor);
 
-    (sensorHub.sensors[Sensor])->setCalibrationCurrentStep( (sensorHub.sensors[Sensor])->getCalibrationCurrentStep()+1);
-    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[Sensor])->getCalibrationCurrentStep());
-    // Debug::println(name + " - Sensor setCalibration = " );
-    Debug::println((sensorHub.sensors[Sensor])->getCalibrationCurrentStep() );
-    Debug::println((sensorHub.sensors[Sensor])->getCalibrationMessage() );
-    
-    //((GravityPh*)(sensorHub.sensors[phSensor]))->setOffset(PHOFFSET);
+  else if (jsonDoc["order"] == "calibrate") {
+    int sensorId = jsonDoc["sensorId"].as<int>();
+    Serial.println( name + " - CALIBRATE order received for sensor : " + sensorId);
+
+    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
+    Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );    
+    (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
+    Debug::println(name + "Sensor new calibration Step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep() );
   }
+
   else if (jsonDoc["order"] == "calibrationStatus") {
     Serial.println( name + " - CALIBRATE Info received");
     Serial.println(sensorHub.getCalibrationStatus().c_str());
@@ -225,3 +224,4 @@ void configToSerial(){
 void sensorCalibrationStepToSerial(){
   Serial.println(sensorHub.getCalibrationStatus().c_str());
 }
+
