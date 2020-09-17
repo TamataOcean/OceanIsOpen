@@ -59,7 +59,7 @@ class TamataPostgres {
       if (DEBUG) console.log('-------------------------------------------------------');     
 
       const queryText = "INSERT INTO sensors(\"teensy_user\", \"teensy_phsensor\", \"teensy_temperaturesensor\", \"teensy_dosensor\", \"teensy_ecsensor\", \"teensy_tdssensor\", \"teensy_orpsensor\","+
-            "\"nmea_date\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
+            "\"GNSS_DATETIME\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
             jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
             jsonRecord.state.reported.phSensor + ","+ 
             jsonRecord.state.reported.temperatureSensor + ","+ 
