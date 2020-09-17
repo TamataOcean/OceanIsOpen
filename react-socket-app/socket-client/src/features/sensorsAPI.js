@@ -7,14 +7,6 @@ import {
   fetchingData,
 } from "./sensorsSlice";
 
-export const ApiSayHello = () => async (dispatch, getState) => {
-  try {
-    const response = await fetch("/api/hello");
-    const body = await response.json();
-    if (response.status !== 200) throw Error(body.message);
-  } catch (err) {}
-};
-
 export const ApiGetServerConfig = () => async (dispatch, getState) => {
   try {
     dispatch(fetchingData());
@@ -22,7 +14,7 @@ export const ApiGetServerConfig = () => async (dispatch, getState) => {
     const body = await response.json();
     const serverConfig = JSON.parse(body.apiAnswer);
 
-    // console.log(serverConfig);
+    console.log(serverConfig);
     const { logInterval, start_log } = serverConfig;
     dispatch(serverConnected());
     dispatch(changeLogsInterval(logInterval));

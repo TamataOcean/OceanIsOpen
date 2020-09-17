@@ -15,7 +15,6 @@ import PauseIcon from "@material-ui/icons/Pause";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Sensor from "./Sensors/sensor";
 import {
-  ApiSayHello,
   ApiChangeLogsInterval,
   ApiToggleLogs,
   ApiGetServerConfig,
@@ -79,8 +78,6 @@ const Acquisition = () => {
   // TODO: fetch server current config to update reddit store
   useEffect(() => {
     async function helloServer() {
-      const hello = await ApiSayHello();
-      console.log({ hello });
       dispatch(ApiGetServerConfig());
     }
 
