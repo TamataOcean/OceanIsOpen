@@ -60,6 +60,7 @@ public:
 
 	// Get JSON Name of sensors
 	DynamicJsonDocument getJsonSensorsName();
+	String getJsonConfig();
 	String getCalibrationStatus();
 	String getSensorInfo(int i);
 	String getSensorName(int sensorId);

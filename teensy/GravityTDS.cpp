@@ -4,6 +4,7 @@
 GravityTDS::GravityTDS():pin(TDSPIN),vref(5.0),temperature(25.0)
 {
 	_sensorId = tdsSensor;
+	sensorName = "GravityTDS";
 }
 
 GravityTDS::~GravityTDS()

@@ -149,10 +149,10 @@ int commandManager(String message) {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - CALIBRATE order received for sensor : " + sensorId);
 
-    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
+    Debug::println(name + " - Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );    
     (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
-    Debug::println(name + "Sensor new calibration Step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep() );
+    Debug::println(name + " - Sensor new calibration Step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep() );
   }
 
   else if (jsonDoc["order"] == "calibrationStatus") {
@@ -202,26 +202,33 @@ int commandManager(String message) {
 }
 
 void configToSerial(){
-    DynamicJsonDocument doc(1024);
-    
-    char SensorName[] = "{\"sensors\":{\"sensor1\":{\"name\":\"phSensor\", \"calibrationStep\":2, \"calibrationCurrentStep\":0 }, \"sensor2\":{\"name\":\"temperatureSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0}, \"sensor3\":{\"name\":\"doSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0},\"sensor4\":{\"name\":\"ecSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0}, \"sensor5\":{\"name\":\"tdsSensor\",\"calibrationStep\":2, \"calibrationCurrentStep\":0}, \"sensor6\":{\"name\":\"orpSensor\",\"calibrationStep\":0, \"calibrationCurrentStep\":0}, \"sensor7\":{\"name\":\"turbiditySensor\",\"calibrationStep\":0, \"calibrationCurrentStep\":0}}}";
-	  DeserializationError err= deserializeJson(doc, SensorName);
-    if(err) {
-      Serial.print(F(" - deserializeJson() failed with code "));
-      Serial.println(err.c_str());
-    } 
-    
-    doc["config"] = "Config_Teensy";
-    doc["start_log"] = start_log;
-    doc["logInterval"] = logInterval;
-    
+    // NOT WORKING
+    // DynamicJsonDocument doc(1024);
+    // doc["config"] = "Config_Teensy";
+    // doc["start_log"] = start_log;
+    // doc["logInterval"] = logInterval;
+    // doc["sensors"] = sensorHub.getJsonConfig();
+
+    // char SensorName[] = "{\"sensors\":{\"sensor1\":{\"name\":\"phSensor\", \"calibrationStep\":2, \"calibrationCurrentStep\":0 }, \"sensor2\":{\"name\":\"temperatureSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0}, \"sensor3\":{\"name\":\"doSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0},\"sensor4\":{\"name\":\"ecSensor\",\"calibrationStep\":0,\"calibrationCurrentStep\":0}, \"sensor5\":{\"name\":\"tdsSensor\",\"calibrationStep\":2, \"calibrationCurrentStep\":0}, \"sensor6\":{\"name\":\"orpSensor\",\"calibrationStep\":0, \"calibrationCurrentStep\":0}, \"sensor7\":{\"name\":\"turbiditySensor\",\"calibrationStep\":0, \"calibrationCurrentStep\":0}}}";
+	  // DeserializationError err= deserializeJson(doc, SensorName);
+    // if(err) {
+    //   Serial.print(F(" - deserializeJson() failed with code "));
+    //   Serial.println(err.c_str());
+    // } 
     //JsonArray sensor  = doc.createNestedArray(sensors);
+    //serializeJson(doc, Serial);
+
+    // OLD SCHOOL 
+    String json = "{";
+	  json += "\"config\":\"Config_Teensy\",";
+    json += "\"start_Log\":" + (String)start_log +","; 
+    json += "\"logInterval\":" + (String)logInterval + ",";
+	  json += "\"sensors\":" + sensorHub.getJsonConfig();
+    json += "}";
     
-    serializeJson(doc, Serial);
-    Serial.println();
+    Serial.println(json);
 }
 
 void sensorCalibrationStepToSerial(){
   Serial.println(sensorHub.getCalibrationStatus().c_str());
 }
-

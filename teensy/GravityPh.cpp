@@ -26,6 +26,7 @@ extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 GravityPh::GravityPh():pin(PHPIN), offset(0.0f),pHValue(0)
 {
 	_sensorId = phSensor;
+	sensorName = "GravityPH";
 }
 
 //********************************************************************************************

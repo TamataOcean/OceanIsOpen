@@ -27,6 +27,7 @@ extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 GravityOrp::GravityOrp():pin(ORPPIN), voltage(3.3), offset(0), orpValue(0.0)
 {
 	_sensorId = orpSensor;
+	sensorName = "GravityORP";
 }
 
 GravityOrp::~GravityOrp()

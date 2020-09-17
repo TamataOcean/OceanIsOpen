@@ -9,6 +9,7 @@ extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 GravityEc::GravityEc() :kValue(ECKVALUE), pin(ECPIN)
 {
 	_sensorId = ecSensor;
+	sensorName = "GravityEC";
 }
 
 

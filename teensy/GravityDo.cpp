@@ -26,6 +26,7 @@ const float SaturationValueTab[41] PROGMEM = {      //saturation dissolved oxyge
 GravityDo::GravityDo()
 {
 	_sensorId = doSensor;
+	sensorName = "GravityDo";
     _pin = DOPIN;
     _vref = 5000;
     _temperature = 25;

@@ -23,6 +23,7 @@
 GravityTemperature::GravityTemperature(int pin)
 {
 	_sensorId = temperatureSensor;
+	sensorName = "Temperature";
 	this->calibrationStep = 0;
 	this->calibrationCurrentStep = TEMP_CALIBRATION_STEP;
 	
