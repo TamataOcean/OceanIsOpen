@@ -10,7 +10,7 @@ CREATE TABLE public.sensors
         teensy_ecSensor double precision,               --Conductivite electrique
         teensy_tdsSensor double precision,              --Taux de particule
         teensy_orpSensor double precision,              --Oxygenation
-        nmea_date character varying,             --Date GPS
+        GNSS_DATETIME character varying,             --Date GPS
         nmea_latitude double precision,                 --latitude GPS
         nmea_longitude double precision,                --Longitude GPS
         nmea_speed double precision,                    --Vitesse
