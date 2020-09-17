@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { ApiGetServerConfig } from "../../features/sensorsAPI";
 
 import HelloCard from "../HelloCard/HelloCard";
-import WCalibration from "../WindowsApp/WCalibration";
 import WGeopoppy from "../WindowsApp/WGeopoppy";
 import WGrafana from "../WindowsApp/WGrafana";
 import WSystem from "../WindowsApp/WSystem";
@@ -20,6 +21,15 @@ const useStyles = makeStyles((theme) => ({
 
 export default ({ theme, toggleDarkTheme }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function getServerConfig() {
+      dispatch(ApiGetServerConfig());
+    }
+
+    getServerConfig();
+  }, [dispatch]);
 
   return (
     <Container maxWidth="md" className={classes.root}>
