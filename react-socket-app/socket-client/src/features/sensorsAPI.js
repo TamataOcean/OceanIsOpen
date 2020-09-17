@@ -1,11 +1,14 @@
 import {
   changeLogsInterval,
+  setSensors,
   toggleLogs,
   serverConnected,
   serverDisconnected,
   fetchedData,
   fetchingData,
 } from "./sensorsSlice";
+
+// TODO: ajouter fonction de gestions des erreurs de requêtes
 
 export const ApiGetServerConfig = () => async (dispatch, getState) => {
   try {
@@ -15,9 +18,10 @@ export const ApiGetServerConfig = () => async (dispatch, getState) => {
     const serverConfig = JSON.parse(body.apiAnswer);
 
     console.log(serverConfig);
-    const { logInterval, start_log } = serverConfig;
+    const { logInterval, start_log, sensors } = serverConfig;
     dispatch(serverConnected());
     dispatch(changeLogsInterval(logInterval));
+    dispatch(setSensors(sensors));
 
     const isAcquisitionOn = !!start_log;
     if (getState().log.isToggleOn !== isAcquisitionOn) {
@@ -76,4 +80,49 @@ export const ApiToggleLogs = (post) => async (dispatch, getState) => {
   } catch (err) {
     dispatch(serverDisconnected());
   }
+};
+
+export const ApiGetSensorInfo = (sensorId) => async (dispatch, getState) => {
+  try {
+    const response = await fetch(`/api/sensorInfo?sensorId=${sensorId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const body = await response.text();
+    if (response.status !== 200) throw Error(body.message);
+    // TODO: ajouter logique dans reducer
+  } catch (err) {}
+};
+
+export const ApiInitSensorCalibration = (sensorId) => async (
+  dispatch,
+  getState
+) => {
+  try {
+    const response = await fetch(`/api/initCalibration?sensorId=${sensorId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const body = await response.text();
+    if (response.status !== 200) throw Error(body.message);
+    // TODO: ajouter logique dans reducer
+  } catch (err) {}
+};
+
+export const ApiCalibrateSensor = (sensorId) => async (dispatch, getState) => {
+  try {
+    const response = await fetch(`/api/calibrate?sensorId=${sensorId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const body = await response.text();
+    if (response.status !== 200) throw Error(body.message);
+    // TODO: ajouter logique dans reducer
+  } catch (err) {}
 };
