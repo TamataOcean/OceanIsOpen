@@ -3,6 +3,8 @@
 
 GravityTDS::GravityTDS():pin(TDSPIN),vref(5.0),temperature(25.0)
 {
+	_sensorId = tdsSensor;
+	sensorName = "GravityTDS";
 }
 
 GravityTDS::~GravityTDS()
@@ -18,6 +20,17 @@ void GravityTDS::setPin(int pin)
 
 void GravityTDS::setup()
 {
+		this->calibrationStep = TDS_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
+
 	    pinMode(this->pin,INPUT);
 
 }
@@ -95,3 +108,24 @@ uint16_t GravityTDS::readMedianValue(int* dataArray, uint16_t arrayLength)
 	return tempValue;
 }
 
+String GravityTDS::getCalibrationMessage() {
+	const String calibrationMessage[TDS_CALIBRATION_STEP] = {
+		"\"message\":\" INIT Calibration TDS step 0\"",
+		"\"message\":\" calibration Gravity TDS step 1 \""	
+	};
+	
+	String json = "{\"calibrationAnswer\":{";
+	json += "\"sensorId\":"+ (String)_sensorId + ",";
+	json += "\"calibrationCurrentStep\":" + (String)this->calibrationCurrentStep +",";
+	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
+	
+	if (this->isCalibrate()) {
+		json += "\"message\":\"Sensor is calibrate \"";
+	}
+	else {
+		json += calibrationMessage[this->calibrationCurrentStep];
+	}
+
+	json += "}}";
+	return json;
+}

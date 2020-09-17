@@ -15,10 +15,29 @@
 * date    :  2017-04-06
 **********************************************************************/
 #pragma once
+
+#include "Arduino.h"
+
 class ISensor
 {
 public:
 	virtual void setup()		= 0;
 	virtual void update()		= 0;
 	virtual double getValue()	= 0;
+	virtual String getCalibrationMessage() = 0;
+
+	int _sensorId;
+   	String sensorName; 
+	int calibrationStep;
+   	int calibrationCurrentStep;
+   	bool sensorIsCalibrate;
+	   
+	int isCalibrate();
+   	int getCalibrationStep();
+   	int getCalibrationCurrentStep();
+   	void setCalibrationCurrentStep(int stepNumber);
+
+
+private:
+
 };

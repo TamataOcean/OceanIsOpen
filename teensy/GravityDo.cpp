@@ -23,14 +23,15 @@ const float SaturationValueTab[41] PROGMEM = {      //saturation dissolved oxyge
 6.41,
 };
 
-
 GravityDo::GravityDo()
 {
+	_sensorId = doSensor;
+	sensorName = "GravityDo";
     _pin = DOPIN;
     _vref = 5000;
     _temperature = 25;
     _doValue = 0;
-
+    
 	_saturationDoVoltage = 1127.6;
 	_saturationDoTemperature = 25.0;
     _averageVoltage = 0;
@@ -54,6 +55,17 @@ void GravityDo::setTemperature(float temperature)
 
 void GravityDo::setup()
 {
+	this->calibrationStep = DO_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
+
 	pinMode(this->_pin, INPUT);
 }
 
@@ -81,4 +93,27 @@ double GravityDo::getValue()
 float GravityDo::getTemperature() const
 {
     return this->_temperature;
+}
+
+String GravityDo::getCalibrationMessage() {
+	const String calibrationMessage[DO_CALIBRATION_STEP] = {
+		"\"message\":\" INIT Calibration  DO step 0\"",
+		"\"message\":\" calibration Gravity DO step 1 \"",
+		"\"message\":\" calibration Gravity DO step 2  \""
+	};
+	
+	String json = "{\"calibrationAnswer\":{";
+	json += "\"sensorId\":"+ (String)_sensorId + ",";
+	json += "\"calibrationCurrentStep\":" + (String)this->calibrationCurrentStep +",";
+	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
+	
+	if (this->isCalibrate()) {
+		json += "\"message\":\"Sensor is calibrate \"";
+	}
+	else {
+		json += calibrationMessage[this->calibrationCurrentStep];
+	}
+
+	json += "}}";
+	return json;
 }

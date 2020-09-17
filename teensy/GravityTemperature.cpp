@@ -22,6 +22,11 @@
 
 GravityTemperature::GravityTemperature(int pin)
 {
+	_sensorId = temperatureSensor;
+	sensorName = "Temperature";
+	this->calibrationStep = 0;
+	this->calibrationCurrentStep = TEMP_CALIBRATION_STEP;
+	
 	this->oneWire = new OneWire(pin);
 	this->update();
 }
@@ -37,6 +42,16 @@ GravityTemperature::~GravityTemperature()
 //********************************************************************************************
 void GravityTemperature::setup()
 {
+	this->calibrationStep = TEMP_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
 
 }
 
@@ -108,4 +123,27 @@ double GravityTemperature::TempProcess(bool ch)
 		TemperatureSum = tempRead / 16;
 	}
 	return TemperatureSum;
+}
+
+String GravityTemperature::getCalibrationMessage() {
+	const String calibrationMessage[TEMP_CALIBRATION_STEP] = {
+		// "\"message\":\" INIT Calibration Temperature step 0\"",
+		// "\"message\":\" calibration Gravity Temperature step 1 \"",
+		// "\"message\":\" calibration Gravity Temperature step 2  \""
+	};
+	
+	String json = "{\"calibrationAnswer\":{";
+	json += "\"sensorId\":"+ (String)_sensorId + ",";
+	json += "\"calibrationCurrentStep\":" + (String)this->calibrationCurrentStep +",";
+	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
+	
+	if (this->isCalibrate()) {
+		json += "\"message\":\"Sensor is calibrate \"";
+	}
+	else {
+		json += calibrationMessage[this->calibrationCurrentStep];
+	}
+
+	json += "}}";
+	return json;
 }

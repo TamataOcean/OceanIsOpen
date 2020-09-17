@@ -139,19 +139,52 @@ String GravitySensorHub::getJsonSensorsUpdate()
 	for (size_t i = 0; i < SensorCount; i++)
 	{
 		if (i == SensorCount-2 ) {
-			if (this->sensors[i])
-			{
-			json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue();
+			if (this->sensors[i]){
+				json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue();
 			}	
 		}
-		else if (this->sensors[i])
-		{
+		else if (this->sensors[i]){
 			json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue() + ",";
 		}
 	}
 	json += "} }}";
 
 	return json;
+}
+
+String GravitySensorHub::getCalibrationStatus(){
+	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
+
+	String json = "{\"calibrationStatusAnswer\":{\"sensors\":{";	
+	for (size_t i = 0; i < SensorCount; i++)
+	{
+		if (i == SensorCount-2 ) {
+			if (this->sensors[i]){
+				json += "\""+ SensorName[i] + "\":{\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate() + "}";
+			}	
+		}
+		else if (this->sensors[i]){
+			json += "\""+ SensorName[i] + "\":{\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate() + "}" + ",";
+		}
+	}
+	json += "} } }";
+
+	return json;
+}
+
+String GravitySensorHub::getSensorInfo(int sensorId){
+	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
+	
+	String json = "{\"sensorInfoAnswer\":{";	
+	json += "\"sensorId\":"+ (String)sensorId + ",\"sensorName\":\""+ SensorName[sensorId] + "\",\"calibrationStep\":" + this->sensors[sensorId]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[sensorId]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[sensorId]->isCalibrate();
+	json += ",\"value\":"+ (String)this->sensors[sensorId]->getValue() ;
+	json += "}}";
+	return json;
+}
+
+String GravitySensorHub::getSensorName(int sensorId){
+	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
+	return SensorName[sensorId];
 }
 
 DynamicJsonDocument GravitySensorHub::getJsonSensorsName(){
@@ -162,6 +195,39 @@ DynamicJsonDocument GravitySensorHub::getJsonSensorsName(){
 	//JsonObject sensor = doc.createNestedOject("SensorName");
 	return doc;
 }
+
+String GravitySensorHub::getJsonConfig(){
+
+	String json = "{";
+	for (size_t i = 0; i < SensorCount; i++)
+	{
+		if (i == SensorCount-2 ) {
+			if (this->sensors[i]){
+				json += "\"sensor" + String(i) + "\":{";
+				json += "\"sensorId\":"+ (String)i + ",\"sensorName\":\""+ this->sensors[i]->sensorName + "\",\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate();
+				json += ",\"value\":"+ (String)this->sensors[i]->getValue() ;
+				json += "}";
+			}	
+		}
+		else if (this->sensors[i]){
+			json += "\"sensor" + String(i) + "\":{";
+			json += "\"sensorId\":"+ (String)i + ",\"sensorName\":\""+ this->sensors[i]->sensorName + "\",\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate();
+			json += ",\"value\":"+ (String)this->sensors[i]->getValue();
+			json += "},";
+		}
+	}
+	json += "}";
+
+	return json;
+
+	// DynamicJsonDocument doc(1024);
+	// deserializeJson(doc, SensorName);
+	//doc["sensors"] = SensorName;
+	//JsonObject sensor = doc.createNestedOject("SensorName");
+	// return doc;
+}
+
+
 //sending jetpackStatus over MQTT
 /* 
 String jsonJetpackStatus="{\"state\":{\"reported\":";

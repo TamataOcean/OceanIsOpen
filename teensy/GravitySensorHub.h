@@ -18,7 +18,7 @@
 #pragma once
 #include "ISensor.h"
 #include "Config.h"
-#include"Arduino.h"		//Arduino Defs
+#include "Arduino.h"		//Arduino Defs
 #include <ArduinoJson.h>
 /*
 sensors :
@@ -60,4 +60,8 @@ public:
 
 	// Get JSON Name of sensors
 	DynamicJsonDocument getJsonSensorsName();
+	String getJsonConfig();
+	String getCalibrationStatus();
+	String getSensorInfo(int i);
+	String getSensorName(int sensorId);
 };

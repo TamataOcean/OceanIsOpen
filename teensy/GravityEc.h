@@ -12,6 +12,7 @@ public:
 	void update();
 	double getValue();
 	void setKValue(float value);
+  	String getCalibrationMessage();
 
 	int pin;
 	double ecValue;

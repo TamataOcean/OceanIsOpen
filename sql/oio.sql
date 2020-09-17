@@ -1,22 +1,22 @@
+
 --tbl for save sensors data + GPS
 CREATE TABLE public.sensors
 (
-	id serial,
-	teensy_user character varying,			--Id du teensy
-	teensy_phSensor double precision, 		--PH
-	teensy_temperatureSensor double precision, 	--Température
-	teensy_doSensor double precision,		--Oxygene dissoud
-	teensy_ecSensor double precision,		--Conductivite electrique
-	teensy_tdsSensor double precision,		--Taux de particule
-	teensy_orpSensor double precision,		--Oxygenation
-	nmea_date date,							--Date GPS
-	nmea_time time without time zone,		--Temps GPS
-	nmea_latitude double precision,			--latitude GPS
-	nmea_longitude double precision,		--Longitude GPS
-	nmea_speed double precision,			--Vitesse
---	precision_nmea double precision, 		--Si besoin et si rajouté dans TamataPostres.js
-	geom geometry(Point,4326),			--Geométrie fabrique avec les long lat
-	    CONSTRAINT sensors_pkey PRIMARY KEY (id)
+        id serial,
+        teensy_user character varying,                  --Id du teensy
+        teensy_phSensor double precision,               --PH
+        teensy_temperatureSensor double precision,      --Température
+        teensy_doSensor double precision,               --Oxygene dissoud
+        teensy_ecSensor double precision,               --Conductivite electrique
+        teensy_tdsSensor double precision,              --Taux de particule
+        teensy_orpSensor double precision,              --Oxygenation
+        nmea_date character varying,             --Date GPS
+        nmea_latitude double precision,                 --latitude GPS
+        nmea_longitude double precision,                --Longitude GPS
+        nmea_speed double precision,                    --Vitesse
+        nmea_accuracy double precision,                 --//TODO rajouter accuracy dans TamataPostres.js quand il sera dipo dans la trame NMEA
+        geom geometry(Point,4326),                      --Geométrie fabrique avec les long lat
+            CONSTRAINT sensors_pkey PRIMARY KEY (id)
 );
 CREATE INDEX sensors_index
     ON public.sensors USING gist
@@ -45,7 +45,6 @@ CREATE  TRIGGER add_geom
 --View make nav line
 CREATE OR REPLACE VIEW nav_line AS
 SELECT row_number() OVER () AS id_unique,
-st_makeline(sensors.geom ORDER BY ((sensors.nmea_date || ' '::text) || sensors.nmea_time)) AS newgeom
+st_makeline(sensors.geom ORDER BY nmea_date AS newgeom
 FROM sensors
 GROUP BY sensors.nmea_date;
-

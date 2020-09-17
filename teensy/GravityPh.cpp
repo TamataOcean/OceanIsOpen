@@ -25,6 +25,8 @@ extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 
 GravityPh::GravityPh():pin(PHPIN), offset(0.0f),pHValue(0)
 {
+	_sensorId = phSensor;
+	sensorName = "GravityPH";
 }
 
 //********************************************************************************************
@@ -33,6 +35,16 @@ GravityPh::GravityPh():pin(PHPIN), offset(0.0f),pHValue(0)
 //********************************************************************************************
 void GravityPh::setup()
 {
+	this->calibrationStep = PH_CALIBRATION_STEP;
+	this->calibrationCurrentStep = 0;
+	if (this->calibrationCurrentStep == this->calibrationStep )
+	{
+		this->sensorIsCalibrate = true;
+	}
+	else
+	{
+		this->sensorIsCalibrate = false;
+	}
 	pinMode(pin, INPUT);
 }
 
@@ -70,4 +82,26 @@ double GravityPh::getValue()
 void GravityPh::setOffset(float offset)
 {
 	this->offset = offset;
+}
+
+String GravityPh::getCalibrationMessage() {
+	const String calibrationMessage[PH_CALIBRATION_STEP] = {
+		"\"message\":\" INIT Calibration PH step 0\"",
+		"\"message\":\" calibration Gravity PH step 1 \""	
+	};
+	
+	String json = "{\"calibrationAnswer\":{";
+	json += "\"sensorId\":"+ (String)_sensorId + ",";
+	json += "\"calibrationCurrentStep\":" + (String)this->calibrationCurrentStep +",";
+	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
+	
+	if (this->isCalibrate()) {
+		json += "\"message\":\"Sensor is calibrate \"";
+	}
+	else {
+		json += calibrationMessage[this->calibrationCurrentStep];
+	}
+
+	json += "}}";
+	return json;
 }

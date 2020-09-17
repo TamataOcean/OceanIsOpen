@@ -4,6 +4,8 @@
 
 GravityTurbidity::GravityTurbidity():ledPin(TURBPINLED),sensorIn(TURBPINSENSOR) 
 {
+	_sensorId = turbiditySensor;
+	sensorName = "GravityTurbidity";
 }
 
 GravityTurbidity::~GravityTurbidity() 
@@ -18,6 +20,17 @@ void GravityTurbidity::setPin(int pin)
 void GravityTurbidity::setup()
 {
 		Debug::println("Initializing Turbidity Sensor");
+		this->calibrationStep = TURB_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
+
 	    pinMode(this->ledPin,INPUT);	 // Set ledPin to output mode
 	    pinMode(this->sensorIn, INPUT);       //Set the turbidity sensor pin to input mode
 
@@ -38,3 +51,25 @@ double GravityTurbidity::getValue()
 	return turbidityValue;
 }
 
+String GravityTurbidity::getCalibrationMessage() {
+	const String calibrationMessage[TURB_CALIBRATION_STEP] = {
+		// "\"message\":\" INIT Calibration Turbidity step 0\"",
+		// "\"message\":\" calibration Gravity Turbidity step 1 \"",
+		// "\"message\":\" calibration Gravity Turbidity step 2  \""
+	};
+	
+	String json = "{\"calibrationAnswer\":{";
+	json += "\"sensorId\":"+ (String)_sensorId + ",";
+	json += "\"calibrationCurrentStep\":" + (String)this->calibrationCurrentStep +",";
+	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
+	
+	if (this->isCalibrate()) {
+		json += "\"message\":\"Sensor is calibrate \"";
+	}
+	else {
+		json += calibrationMessage[this->calibrationCurrentStep];
+	}
+
+	json += "}}";
+	return json;
+}

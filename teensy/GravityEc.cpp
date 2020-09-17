@@ -8,6 +8,8 @@ extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 
 GravityEc::GravityEc() :kValue(ECKVALUE), pin(ECPIN)
 {
+	_sensorId = ecSensor;
+	sensorName = "GravityEC";
 }
 
 
@@ -17,6 +19,17 @@ GravityEc::~GravityEc()
 
 void GravityEc::setup()
 {
+	this->calibrationStep = EC_CALIBRATION_STEP;
+		this->calibrationCurrentStep = 0;
+		if (this->calibrationCurrentStep == this->calibrationStep )
+		{
+			this->sensorIsCalibrate = true;
+		}
+		else
+		{
+			this->sensorIsCalibrate = false;
+		}
+
 	pinMode(pin, INPUT);
 }
 
@@ -44,4 +57,27 @@ double GravityEc::getValue()
 void GravityEc::setKValue(float value)
 {
 	this->kValue = value;
+}
+
+String GravityEc::getCalibrationMessage() {
+	const String calibrationMessage[EC_CALIBRATION_STEP] = {
+		"\"message\":\" INIT Calibration EC step 0\"",
+		"\"message\":\" calibration Gravity EC step 1 \"",
+		"\"message\":\" calibration Gravity EC step 2  \""
+	};
+	
+	String json = "{\"calibrationAnswer\":{";
+	json += "\"sensorId\":"+ (String)_sensorId + ",";
+	json += "\"calibrationCurrentStep\":" + (String)this->calibrationCurrentStep +",";
+	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
+	
+	if (this->isCalibrate()) {
+		json += "\"message\":\"Sensor is calibrate \"";
+	}
+	else {
+		json += calibrationMessage[this->calibrationCurrentStep];
+	}
+
+	json += "}}";
+	return json;
 }
