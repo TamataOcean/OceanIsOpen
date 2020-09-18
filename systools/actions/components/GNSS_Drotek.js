@@ -3,7 +3,7 @@
 2020 Romain Tourte hacked for Drotek NMEA
 */
 'use strict';
-constr debug = true;
+const debug = false;
 
 const fixGeo = function(coord, cardinalPoint) {
   const convert = function(raw, sign) {

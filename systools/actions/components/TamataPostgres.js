@@ -76,8 +76,7 @@ class TamataPostgres {
       
       else if ( GPS_Modele == "Drotek") {
       /* Drotek Format */
-         console.log("     date = " + jsonPosition.gps.date );
-         console.log("     time = " + jsonPosition.gps.time );
+         console.log("     datetime = " + jsonPosition.gps.datetime );
          console.log("     latitude = " + jsonPosition.geo.latitude );
          console.log("     longitude = " + jsonPosition.geo.longitude );
          console.log("     speed= " + jsonPosition.speed.knots );
