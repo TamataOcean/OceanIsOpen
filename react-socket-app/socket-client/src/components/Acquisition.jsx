@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -14,11 +14,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import PauseIcon from "@material-ui/icons/Pause";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Sensor from "./Sensors/sensor";
-import {
-  ApiChangeLogsInterval,
-  ApiToggleLogs,
-  ApiGetServerConfig,
-} from "../features/sensorsAPI";
+import { ApiChangeLogsInterval, ApiToggleLogs } from "../features/sensorsAPI";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -73,16 +69,6 @@ const Acquisition = () => {
     const newInterval = e.target.value;
     dispatch(ApiChangeLogsInterval(newInterval, post));
   };
-
-  // On mount say hello to server
-  // TODO: fetch server current config to update reddit store
-  useEffect(() => {
-    async function helloServer() {
-      dispatch(ApiGetServerConfig());
-    }
-
-    helloServer();
-  }, [dispatch]);
 
   const sensorsList = sensors.length ? (
     <div className={classes.root}>
