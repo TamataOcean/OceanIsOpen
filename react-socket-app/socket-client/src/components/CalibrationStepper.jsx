@@ -6,11 +6,16 @@ import {
   Stepper,
   StepLabel,
   Typography,
+  Card,
+  CardContent,
+  CardHeader,
+  Avatar,
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    marginBottom: theme.spacing(3),
   },
   button: {
     marginRight: theme.spacing(1),
@@ -19,33 +24,27 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
+  cardHeader: {
+    paddingBottom: 0,
+  },
 }));
 
-function getSteps() {
-  return ["Select campaign settings", "Create an ad group", "Create an ad"];
-}
-
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return "Select campaign settings...";
-    case 1:
-      return "What is an ad group anyways?";
-    case 2:
-      return "This is the bit I really care about!";
-    default:
-      return "Unknown step";
-  }
-}
-
-const CalibrationStepper = () => {
+const CalibrationStepper = ({
+  steps,
+  stepsContent,
+  optionalSteps,
+  title,
+  logoSrc,
+}) => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
-  const steps = getSteps();
 
   const isStepOptional = (step) => {
-    return step === 1;
+    if (optionalSteps) {
+      return optionalSteps.includes(step);
+    }
+    return false;
   };
 
   const isStepSkipped = (step) => {
@@ -87,73 +86,87 @@ const CalibrationStepper = () => {
   };
 
   return (
-    <div className={classes.root}>
-      <Stepper activeStep={activeStep}>
-        {steps.map((label, index) => {
-          const stepProps = {};
-          const labelProps = {};
-          if (isStepOptional(index)) {
-            labelProps.optional = (
-              <Typography variant="caption">Optional</Typography>
+    <Card className={classes.root}>
+      <CardHeader
+        className={classes.cardHeader}
+        avatar={
+          <Avatar
+            aria-label="recipe"
+            className={classes.avatar}
+            src={logoSrc}
+          />
+        }
+        title={title}
+        titleTypographyProps={{ variant: "h5" }}
+      />
+      <CardContent>
+        <Stepper activeStep={activeStep}>
+          {steps.map((label, index) => {
+            const stepProps = {};
+            const labelProps = {};
+            if (isStepOptional(index)) {
+              labelProps.optional = (
+                <Typography variant="caption">Optionnelle</Typography>
+              );
+            }
+            if (isStepSkipped(index)) {
+              stepProps.completed = false;
+            }
+            return (
+              <Step key={label} {...stepProps}>
+                <StepLabel {...labelProps}>{label}</StepLabel>
+              </Step>
             );
-          }
-          if (isStepSkipped(index)) {
-            stepProps.completed = false;
-          }
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-      <div>
-        {activeStep === steps.length ? (
-          <div>
-            <Typography className={classes.instructions}>
-              All steps completed - you&apos;re finished
-            </Typography>
-            <Button onClick={handleReset} className={classes.button}>
-              Réinitialiser
-            </Button>
-          </div>
-        ) : (
-          <div>
-            <Typography className={classes.instructions}>
-              {getStepContent(activeStep)}
-            </Typography>
+          })}
+        </Stepper>
+        <div>
+          {activeStep === steps.length ? (
             <div>
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                className={classes.button}
-              >
-                Retour
+              <Typography className={classes.instructions}>
+                Toutes les étapes sont terminées, le capteur est calibré.
+              </Typography>
+              <Button onClick={handleReset} className={classes.button}>
+                Réinitialiser
               </Button>
-              {isStepOptional(activeStep) && (
+            </div>
+          ) : (
+            <div>
+              <Typography className={classes.instructions}>
+                {stepsContent[activeStep]}
+              </Typography>
+              <div>
+                <Button
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  className={classes.button}
+                >
+                  Retour
+                </Button>
+                {isStepOptional(activeStep) && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSkip}
+                    className={classes.button}
+                  >
+                    Passer
+                  </Button>
+                )}
+
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleSkip}
+                  onClick={handleNext}
                   className={classes.button}
                 >
-                  Passer
+                  {activeStep === steps.length - 1 ? "Terminer" : "Suivant"}
                 </Button>
-              )}
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-                className={classes.button}
-              >
-                {activeStep === steps.length - 1 ? "Terminer" : "Suivant"}
-              </Button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
