@@ -18,6 +18,7 @@ jsonfile.spaces = 4;
 var mqtt = require('mqtt'); //includes mqtt server 
 const TamataPostgres = require('./actions/components/TamataPostgres')
 const TamataInfluxDB = require('./actions/components/TamataInflux')
+const GNSS_Drotek = require('./actions/components/GNSS_Drotek')
 
 var configFile = "config.json";
 var jsonConfig ;
@@ -308,7 +309,7 @@ async function insertData(topic,message) {
 
 	// 	/* INSERT to Postgres database */
 	 	posgresDB = new TamataPostgres( jsonConfig.system.postgres );
-	 	posgresDB.save( parsedMessage, parsedPosition );
+	 	posgresDB.save( parsedMessage, parsedPosition, GPS_Modele );
 	// 	/* INSERT to influx database */
 	// 	influx = new TamataInfluxDB( jsonConfig.system.influxDB );
 	// 	influx.save( parsedMessage, parsedPosition );
@@ -339,11 +340,10 @@ function getGpsPosition() {
 	return new Promise( (resolve, reject) => {
 		const nmea = require('node-nmea')
 		const gprmc = require('gprmc-parser')
-
+		
 		parser_GPS.on('data', function (data) {
 			if (DEBUG_GPS) {
-				console.log("Data from GPS")
-				console.log(data)
+			//	console.log(data)
 			}
 
 			// Using USB GPS classic
@@ -358,6 +358,14 @@ function getGpsPosition() {
 				//console.log("Using emLead GPS");
 				if (data.includes("$GNRMC")) {
 				resolve(gprmc(data)); 
+				}
+			}
+
+			// Using Drotek GPS
+			else if ( GPS_Modele == "Drotek") {
+				if (data.includes("$GNRMC")) {
+					// resolve(nmea.parse(data));
+					resolve(GNSS_Drotek(data)); 
 				}
 			}
 		})
