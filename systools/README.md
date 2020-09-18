@@ -31,6 +31,21 @@ NodeJS program to listen Serialport & Saving data on Postgres.
 * postgres database
 * GPS modele ( standard, emLead, Drotek )
 
+#### Exemple of config
+* **GPS Standard**
+    "serialport_GPS": {
+      "port": "/dev/tty.SLAB_USBtoUART",
+      "baud": 4800,
+      "modele": "standard"
+    },
+
+* **Drotek Antenna** 
+    "serialport_GPS": {
+        "port": "/dev/tty.usbmodem1461",
+        "baud": 9600,
+        "modele": "Drotek"
+        },
+
 ### save_data.js
 
 In charge of listening Mosquitto, when a message arrive, keeping GPS position and save to PostGres 
