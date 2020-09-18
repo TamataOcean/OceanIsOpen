@@ -7,7 +7,6 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
-  Switch,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
