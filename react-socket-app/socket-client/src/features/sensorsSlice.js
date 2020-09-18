@@ -2,36 +2,46 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import logoTemperature from "./../images/logoTemperature.png";
 import logoPh from "./../images/logoPh.png";
-// import logoDo from "./../images/logoDo.png";
-// import logoEc from "./../images/logoEc.png";
-// import logoTds from "./../images/logoTds.png";
-// import logoOrp from "./../images/logoOrp.png";
+import logoDo from "./../images/logoDo.png";
+import logoEc from "./../images/logoEc.png";
+import logoTds from "./../images/logoTds.png";
+import logoOrp from "./../images/logoOrp.png";
 import logoTurbidity from "./../images/logoTurbidity.png";
+
+export const logos = {
+  Temperature: logoTemperature,
+  GravityPH: logoPh,
+  GravityDo: logoDo,
+  GravityEC: logoEc,
+  GravityTDS: logoTds,
+  GravityORP: logoOrp,
+  GravityTurbidity: logoTurbidity,
+};
 
 const initialState = {
   sensors: [
-    {
-      id: 0,
-      state: "On",
-      name: "Ph",
-      logo: logoPh,
-      ref: "",
-      link: "",
-      calibrationStep: 2,
-      calibrationCurrentStep: 0,
-      calibrationState: "Never",
-    },
-    {
-      id: 1,
-      state: "On",
-      name: "temp",
-      logo: logoTemperature,
-      ref: "DS18B20",
-      link: "",
-      calibrationStep: 0,
-      calibrationCurrentStep: 0,
-      calibrationState: "Never",
-    },
+    // {
+    //   id: 0,
+    //   state: "On",
+    //   name: "Ph",
+    //   logo: logoPh,
+    //   ref: "",
+    //   link: "",
+    //   calibrationStep: 2,
+    //   calibrationCurrentStep: 0,
+    //   calibrationState: "Never",
+    // },
+    // {
+    //   id: 1,
+    //   state: "On",
+    //   name: "temp",
+    //   logo: logoTemperature,
+    //   ref: "DS18B20",
+    //   link: "",
+    //   calibrationStep: 0,
+    //   calibrationCurrentStep: 0,
+    //   calibrationState: "Never",
+    // },
     // {
     //   id: 2,
     //   state: "On",
@@ -76,17 +86,17 @@ const initialState = {
     //   calibrationCurrentStep: 0,
     //   calibrationState: "Never"
     // },
-    {
-      id: 6,
-      state: "On",
-      name: "Turbidity",
-      logo: logoTurbidity,
-      ref: "",
-      link: "",
-      calibrationStep: 0,
-      calibrationCurrentStep: 0,
-      calibrationState: "Never",
-    },
+    // {
+    //   id: 6,
+    //   state: "On",
+    //   name: "Turbidity",
+    //   logo: logoTurbidity,
+    //   ref: "",
+    //   link: "",
+    //   calibrationStep: 0,
+    //   calibrationCurrentStep: 0,
+    //   calibrationState: "Never",
+    // },
   ],
 
   position: {
@@ -111,9 +121,15 @@ const sensorsSlice = createSlice({
   name: "sensors",
   initialState,
   reducers: {
+    setSensors(state, action) {
+      console.log({ action });
+      console.log(Object.keys(action.payload).map((el) => action.payload[el]));
+      state.sensors = Object.keys(action.payload).map(
+        (el) => action.payload[el]
+      );
+    },
     calibrateSensor(state, action) {},
     toggleLogs(state, action) {
-      console.log({ state, action });
       state.log.isToggleOn = !state.log.isToggleOn;
       state.log.state = state.log.isToggleOn ? "Recording" : "Pause";
     },
@@ -136,6 +152,7 @@ const sensorsSlice = createSlice({
 });
 
 export const {
+  setSensors,
   calibrateSensor,
   toggleLogs,
   changeLogsInterval,
