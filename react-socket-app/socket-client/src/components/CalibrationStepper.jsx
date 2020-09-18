@@ -11,6 +11,11 @@ import {
   CardHeader,
   Avatar,
 } from "@material-ui/core";
+import { useDispatch } from "react-redux";
+import {
+  ApiCalibrateSensor,
+  ApiInitSensorCalibration,
+} from "../features/sensorsAPI";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,23 +32,31 @@ const useStyles = makeStyles((theme) => ({
   cardHeader: {
     paddingBottom: 0,
   },
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
 }));
 
 const CalibrationStepper = ({
-  steps,
   stepsContent,
-  optionalSteps,
-  title,
+  // optionalSteps,
   logoSrc,
+  sensor,
 }) => {
+  const dispatch = useDispatch();
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
+  // const [currentStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
 
+  const title = sensor.sensorName;
+  const currentStep = sensor.calibrationCurrentStep;
+  const steps = new Array(sensor.calibrationStep).fill("");
+
   const isStepOptional = (step) => {
-    if (optionalSteps) {
-      return optionalSteps.includes(step);
-    }
+    // if (optionalSteps) {
+    //   return optionalSteps.includes(step);
+    // }
     return false;
   };
 
@@ -53,36 +66,37 @@ const CalibrationStepper = ({
 
   const handleNext = () => {
     let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
+    if (isStepSkipped(currentStep)) {
       newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
+      newSkipped.delete(currentStep);
     }
 
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    dispatch(ApiCalibrateSensor(sensor.sensorId));
+    // setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    // setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
+    if (!isStepOptional(currentStep)) {
       // You probably want to guard against something like this,
       // it should never occur unless someone's actively trying to break something.
       throw new Error("You can't skip a step that isn't optional.");
     }
 
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    // setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped((prevSkipped) => {
       const newSkipped = new Set(prevSkipped.values());
-      newSkipped.add(activeStep);
+      newSkipped.add(currentStep);
       return newSkipped;
     });
   };
 
   const handleReset = () => {
-    setActiveStep(0);
+    dispatch(ApiInitSensorCalibration(sensor.sensorId));
   };
 
   return (
@@ -90,17 +104,13 @@ const CalibrationStepper = ({
       <CardHeader
         className={classes.cardHeader}
         avatar={
-          <Avatar
-            aria-label="recipe"
-            className={classes.avatar}
-            src={logoSrc}
-          />
+          <Avatar aria-label="recipe" className={classes.large} src={logoSrc} />
         }
         title={title}
         titleTypographyProps={{ variant: "h5" }}
       />
       <CardContent>
-        <Stepper activeStep={activeStep}>
+        <Stepper activeStep={currentStep}>
           {steps.map((label, index) => {
             const stepProps = {};
             const labelProps = {};
@@ -113,14 +123,14 @@ const CalibrationStepper = ({
               stepProps.completed = false;
             }
             return (
-              <Step key={label} {...stepProps}>
+              <Step key={title + label + index} {...stepProps}>
                 <StepLabel {...labelProps}>{label}</StepLabel>
               </Step>
             );
           })}
         </Stepper>
         <div>
-          {activeStep === steps.length ? (
+          {currentStep === steps.length ? (
             <div>
               <Typography className={classes.instructions}>
                 Toutes les étapes sont terminées, le capteur est calibré.
@@ -132,17 +142,17 @@ const CalibrationStepper = ({
           ) : (
             <div>
               <Typography className={classes.instructions}>
-                {stepsContent[activeStep]}
+                {stepsContent[currentStep]}
               </Typography>
               <div>
                 <Button
-                  disabled={activeStep === 0}
+                  disabled={currentStep === 0}
                   onClick={handleBack}
                   className={classes.button}
                 >
                   Retour
                 </Button>
-                {isStepOptional(activeStep) && (
+                {isStepOptional(currentStep) && (
                   <Button
                     variant="contained"
                     color="primary"
@@ -159,7 +169,7 @@ const CalibrationStepper = ({
                   onClick={handleNext}
                   className={classes.button}
                 >
-                  {activeStep === steps.length - 1 ? "Terminer" : "Suivant"}
+                  {currentStep === steps.length - 1 ? "Terminer" : "Suivant"}
                 </Button>
               </div>
             </div>

@@ -5,7 +5,6 @@ import { logos } from "../features/sensorsSlice";
 import { Typography } from "@material-ui/core";
 
 const Calibration = () => {
-  const dispatch = useDispatch();
   const sensors = useSelector((state) => state.sensors);
 
   return (
@@ -14,7 +13,7 @@ const Calibration = () => {
       {sensors.map((sensor) => (
         <CalibrationStepper
           key={sensor.sensorId}
-          steps={["1", "2", "3"]}
+          // steps={["1", "2", "3"]}
           stepsContent={[
             "Étape 1",
             "C'est la deuxième",
@@ -22,6 +21,7 @@ const Calibration = () => {
           ]}
           optionalSteps={[1]}
           title={sensor.sensorName}
+          sensor={sensor}
           logoSrc={logos[sensor.sensorName]}
         />
       ))}

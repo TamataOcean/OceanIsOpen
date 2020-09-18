@@ -6,6 +6,8 @@ import {
   serverDisconnected,
   fetchedData,
   fetchingData,
+  calibrateSensor,
+  initSensorCalibration,
 } from "./sensorsSlice";
 
 // TODO: ajouter fonction de gestions des erreurs de requêtes
@@ -109,7 +111,7 @@ export const ApiInitSensorCalibration = (sensorId) => async (
     });
     const body = await response.text();
     if (response.status !== 200) throw Error(body.message);
-    // TODO: ajouter logique dans reducer
+    dispatch(initSensorCalibration(sensorId));
   } catch (err) {}
 };
 
@@ -122,7 +124,8 @@ export const ApiCalibrateSensor = (sensorId) => async (dispatch, getState) => {
       },
     });
     const body = await response.text();
+    console.log(body);
     if (response.status !== 200) throw Error(body.message);
-    // TODO: ajouter logique dans reducer
+    dispatch(calibrateSensor(sensorId));
   } catch (err) {}
 };

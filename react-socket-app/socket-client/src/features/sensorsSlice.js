@@ -128,7 +128,22 @@ const sensorsSlice = createSlice({
         (el) => action.payload[el]
       );
     },
-    calibrateSensor(state, action) {},
+    calibrateSensor(state, action) {
+      const sensorId = action.payload;
+      state.sensors.forEach((sensor) => {
+        if (sensor.sensorId === sensorId) {
+          sensor.calibrationCurrentStep += 1;
+        }
+      });
+    },
+    initSensorCalibration(state, action) {
+      const sensorId = action.payload;
+      state.sensors.forEach((sensor) => {
+        if (sensor.sensorId === sensorId) {
+          sensor.calibrationCurrentStep = 0;
+        }
+      });
+    },
     toggleLogs(state, action) {
       state.log.isToggleOn = !state.log.isToggleOn;
       state.log.state = state.log.isToggleOn ? "Recording" : "Pause";
@@ -154,6 +169,7 @@ const sensorsSlice = createSlice({
 export const {
   setSensors,
   calibrateSensor,
+  initSensorCalibration,
   toggleLogs,
   changeLogsInterval,
   serverConnected,
