@@ -53,7 +53,7 @@ class TamataPostgres {
          
          if (DEBUG) console.log('----------- QUERY for GPS Modele Standard ----------------------------------------');     
          const queryText = "INSERT INTO sensors(\"teensy_user\", \"teensy_phsensor\", \"teensy_temperaturesensor\", \"teensy_dosensor\", \"teensy_ecsensor\", \"teensy_tdssensor\", \"teensy_orpsensor\","+
-         "\"GNSS_DATETIME\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
+         "\"GNSS_MODELE\", \"GNSS_DATETIME\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
          jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
          jsonRecord.state.reported.phSensor + ","+ 
          jsonRecord.state.reported.temperatureSensor + ","+ 
@@ -63,6 +63,7 @@ class TamataPostgres {
          jsonRecord.state.reported.orpSensor + ",'" +
          
          /* USB GPS Classic */
+         GPS_Modele + "','" +
          JSON.stringify(jsonPosition.datetime) + "'," +
          jsonPosition.loc.geojson.coordinates[1] + "," +
          jsonPosition.loc.geojson.coordinates[0] +"," +
@@ -83,7 +84,7 @@ class TamataPostgres {
       
          if (DEBUG) console.log('(----------- QUERY for  Modele Drotek ----------------------------------------');     
          const queryText = "INSERT INTO sensors(\"teensy_user\", \"teensy_phsensor\", \"teensy_temperaturesensor\", \"teensy_dosensor\", \"teensy_ecsensor\", \"teensy_tdssensor\", \"teensy_orpsensor\","+
-         "\"GNSS_DATETIME\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
+         "\"GNSS_MODELE\",\"GNSS_DATETIME\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
          jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
          jsonRecord.state.reported.phSensor + ","+ 
          jsonRecord.state.reported.temperatureSensor + ","+ 
@@ -93,6 +94,7 @@ class TamataPostgres {
          jsonRecord.state.reported.orpSensor + ",'" +
          
          /* GPS data */
+         GPS_Modele + "','" +
          JSON.stringify(jsonPosition.gps.datetime)  + "'," +
          jsonPosition.geo.latitude + "," +
          jsonPosition.geo.longitude +"," +

@@ -54,10 +54,10 @@ enum SensorNumber
 	turbiditySensor = 6		//Turbidity Sensor
 };
 
-#define PH_CALIBRATION_STEP 2
+#define PH_CALIBRATION_STEP 3
 #define TEMP_CALIBRATION_STEP 0
 #define EC_CALIBRATION_STEP 3
-#define DO_CALIBRATION_STEP 3
+#define DO_CALIBRATION_STEP 5
 #define TDS_CALIBRATION_STEP 2
 #define ORP_CALIBRATION_STEP 3
 #define TURB_CALIBRATION_STEP 0

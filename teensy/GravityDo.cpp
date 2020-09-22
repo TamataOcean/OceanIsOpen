@@ -99,7 +99,9 @@ String GravityDo::getCalibrationMessage() {
 	const String calibrationMessage[DO_CALIBRATION_STEP] = {
 		"\"message\":\" INIT Calibration  DO step 0\"",
 		"\"message\":\" calibration Gravity DO step 1 \"",
-		"\"message\":\" calibration Gravity DO step 2  \""
+		"\"message\":\" calibration Gravity DO step 2  \"",
+		"\"message\":\" calibration Gravity DO step 3  \"",
+		"\"message\":\" calibration Gravity DO step 4  \""
 	};
 	
 	String json = "{\"calibrationAnswer\":{";

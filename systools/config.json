@@ -26,9 +26,9 @@
     },
 
     "serialport_GPS": {
-      "port": "/dev/tty.usbmodem1461",
-      "baud": 9600,
-      "modele": "Drotek"
+      "port": "/dev/tty.SLAB_USBtoUART",
+      "baud": 4800,
+      "modele": "standard"
       },
 
     "serialport_TEENSY": {

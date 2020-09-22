@@ -87,7 +87,8 @@ void GravityPh::setOffset(float offset)
 String GravityPh::getCalibrationMessage() {
 	const String calibrationMessage[PH_CALIBRATION_STEP] = {
 		"\"message\":\" INIT Calibration PH step 0\"",
-		"\"message\":\" calibration Gravity PH step 1 \""	
+		"\"message\":\" calibration Gravity PH step 1 \"",	
+		"\"message\":\" calibration Gravity PH step 2 \""	
 	};
 	
 	String json = "{\"calibrationAnswer\":{";
