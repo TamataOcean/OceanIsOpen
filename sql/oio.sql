@@ -10,7 +10,8 @@ CREATE TABLE public.sensors
         teensy_ecSensor double precision,               --Conductivite electrique
         teensy_tdsSensor double precision,              --Taux de particule
         teensy_orpSensor double precision,              --Oxygenation
-        GNSS_DATETIME character varying,             --Date GPS
+        GNSS_DATETIME timestamp without time zone,      --Date GPS
+        GNSS_MODELE character varying COLLATE pg_catalog."default", --Modele GNSS ( Standard, Drotek... )
         nmea_latitude double precision,                 --latitude GPS
         nmea_longitude double precision,                --Longitude GPS
         nmea_speed double precision,                    --Vitesse
