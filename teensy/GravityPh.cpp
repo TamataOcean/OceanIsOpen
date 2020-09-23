@@ -27,6 +27,8 @@ GravityPh::GravityPh():pin(PHPIN), offset(0.0f),pHValue(0)
 {
 	_sensorId = phSensor;
 	sensorName = "GravityPH";
+	unit = "pH";
+
 }
 
 //********************************************************************************************

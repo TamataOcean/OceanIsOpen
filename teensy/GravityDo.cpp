@@ -27,6 +27,7 @@ GravityDo::GravityDo()
 {
 	_sensorId = doSensor;
 	sensorName = "GravityDo";
+	unit = "DO";
     _pin = DOPIN;
     _vref = 5000;
     _temperature = 25;

@@ -6,6 +6,7 @@ GravityTurbidity::GravityTurbidity():ledPin(TURBPINLED),sensorIn(TURBPINSENSOR)
 {
 	_sensorId = turbiditySensor;
 	sensorName = "GravityTurbidity";
+	unit = "ppm";
 }
 
 GravityTurbidity::~GravityTurbidity() 

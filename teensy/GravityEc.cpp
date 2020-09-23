@@ -10,6 +10,8 @@ GravityEc::GravityEc() :kValue(ECKVALUE), pin(ECPIN)
 {
 	_sensorId = ecSensor;
 	sensorName = "GravityEC";
+	unit = "Volt";
+
 }
 
 

@@ -27,7 +27,8 @@ public:
 	virtual String getCalibrationMessage() = 0;
 
 	int _sensorId;
-   	String sensorName; 
+   	String sensorName;
+	String unit; 
 	int calibrationStep;
    	int calibrationCurrentStep;
    	bool sensorIsCalibrate;
@@ -36,7 +37,7 @@ public:
    	int getCalibrationStep();
    	int getCalibrationCurrentStep();
    	void setCalibrationCurrentStep(int stepNumber);
-
+	String getUnit();
 
 private:
 

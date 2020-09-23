@@ -153,6 +153,8 @@ int commandManager(String message) {
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );    
     (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
     Debug::println(name + " - Sensor new calibration Step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep() );
+    Debug::println(name + " - Sensor calibration Status = " + (sensorHub.sensors[sensorId])->isCalibrate() );
+    
   }
 
   else if (jsonDoc["order"] == "calibrationStatus") {
