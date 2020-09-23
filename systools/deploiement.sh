@@ -7,12 +7,23 @@ echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/a
 sudo apt-get update
 sudo apt-get install -y grafana
 
-#### NODEJS
+sudo /bin/systemctl enable grafana-server
+sudo /bin/systemctl start grafana-server
 
+#### NODEJS
+curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
+sudo apt-get install -y nodejs
 
 #### OIO PACKAGE
+cd /home/pi
+git clone https://github.com/TamataOcean/OceanIsOpen.git
+# Deploy node.js libs
+cd /home/pi/OceanIsOpen/systools
+npm install
+cd /home/pi/OceanIsOpen/react-socket-app/socket-client
+npm install
 
-
+#### PACKAGE DEPLOY END ####
 
 ### Variabiliser l'utilisateur
 utilisateur=pi
