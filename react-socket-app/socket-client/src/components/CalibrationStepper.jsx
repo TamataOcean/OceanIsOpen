@@ -38,12 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CalibrationStepper = ({
-  stepsContent,
-  // optionalSteps,
-  logoSrc,
-  sensor,
-}) => {
+const CalibrationStepper = ({ logoSrc, sensor }) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   // const [currentStep, setActiveStep] = React.useState(0);
@@ -142,7 +137,7 @@ const CalibrationStepper = ({
           ) : (
             <div>
               <Typography className={classes.instructions}>
-                {stepsContent[currentStep]}
+                {sensor.message}
               </Typography>
               <div>
                 <Button

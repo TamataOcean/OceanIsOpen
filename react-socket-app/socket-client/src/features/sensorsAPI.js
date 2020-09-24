@@ -8,6 +8,7 @@ import {
   fetchingData,
   calibrateSensor,
   initSensorCalibration,
+  setSensorMessage,
 } from "./sensorsSlice";
 
 // TODO: ajouter fonction de gestions des erreurs de requêtes
@@ -124,8 +125,15 @@ export const ApiCalibrateSensor = (sensorId) => async (dispatch, getState) => {
       },
     });
     const body = await response.text();
+    console.log("BODY");
     console.log(body);
+    let apiAnswer = JSON.parse(JSON.parse(body).apiAnswer).calibrationAnswer;
+    // apiAnswer = JSON.parse(apiAnswer);
+
+    console.log(apiAnswer);
+    const { message } = apiAnswer;
     if (response.status !== 200) throw Error(body.message);
     dispatch(calibrateSensor(sensorId));
+    dispatch(setSensorMessage({ sensorId, message }));
   } catch (err) {}
 };
