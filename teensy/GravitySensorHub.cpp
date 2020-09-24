@@ -206,6 +206,7 @@ String GravitySensorHub::getJsonConfig(){
 			if (this->sensors[i]){
 				json += "\"sensor" + String(i) + "\":{";
 				json += "\"sensorId\":"+ (String)i + ",\"sensorName\":\""+ this->sensors[i]->sensorName + "\",\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate();
+				json += ",\"unit\":\""+ (String)this->sensors[i]->getUnit() +"\"";
 				json += ",\"value\":"+ (String)this->sensors[i]->getValue() ;
 				json += "}";
 			}	
@@ -213,6 +214,7 @@ String GravitySensorHub::getJsonConfig(){
 		else if (this->sensors[i]){
 			json += "\"sensor" + String(i) + "\":{";
 			json += "\"sensorId\":"+ (String)i + ",\"sensorName\":\""+ this->sensors[i]->sensorName + "\",\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate();
+			json += ",\"unit\":\""+ (String)this->sensors[i]->getUnit() +"\"";
 			json += ",\"value\":"+ (String)this->sensors[i]->getValue();
 			json += "},";
 		}
