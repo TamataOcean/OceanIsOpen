@@ -19,85 +19,7 @@ export const logos = {
 };
 
 const initialState = {
-  sensors: [
-    // {
-    //   id: 0,
-    //   state: "On",
-    //   name: "Ph",
-    //   logo: logoPh,
-    //   ref: "",
-    //   link: "",
-    //   calibrationStep: 2,
-    //   calibrationCurrentStep: 0,
-    //   calibrationState: "Never",
-    // },
-    // {
-    //   id: 1,
-    //   state: "On",
-    //   name: "temp",
-    //   logo: logoTemperature,
-    //   ref: "DS18B20",
-    //   link: "",
-    //   calibrationStep: 0,
-    //   calibrationCurrentStep: 0,
-    //   calibrationState: "Never",
-    // },
-    // {
-    //   id: 2,
-    //   state: "On",
-    //   name: "Do",
-    //   logo: logoDo,
-    //   ref: "",
-    //   link: "",
-    //   calibrationStep: 0,
-    //   calibrationCurrentStep: 0,
-    //   calibrationState: "Never"
-    // },
-    // {
-    //   id: 3,
-    //   state: "On",
-    //   name: "Electrical Conductivity",
-    //   logo: logoEc,
-    //   ref: "",
-    //   link: "",
-    //   calibrationStep: 3,
-    //   calibrationCurrentStep: 0,
-    //   calibrationState: "Never"
-    // },
-    // {
-    //   id: 4,
-    //   state: "Off",
-    //   name: "TDS",
-    //   logo: logoTds,
-    //   ref: "",
-    //   link: "",
-    //   calibrationStep: 0,
-    //   calibrationCurrentStep: 0,
-    //   calibrationState: "Never"
-    // },
-    // {
-    //   id: 5,
-    //   state: "Off",
-    //   name: "ORP",
-    //   logo: logoOrp,
-    //   ref: "",
-    //   link: "",
-    //   calibrationStep: 0,
-    //   calibrationCurrentStep: 0,
-    //   calibrationState: "Never"
-    // },
-    // {
-    //   id: 6,
-    //   state: "On",
-    //   name: "Turbidity",
-    //   logo: logoTurbidity,
-    //   ref: "",
-    //   link: "",
-    //   calibrationStep: 0,
-    //   calibrationCurrentStep: 0,
-    //   calibrationState: "Never",
-    // },
-  ],
+  sensors: [],
 
   position: {
     lon: "",
@@ -111,6 +33,7 @@ const initialState = {
     state: "Pause", // or Recording
     interval: "10000", // or 30sec, 1min, 5min, 1hour, 1day
   },
+
   server: {
     isConnected: false,
     isFetching: false,
@@ -141,6 +64,14 @@ const sensorsSlice = createSlice({
       state.sensors.forEach((sensor) => {
         if (sensor.sensorId === sensorId) {
           sensor.calibrationCurrentStep = 0;
+        }
+      });
+    },
+    setSensorMessage(state, action) {
+      const { sensorId, message } = action.payload;
+      state.sensors.forEach((sensor) => {
+        if (sensor.sensorId === sensorId) {
+          sensor.message = message;
         }
       });
     },
@@ -176,6 +107,7 @@ export const {
   serverDisconnected,
   fetchedData,
   fetchingData,
+  setSensorMessage,
 } = sensorsSlice.actions;
 
 export default sensorsSlice.reducer;
