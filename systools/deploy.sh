@@ -40,12 +40,15 @@ sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/interfaces /etc/network/interfa
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/dnsmasq.conf /etc/dnsmasq.conf
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/sysctl.conf /etc/sysctl.conf
 sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+sleep 5
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE  
 sudo iptables -t nat -A POSTROUTING -o usb0 -j MASQUERADE  
 sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT  
 sudo iptables -A FORWARD -i usb0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT  
 sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT 
 sudo iptables -A FORWARD -i wlan0 -o usb0 -j ACCEPT 
+sleep 5
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/rc.local /etc/rc.local
+sudo chmod +x  /etc/rc.local
 #### PACKAGE DEPLOY END ####
