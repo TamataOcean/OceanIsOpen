@@ -149,7 +149,7 @@ function begin() {
 		// build directory, is the react app compiled
 		res.sendFile(path.join(__dirname, 'build', 'index.html'));
 
-		// TO DELETE
+		// DEBUG TOOLS 
 		// console.log('htttp request on / ');
         // res.render(ejs_index, {
         //     title : "Serial Com - Home",
