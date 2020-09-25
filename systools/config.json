@@ -26,13 +26,13 @@
     },
 
     "serialport_GPS": {
-      "port": "/dev/tty.SLAB_USBtoUART",
+      "port": "/dev/ttyUSB0",
       "baud": 4800,
       "modele": "standard"
       },
 
     "serialport_TEENSY": {
-      "port": "/dev/tty.usbmodem5905471",
+      "port": "/dev/ttyACM0",
       "baud": 115200
     }
   },
