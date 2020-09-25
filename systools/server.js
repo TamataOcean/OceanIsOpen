@@ -134,19 +134,26 @@ function begin() {
     var session = require('cookie-session'); // Charge le middleware de sessions
     var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
     var urlencodedParser = bodyParser.urlencoded({ extended: false });
-    var app = express();
+	const path = require('path');
+	var app = express();
     var ejs_index = 'indexW3.ejs';
-    /* Using sessions */
+	/* Using sessions */
+
 	app.use(session({secret: 'SerialCommunication'}));
 	app.use(bodyParser.json());
+	app.use(express.static(path.join(__dirname, 'build')));
 	app.use(bodyParser.urlencoded({extended: false}))
     /* --------------------------- Index print ------------------------ */
     /* ---------------------------------------------------------------- */
     .get('/', function(req, res) {
-        // console.log('htttp request on / ');
-        res.render(ejs_index, {
-            title : "Serial Com - Home",
-        });
+		// build directory, is the react app compiled
+		res.sendFile(path.join(__dirname, 'build', 'index.html'));
+
+		// TO DELETE
+		// console.log('htttp request on / ');
+        // res.render(ejs_index, {
+        //     title : "Serial Com - Home",
+        // });
     })
 
     /* --------------------------- Command?cmd_id --------------------- */
