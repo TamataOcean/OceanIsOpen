@@ -34,8 +34,6 @@ sudo systemctl start oio.service
 sudo apt-get install -y dnsmasq hostapd 
 
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/hostapd.conf /etc/hostapd/hostapd.conf
-sudo systemctl unmask hostapd
-sudo systemctl enable hostapd
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/interfaces /etc/network/interfaces
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/dnsmasq.conf /etc/dnsmasq.conf
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/sysctl.conf /etc/sysctl.conf
@@ -51,4 +49,10 @@ sleep 5
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/rc.local /etc/rc.local
 sudo chmod +x  /etc/rc.local
+
+sudo systemctl unmask hostapd
+sudo systemctl enable hostapd
+sudo systemctl start hostapd
+sudo systemctl start dnsmasq
+
 #### PACKAGE DEPLOY END ####
