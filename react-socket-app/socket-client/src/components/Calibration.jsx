@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import CalibrationStepper from "./CalibrationStepper";
 import { logos } from "../features/sensorsSlice";
 import { Typography } from "@material-ui/core";
@@ -13,13 +13,6 @@ const Calibration = () => {
       {sensors.map((sensor) => (
         <CalibrationStepper
           key={sensor.sensorId}
-          // steps={["1", "2", "3"]}
-          stepsContent={[
-            "Étape 1",
-            "C'est la deuxième",
-            "Jamais deux sans trois",
-          ]}
-          optionalSteps={[1]}
           title={sensor.sensorName}
           sensor={sensor}
           logoSrc={logos[sensor.sensorName]}
