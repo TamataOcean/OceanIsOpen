@@ -12,7 +12,7 @@
     "postgres": {
       "user": "postgres",
       "host": "192.168.0.113",
-      "database": "OCEANWATER",
+      "database": "postgis_oceanSensors",
       "password": "postgres",
       "port": "5432"
     },
@@ -26,13 +26,13 @@
     },
 
     "serialport_GPS": {
-      "port": "/dev/ttyUSB0",
+      "port": "/dev/tty.SLAB_USBtoUART",
       "baud": 4800,
       "modele": "standard"
       },
 
     "serialport_TEENSY": {
-      "port": "/dev/ttyACM0",
+      "port": "/dev/tty.usbmodem5905471",
       "baud": 115200
     }
   },

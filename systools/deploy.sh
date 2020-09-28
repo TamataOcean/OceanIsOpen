@@ -52,7 +52,6 @@ sudo chmod +x  /etc/rc.local
 
 sudo systemctl unmask hostapd
 sudo systemctl enable hostapd
-sudo systemctl start hostapd
-sudo systemctl start dnsmasq
+sudo reboot now
 
 #### PACKAGE DEPLOY END ####

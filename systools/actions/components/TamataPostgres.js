@@ -3,15 +3,16 @@ var DEBUG = true;
 
 const pg = require('pg')
 
-const pool = new pg.Pool({
-user: "postgres",
-host: "192.168.0.113",
-database: "postgis_oceanSensors",
-password: "postgres",
-port: "5432"});
 
 class TamataPostgres {
    constructor ( jsonObject ) {
+      this.pool = new pg.Pool({
+         user: jsonObject.user,
+         host: jsonObject.host,
+         database: jsonObject.database,
+         password: jsonObject.password,
+         port: jsonObject.port});
+
    	this.config = jsonObject;
 
    	console.log('Postgres constructor...');
@@ -21,7 +22,7 @@ class TamataPostgres {
 
    connect() {
    	console.log("Postgres - connect function");
-      pool.connect((err, client, release) => {
+      this.pool.connect((err, client, release) => {
          if (err) {
             return console.error('Error acquiring client', err.stack)
          }
@@ -70,7 +71,7 @@ class TamataPostgres {
          jsonPosition.speed.knots + ")";
          
          if (DEBUG) console.log("queryText " + queryText);
-         pool.query(queryText, (err, res) => {
+         this.pool.query(queryText, (err, res) => {
             console.log(err, res);
          }); 
       }
@@ -101,7 +102,7 @@ class TamataPostgres {
          jsonPosition.speed.knots + ")";
          
          if (DEBUG) console.log("queryText " + queryText);
-         pool.query(queryText, (err, res) => {
+         this.pool.query(queryText, (err, res) => {
             console.log(err, res);
             //pool.end();
          }); 
