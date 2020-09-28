@@ -53,7 +53,7 @@ class TamataPostgres {
          
          if (DEBUG) console.log('----------- QUERY for GPS Modele Standard ----------------------------------------');     
          const queryText = "INSERT INTO sensors(\"teensy_user\", \"teensy_phsensor\", \"teensy_temperaturesensor\", \"teensy_dosensor\", \"teensy_ecsensor\", \"teensy_tdssensor\", \"teensy_orpsensor\","+
-         "\"GNSS_MODELE\", \"GNSS_DATETIME\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
+         "\"gnss_modele\", \"gnss_datetime\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
          jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
          jsonRecord.state.reported.phSensor + ","+ 
          jsonRecord.state.reported.temperatureSensor + ","+ 
