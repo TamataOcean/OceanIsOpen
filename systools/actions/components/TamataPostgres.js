@@ -3,7 +3,6 @@ var DEBUG = true;
 
 const pg = require('pg')
 
-
 class TamataPostgres {
    constructor ( jsonObject ) {
       this.pool = new pg.Pool({

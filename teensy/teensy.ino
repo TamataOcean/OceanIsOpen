@@ -223,7 +223,7 @@ void configToSerial(){
     // OLD SCHOOL 
     String json = "{";
 	  json += "\"config\":\"Config_Teensy\",";
-    json += "\"start_Log\":" + (String)start_log +","; 
+    json += "\"start_log\":" + (String)start_log +","; 
     json += "\"logInterval\":" + (String)logInterval + ",";
 	  json += "\"sensors\":" + sensorHub.getJsonConfig();
     json += "}";

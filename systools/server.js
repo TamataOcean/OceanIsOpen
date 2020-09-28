@@ -125,7 +125,7 @@ function begin() {
 	})
 
 	parser_GPS = port_GPS.pipe(new Readline({ delimiter: '\r\n' }))
-	getGpsPosition()
+//	getGpsPosition()
 
 	// **************************** 
     /* EXPRESS.JS -------------- */  
