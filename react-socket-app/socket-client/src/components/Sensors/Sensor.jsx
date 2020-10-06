@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Paper, Avatar } from "@material-ui/core";
+import { Grid, Paper } from "@material-ui/core";
 import { logos } from "../../features/sensorsSlice";
 
 const useStyles = makeStyles((theme) => {
@@ -30,6 +30,9 @@ const Sensor = ({ sensor }) => {
           alt={sensor.sensorName}
         />
         <p>{sensor.sensorName}</p>
+        <p>
+          {sensor.value} {sensor.unit}
+        </p>
       </Paper>
     </Grid>
   );
