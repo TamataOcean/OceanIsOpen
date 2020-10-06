@@ -16,6 +16,7 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Sensor from "./Sensors/Sensor";
 import { ApiChangeLogsInterval, ApiToggleLogs } from "../features/sensorsAPI";
 import io from "socket.io-client";
+import { setSensors } from "../features/sensorsSlice";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -61,8 +62,15 @@ const Acquisition = () => {
   // Handles socket io events
   useEffect(() => {
     socket.on("connect", () => console.log("connecté à socket.io"));
-    socket.on("data", (data) => console.log(JSON.parse(data)));
-  }, [socket]);
+    socket.on("data", (data) => {
+      const parsedData = JSON.parse(data);
+      dispatch(setSensors(parsedData.state.reported.sensors));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [socket, dispatch]);
 
   // Toggles the acquisition of data
   // and display response from server
