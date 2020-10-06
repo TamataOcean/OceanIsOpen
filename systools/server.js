@@ -63,86 +63,10 @@ jsonfile.readFile(configFile, function (err, data) {
 - function begin())
 - Listening on Serial for TEENSY & GPS
 - When Data message arrive, => insertData()
- */
+*/
 function begin() {
-  if (DEBUG) {
-    console.log(".............. CONFIG .............");
-    console.log("MqttServer = " + mqttServer);
-    console.log("MqttUser = " + mqttUser);
-    console.log("MqttTopic = " + mqttTopic);
-    console.log("Postgres = " + JSON.stringify(jsonConfig.system.postgres));
-    console.log(
-      "SerialPort TEENSY = " +
-        JSON.stringify(jsonConfig.system.serialport_TEENSY)
-    );
-    console.log(
-      "Baud TEENSY = " +
-        JSON.stringify(jsonConfig.system.serialport_TEENSY.baud)
-    );
-    console.log(
-      "SerialPort GPS = " + JSON.stringify(jsonConfig.system.serialport_GPS)
-    );
-    console.log(
-      "Baud GPS = " + JSON.stringify(jsonConfig.system.serialport_GPS.baud)
-    );
-    console.log("GPS Modele = " + GPS_Modele);
-  }
-
-  /* ************************************ */
-  /* LISTENING on SERIAL for TEENSY & GPS */
-  /* ************************************ */
-  const SerialPort = require("serialport");
-  const Readline = require("@serialport/parser-readline");
-
-  /* LISTENING TEENSY */
-  /* **************** */
-  const port_TEENSY = new SerialPort(serialport_TEENSY, {
-    baudRate: baud_TEENSY,
-  });
-  port_TEENSY.on("error", function (err) {
-    console.log("Error: ", err.message);
-  });
-
-  port_TEENSY.on("open", function () {
-    port_TEENSY.write('{"order":"Init_connection_from_Raspi"}', function (err) {
-      if (err) {
-        return console.log("Error: ", err.message);
-      }
-      console.log("message init sent");
-    });
-  });
-
-  port_TEENSY.on("close", function () {
-    console.log("Serial connection closed");
-    open();
-  });
-
-  parser_TEENSY = port_TEENSY.pipe(new Readline({ delimiter: "\r\n" }));
-  console.log("Listening on serial for TEENSY");
-
-  /* ECOUTE LE PORT TEENSY */
-  /* ********************* */
-  parser_TEENSY.on("data", function (data) {
-    console.log(data);
-    if (data.includes('{"state":{"reported":{')) {
-      console.log("Data sensors arrived");
-      insertData("serial", data);
-    }
-  });
-
-  /* ************* */
-  /* LISTENING GPS */
-  /* ************* */
-  const port_GPS = new SerialPort(serialport_GPS, { baudRate: baud_GPS });
-  port_GPS.on("error", function (err) {
-    console.log("Error: ", err.message);
-  });
-
-  parser_GPS = port_GPS.pipe(new Readline({ delimiter: "\r\n" }));
-  //	getGpsPosition()
-
   // ****************************
-  /* EXPRESS.JS -------------- */
+  /* EXPRESS.JS & SOCKET.IO -- */
   // ****************************
   var express = require("express");
   var session = require("cookie-session"); // Charge le middleware de sessions
@@ -150,6 +74,13 @@ function begin() {
   var urlencodedParser = bodyParser.urlencoded({ extended: false });
   const path = require("path");
   var app = express();
+  const server = require("http").createServer(app);
+  const io = require("socket.io")(server);
+
+  io.on("connect", (evt) => {
+    console.log("CONNECTÉ");
+  });
+
   var ejs_index = "indexW3.ejs";
   /* Using sessions */
 
@@ -336,7 +267,86 @@ function begin() {
     console.log("new user arrived");
   });
   console.log("-------------------------------");
-  app.listen(8080, () => console.log("Web server listening on 8080"));
+  server.listen(8080, () => console.log("Web server listening on 8080"));
+
+  if (DEBUG) {
+    console.log(".............. CONFIG .............");
+    console.log("MqttServer = " + mqttServer);
+    console.log("MqttUser = " + mqttUser);
+    console.log("MqttTopic = " + mqttTopic);
+    console.log("Postgres = " + JSON.stringify(jsonConfig.system.postgres));
+    console.log(
+      "SerialPort TEENSY = " +
+        JSON.stringify(jsonConfig.system.serialport_TEENSY)
+    );
+    console.log(
+      "Baud TEENSY = " +
+        JSON.stringify(jsonConfig.system.serialport_TEENSY.baud)
+    );
+    console.log(
+      "SerialPort GPS = " + JSON.stringify(jsonConfig.system.serialport_GPS)
+    );
+    console.log(
+      "Baud GPS = " + JSON.stringify(jsonConfig.system.serialport_GPS.baud)
+    );
+    console.log("GPS Modele = " + GPS_Modele);
+  }
+
+  /* ************************************ */
+  /* LISTENING on SERIAL for TEENSY & GPS */
+  /* ************************************ */
+  const SerialPort = require("serialport");
+  const Readline = require("@serialport/parser-readline");
+
+  /* LISTENING TEENSY */
+  /* **************** */
+  const port_TEENSY = new SerialPort(serialport_TEENSY, {
+    baudRate: baud_TEENSY,
+  });
+  port_TEENSY.on("error", function (err) {
+    console.log("Error: ", err.message);
+  });
+
+  port_TEENSY.on("open", function () {
+    port_TEENSY.write('{"order":"Init_connection_from_Raspi"}', function (err) {
+      if (err) {
+        return console.log("Error: ", err.message);
+      }
+      console.log("message init sent");
+    });
+  });
+
+  port_TEENSY.on("close", function () {
+    console.log("Serial connection closed");
+    open();
+  });
+
+  parser_TEENSY = port_TEENSY.pipe(new Readline({ delimiter: "\r\n" }));
+  console.log("Listening on serial for TEENSY");
+
+  /* ECOUTE LE PORT TEENSY */
+  /* ********************* */
+  parser_TEENSY.on("data", function (data) {
+    console.log(data);
+    if (data.includes('{"state":{"reported":{')) {
+      console.log("Data sensors arrived");
+
+      io.emit("data", data);
+
+      insertData("serial", data);
+    }
+  });
+
+  /* ************* */
+  /* LISTENING GPS */
+  /* ************* */
+  const port_GPS = new SerialPort(serialport_GPS, { baudRate: baud_GPS });
+  port_GPS.on("error", function (err) {
+    console.log("Error: ", err.message);
+  });
+
+  parser_GPS = port_GPS.pipe(new Readline({ delimiter: "\r\n" }));
+  //	getGpsPosition()
 }
 
 /***************************************

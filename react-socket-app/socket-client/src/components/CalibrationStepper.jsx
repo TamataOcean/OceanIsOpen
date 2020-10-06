@@ -99,7 +99,11 @@ const CalibrationStepper = ({ logoSrc, sensor }) => {
       <CardHeader
         className={classes.cardHeader}
         avatar={
-          <Avatar aria-label="recipe" className={classes.large} src={logoSrc} />
+          <Avatar
+            aria-label="Sensor Logo"
+            className={classes.large}
+            src={logoSrc}
+          />
         }
         title={title}
         titleTypographyProps={{ variant: "h5" }}

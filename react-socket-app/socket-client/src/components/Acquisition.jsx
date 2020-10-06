@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -13,8 +13,9 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import PauseIcon from "@material-ui/icons/Pause";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import Sensor from "./Sensors/sensor";
+import Sensor from "./Sensors/Sensor";
 import { ApiChangeLogsInterval, ApiToggleLogs } from "../features/sensorsAPI";
+import io from "socket.io-client";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -55,6 +56,14 @@ const Acquisition = () => {
   const sensors = useSelector((state) => state.sensors);
   const log = useSelector((state) => state.log);
 
+  const socket = useMemo(() => io(), []);
+
+  // Handles socket io events
+  useEffect(() => {
+    socket.on("connect", () => console.log("connecté à socket.io"));
+    socket.on("data", (data) => console.log(JSON.parse(data)));
+  }, [socket]);
+
   // Toggles the acquisition of data
   // and display response from server
   const handleToggleLogs = async (e) => {
@@ -74,7 +83,9 @@ const Acquisition = () => {
     <div className={classes.root}>
       <Grid container spacing={3}>
         {sensors.map((sensor) => (
-          <Sensor simple id={sensor.id} key={sensor.id} />
+          <React.Fragment key={sensor.sensorId}>
+            <Sensor sensor={sensor} />
+          </React.Fragment>
         ))}
       </Grid>
     </div>

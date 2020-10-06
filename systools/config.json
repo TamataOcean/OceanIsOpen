@@ -29,10 +29,10 @@
       "port": "/dev/tty.SLAB_USBtoUART",
       "baud": 4800,
       "modele": "standard"
-      },
+    },
 
     "serialport_TEENSY": {
-      "port": "/dev/tty.usbmodem5905471",
+      "port": "COM6",
       "baud": 115200
     }
   },

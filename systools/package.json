@@ -15,7 +15,8 @@
     "node-nmea": "^2.0.0",
     "parser-readline": "^1.0.2",
     "pg": "^7.12.1",
-    "serialport": "^7.1.5"
+    "serialport": "^7.1.5",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {},
   "scripts": {
