@@ -78,7 +78,7 @@ function begin() {
   const io = require("socket.io")(server);
 
   io.on("connect", (evt) => {
-    console.log("CONNECTÉ");
+    console.log("WebSocket Connected");
   });
 
   var ejs_index = "indexW3.ejs";

@@ -55,12 +55,18 @@ class TamataPostgres {
          const queryText = "INSERT INTO sensors(\"teensy_user\", \"teensy_phsensor\", \"teensy_temperaturesensor\", \"teensy_dosensor\", \"teensy_ecsensor\", \"teensy_tdssensor\", \"teensy_orpsensor\","+
          "\"gnss_modele\", \"gnss_datetime\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
          jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
-         jsonRecord.state.reported.phSensor + ","+ 
-         jsonRecord.state.reported.temperatureSensor + ","+ 
-         jsonRecord.state.reported.doSensor + ","+ 
-         jsonRecord.state.reported.ecSensor + ","+ 
-         jsonRecord.state.reported.tdsSensor + ","+ 
-         jsonRecord.state.reported.orpSensor + ",'" +
+         // phSensor  
+         jsonRecord.state.reported.sensors[0].value + ","+ 
+         // temperatureSensor + ","+ 
+         jsonRecord.state.reported.sensors[1].value + ","+ 
+         // doSensor + ","+ 
+         jsonRecord.state.reported.sensors[2].value + ","+ 
+         // ecSensor + ","+ 
+         jsonRecord.state.reported.sensors[3].value + ","+ 
+         // tdsSensor + ","+ 
+         jsonRecord.state.reported.sensors[4].value + ","+ 
+         // orpSensor + ",'" +
+         jsonRecord.state.reported.sensors[5].value + ",'" +
          
          /* USB GPS Classic */
          GPS_Modele + "','" +
@@ -86,12 +92,12 @@ class TamataPostgres {
          const queryText = "INSERT INTO sensors(\"teensy_user\", \"teensy_phsensor\", \"teensy_temperaturesensor\", \"teensy_dosensor\", \"teensy_ecsensor\", \"teensy_tdssensor\", \"teensy_orpsensor\","+
          "\"gnss_modele\",\"gnss_datetime\", \"nmea_latitude\", \"nmea_longitude\", \"nmea_speed\" ) VALUES('"+
          jsonRecord.state.reported.user +"'," +          //FOR TEXT Value have to be 'VALUE'
-         jsonRecord.state.reported.phSensor + ","+ 
-         jsonRecord.state.reported.temperatureSensor + ","+ 
-         jsonRecord.state.reported.doSensor + ","+ 
-         jsonRecord.state.reported.ecSensor + ","+ 
-         jsonRecord.state.reported.tdsSensor + ","+ 
-         jsonRecord.state.reported.orpSensor + ",'" +
+         jsonRecord.state.reported.sensors[0].value + ","+ 
+         jsonRecord.state.reported.sensors[1].value + ","+ 
+         jsonRecord.state.reported.sensors[2].value + ","+ 
+         jsonRecord.state.reported.sensors[3].value + ","+ 
+         jsonRecord.state.reported.sensors[4].value + ","+ 
+         jsonRecord.state.reported.sensors[5].value + ",'" +
          
          /* GPS data */
          GPS_Modele + "','" +

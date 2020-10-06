@@ -133,21 +133,46 @@ double GravitySensorHub::getValueBySensorNumber(int num)
 String GravitySensorHub::getJsonSensorsUpdate()
 {
 	//CRADE... mais ça marche ;)
-	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
+	// String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
 
-	String json = "{\"state\":{\"reported\":{\"user\":\""+(String)MQTTUSER+"\",";	
+	// String json = "{\"state\":{\"reported\":{\"user\":\""+(String)MQTTUSER+"\",";	
+	// for (size_t i = 0; i < SensorCount; i++)
+	// {
+	// 	if (i == SensorCount-2 ) {
+	// 		if (this->sensors[i]){
+	// 			json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue();
+	// 		}	
+	// 	}
+	// 	else if (this->sensors[i]){
+	// 		json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue() + ",";
+	// 	}
+	// }
+	// json += "} }}";
+
+
+	String json = "{\"state\":{\"reported\":{\"user\":\""+(String)MQTTUSER+"\",\"sensors\":[";	
 	for (size_t i = 0; i < SensorCount; i++)
 	{
 		if (i == SensorCount-2 ) {
 			if (this->sensors[i]){
-				json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue();
+				// json += "\"sensor" + String(i) + "\":{";
+				json += "{";
+				json += "\"sensorId\":"+ (String)i + ",\"sensorName\":\""+ this->sensors[i]->sensorName + "\",\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate();
+				json += ",\"unit\":\""+ (String)this->sensors[i]->getUnit() +"\"";
+				json += ",\"value\":"+ (String)this->sensors[i]->getValue() ;
+				json += "}";
 			}	
 		}
 		else if (this->sensors[i]){
-			json += "\""+ SensorName[i] + "\":" + this->sensors[i]->getValue() + ",";
+			// json += "\"sensor" + String(i) + "\":{";
+			json += "{";
+			json += "\"sensorId\":"+ (String)i + ",\"sensorName\":\""+ this->sensors[i]->sensorName + "\",\"calibrationStep\":" + this->sensors[i]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[i]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[i]->isCalibrate();
+			json += ",\"unit\":\""+ (String)this->sensors[i]->getUnit() +"\"";
+			json += ",\"value\":"+ (String)this->sensors[i]->getValue();
+			json += "},";
 		}
 	}
-	json += "} }}";
+	json += "]}}}";
 
 	return json;
 }
