@@ -178,10 +178,12 @@ String GravitySensorHub::getCalibrationStatus(){
 }
 
 String GravitySensorHub::getSensorInfo(int sensorId){
-	String SensorName[SENSORCOUNT] = {"phSensor", "temperatureSensor", "doSensor", "ecSensor", "tdsSensor", "orpSensor", "turbiditySensor"};
-	
 	String json = "{\"sensorInfoAnswer\":{";	
-	json += "\"sensorId\":"+ (String)sensorId + ",\"sensorName\":\""+ (String)this->sensors[sensorId]->sensorName + "\",\"calibrationStep\":" + this->sensors[sensorId]->getCalibrationStep() + ",\"calibrationCurrentStep\":"+ this->sensors[sensorId]->getCalibrationCurrentStep() + ",\"isCalibrate\":"+ this->sensors[sensorId]->isCalibrate();
+	json += "\"sensorId\":"+ (String)sensorId;
+	json += ",\"sensorName\":\""+ (String)this->sensors[sensorId]->sensorName;
+	json += "\",\"calibrationStep\":" + this->sensors[sensorId]->getCalibrationStep();
+	json += ",\"calibrationCurrentStep\":"+ this->sensors[sensorId]->getCalibrationCurrentStep();
+	json += ",\"isCalibrate\":"+ this->sensors[sensorId]->isCalibrate();
 	json += ",\"unit\":\""+ (String)this->sensors[sensorId]->getUnit() +"\"";
 	json += ",\"value\":"+ (String)this->sensors[sensorId]->getValue() ;
 	json += "}}";
