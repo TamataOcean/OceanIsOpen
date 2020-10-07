@@ -53,7 +53,7 @@ void ISensor::setCalibrationCurrentStep(int step)
     if ( step <= this->calibrationStep  ){
 	    this->calibrationCurrentStep = step;
     }
-    if (this->calibrationCurrentStep == this->calibrationStep )
+    if (this->calibrationCurrentStep == this->calibrationStep -1 )
     {
         this->sensorIsCalibrate = true;
     }
