@@ -149,11 +149,11 @@ int commandManager(String message) {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - CALIBRATE order received for sensor : " + sensorId);
 
-    Debug::println(name + " - Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
-    Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );    
+    Debug::println(name + " - Sensor current calibration step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
     (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
     Debug::println(name + " - Sensor new calibration Step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep() );
-    Debug::println(name + " - Sensor calibration Status = " + (sensorHub.sensors[sensorId])->isCalibrate() );
+    Debug::println(name + " - Sensor isCalibrated ? = " + (sensorHub.sensors[sensorId])->isCalibrate() );
+    Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );    
     
   }
 
