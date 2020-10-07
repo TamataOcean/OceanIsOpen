@@ -41,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
 const CalibrationStepper = ({ logoSrc, sensor }) => {
   const dispatch = useDispatch();
   const classes = useStyles();
-  // const [currentStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
 
   const title = sensor.sensorName;
@@ -69,10 +68,6 @@ const CalibrationStepper = ({ logoSrc, sensor }) => {
     dispatch(ApiCalibrateSensor(sensor.sensorId));
     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
-  };
-
-  const handleBack = () => {
-    // setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   const handleSkip = () => {
@@ -144,13 +139,6 @@ const CalibrationStepper = ({ logoSrc, sensor }) => {
                 {sensor.message}
               </Typography>
               <div>
-                <Button
-                  disabled={currentStep === 0}
-                  onClick={handleBack}
-                  className={classes.button}
-                >
-                  Retour
-                </Button>
                 {isStepOptional(currentStep) && (
                   <Button
                     variant="contained"
@@ -161,15 +149,25 @@ const CalibrationStepper = ({ logoSrc, sensor }) => {
                     Passer
                   </Button>
                 )}
-
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleNext}
-                  className={classes.button}
-                >
-                  {currentStep === steps.length - 1 ? "Terminer" : "Suivant"}
-                </Button>
+                {currentStep === 0 ? (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleReset}
+                    className={classes.button}
+                  >
+                    Commencer la calibration
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleNext}
+                    className={classes.button}
+                  >
+                    {currentStep === steps.length - 1 ? "Terminer" : "Suivant"}
+                  </Button>
+                )}
               </div>
             </div>
           )}
