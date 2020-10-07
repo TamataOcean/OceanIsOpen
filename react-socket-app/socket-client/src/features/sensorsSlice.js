@@ -63,7 +63,11 @@ const sensorsSlice = createSlice({
       const sensorId = action.payload;
       state.sensors.forEach((sensor) => {
         if (sensor.sensorId === sensorId) {
-          sensor.calibrationCurrentStep = 0;
+          if (sensor.isCalibrate === 1) {
+            sensor.calibrationCurrentStep = 0;
+          } else {
+            sensor.calibrationCurrentStep = 1;
+          }
         }
       });
     },
