@@ -181,9 +181,9 @@ String GravitySensorHub::getSensorInfo(int sensorId){
 	String json = "{\"sensorInfoAnswer\":{";	
 	json += "\"sensorId\":"+ (String)sensorId;
 	json += ",\"sensorName\":\""+ (String)this->sensors[sensorId]->sensorName;
-	json += "\",\"calibrationStep\":" + this->sensors[sensorId]->getCalibrationStep();
-	json += ",\"calibrationCurrentStep\":"+ this->sensors[sensorId]->getCalibrationCurrentStep();
-	json += ",\"isCalibrate\":"+ this->sensors[sensorId]->isCalibrate();
+	json += "\",\"calibrationStep\":" + (String)this->sensors[sensorId]->getCalibrationStep();
+	json += ",\"calibrationCurrentStep\":"+ (String)this->sensors[sensorId]->getCalibrationCurrentStep();
+	json += ",\"isCalibrate\":"+ (String)this->sensors[sensorId]->isCalibrate();
 	json += ",\"unit\":\""+ (String)this->sensors[sensorId]->getUnit() +"\"";
 	json += ",\"value\":"+ (String)this->sensors[sensorId]->getValue() ;
 	json += "}}";
