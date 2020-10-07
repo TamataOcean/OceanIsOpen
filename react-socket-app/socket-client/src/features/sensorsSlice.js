@@ -52,9 +52,12 @@ const sensorsSlice = createSlice({
       );
     },
     calibrateSensor(state, action) {
-      const sensorId = action.payload;
+      const { sensorId, isCalibrate } = action.payload;
       state.sensors.forEach((sensor) => {
         if (sensor.sensorId === sensorId) {
+          if (sensor.isCalibrate !== isCalibrate) {
+            sensor.isCalibrate = isCalibrate;
+          }
           sensor.calibrationCurrentStep += 1;
         }
       });
@@ -63,6 +66,7 @@ const sensorsSlice = createSlice({
       const sensorId = action.payload;
       state.sensors.forEach((sensor) => {
         if (sensor.sensorId === sensorId) {
+          // TODO: Utiliser les calibration step plutôt que isCalibrate
           if (sensor.isCalibrate === 1) {
             sensor.calibrationCurrentStep = 0;
           } else {

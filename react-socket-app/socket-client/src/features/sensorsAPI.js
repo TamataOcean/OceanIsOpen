@@ -131,9 +131,9 @@ export const ApiCalibrateSensor = (sensorId) => async (dispatch, getState) => {
     // apiAnswer = JSON.parse(apiAnswer);
 
     console.log(apiAnswer);
-    const { message } = apiAnswer;
+    const { message, isCalibrate } = apiAnswer;
     if (response.status !== 200) throw Error(body.message);
-    dispatch(calibrateSensor(sensorId));
+    dispatch(calibrateSensor({ sensorId, isCalibrate }));
     dispatch(setSensorMessage({ sensorId, message }));
   } catch (err) {}
 };
