@@ -11,6 +11,7 @@
 */
 var DEBUG = true;
 var DEBUG_GPS = false;
+var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
 
 var jsonfile = require("jsonfile");
 jsonfile.spaces = 4;
@@ -414,9 +415,8 @@ function getGpsPosition() {
     const gprmc = require("gprmc-parser");
 	
 	// DEBUG MODE Without GPS
-	if ( false ) {
-		// resolve("{\"gps\":{\"datetime\":\"2020-10-08 09:54:23.00\",\"date\":\"2020-10-08\",\"time\":\"09:54:23.00\",\"validity\":true},\"geo\":{\"latitude\":46.155237,\"longitude\":-1.145442,\"bearing\":null},\"speed\":{\"knots\":0.016,\"kmh\":0.03,\"mph\":0.018}}")
-		resolve('{"gps":{"datetime":"2020-10-08 09:54:23.00","date":"2020-10-08","time":"09:54:23.00","validity":true},"geo":{"latitude":46.155237,"longitude":-1.145442,"bearing":null},"speed":{"knots":0.016,"kmh":0.03,"mph":0.018}}')
+	if ( !GNSS_CONNECTED ) {
+		resolve(gprmc("$GNRMC,133333.33,A,4609.31519,N,00108.72949,W,0.038,,180920,,,A,V*02"))
 	}
 	else {
 		parser_GPS.on("data", function (data) {
