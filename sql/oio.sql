@@ -46,6 +46,6 @@ CREATE  TRIGGER add_geom
 --View make nav line
 CREATE OR REPLACE VIEW nav_line AS
 SELECT row_number() OVER () AS id_unique,
-st_makeline(sensors.geom ORDER BY nmea_date AS newgeom
+st_makeline(sensors.geom ORDER BY GNSS_DATETIME) AS newgeom
 FROM sensors
-GROUP BY sensors.nmea_date;
+GROUP BY sensors.GNSS_DATETIME;
