@@ -132,7 +132,8 @@ const CalibrationStepper = ({ logoSrc, sensor }) => {
           {currentStep === steps.length ? (
             <div>
               <Typography className={classes.instructions}>
-                Toutes les étapes sont terminées, le capteur est calibré.
+                {sensor.message}
+                {/* Toutes les étapes sont terminées, le capteur est calibré. */}
               </Typography>
               <Button onClick={handleReset} className={classes.button}>
                 Réinitialiser

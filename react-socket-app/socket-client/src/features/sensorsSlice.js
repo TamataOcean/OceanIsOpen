@@ -67,6 +67,7 @@ const sensorsSlice = createSlice({
       state.sensors.forEach((sensor) => {
         if (sensor.sensorId === sensorId) {
           sensor.calibrationCurrentStep = 0;
+          sensor.message = "";
           // // TODO: Utiliser les calibration step plutôt que isCalibrate
           // if (sensor.isCalibrate === 1) {
           //   sensor.calibrationCurrentStep = 0;
