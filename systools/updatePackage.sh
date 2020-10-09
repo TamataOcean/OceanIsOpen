@@ -3,7 +3,7 @@
 
 echo "Stopping service oio"
 sudo service oio stop
-sleep 50
+sleep 5s
 
 echo "Update Oio package from github" 
 cd /home/pi/OceanIsOpen
