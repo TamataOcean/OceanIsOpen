@@ -89,6 +89,11 @@ const CalibrationStepper = ({ logoSrc, sensor }) => {
     dispatch(ApiInitSensorCalibration(sensor.sensorId));
   };
 
+  const handleInit = () => {
+    dispatch(ApiCalibrateSensor(sensor.sensorId));
+  };
+
+
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -104,7 +109,7 @@ const CalibrationStepper = ({ logoSrc, sensor }) => {
         titleTypographyProps={{ variant: "h5" }}
       />
       <CardContent>
-        <Stepper activeStep={currentStep}>
+        <Stepper activeStep={currentStep-1}>
           {steps.map((label, index) => {
             const stepProps = {};
             const labelProps = {};
@@ -153,7 +158,7 @@ const CalibrationStepper = ({ logoSrc, sensor }) => {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleReset}
+                    onClick={handleInit}
                     className={classes.button}
                   >
                     Commencer la calibration

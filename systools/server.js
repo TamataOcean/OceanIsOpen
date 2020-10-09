@@ -412,35 +412,43 @@ function getGpsPosition() {
   return new Promise((resolve, reject) => {
     const nmea = require("node-nmea");
     const gprmc = require("gprmc-parser");
+	
+	// DEBUG MODE Without GPS
+	if ( false ) {
+		// resolve("{\"gps\":{\"datetime\":\"2020-10-08 09:54:23.00\",\"date\":\"2020-10-08\",\"time\":\"09:54:23.00\",\"validity\":true},\"geo\":{\"latitude\":46.155237,\"longitude\":-1.145442,\"bearing\":null},\"speed\":{\"knots\":0.016,\"kmh\":0.03,\"mph\":0.018}}")
+		resolve('{"gps":{"datetime":"2020-10-08 09:54:23.00","date":"2020-10-08","time":"09:54:23.00","validity":true},"geo":{"latitude":46.155237,"longitude":-1.145442,"bearing":null},"speed":{"knots":0.016,"kmh":0.03,"mph":0.018}}')
+	}
+	else {
+		parser_GPS.on("data", function (data) {
+		  if (DEBUG_GPS) {
+			//	console.log(data)
+		  }
+	
+		  // Using USB GPS classic
+		  if (GPS_Modele == "standard") {
+			if (data.includes("$GPRMC")) {
+			  //console.log("Using standard GPS : "+ GPS_Modele);
+			  resolve(nmea.parse(data));
+			}
+		  }
+		  // Using emLead GPS
+		  else if (GPS_Modele == "emLead") {
+			//console.log("Using emLead GPS");
+			if (data.includes("$GNRMC")) {
+			  resolve(gprmc(data));
+			}
+		  }
+	
+		  // Using Drotek GPS
+		  else if (GPS_Modele == "Drotek") {
+			if (data.includes("$GNRMC")) {
+			  // resolve(nmea.parse(data));
+			  resolve(GNSS_Drotek(data));
+			}
+		  }
+		});
+	}
 
-    parser_GPS.on("data", function (data) {
-      if (DEBUG_GPS) {
-        //	console.log(data)
-      }
-
-      // Using USB GPS classic
-      if (GPS_Modele == "standard") {
-        if (data.includes("$GPRMC")) {
-          //console.log("Using standard GPS : "+ GPS_Modele);
-          resolve(nmea.parse(data));
-        }
-      }
-      // Using emLead GPS
-      else if (GPS_Modele == "emLead") {
-        //console.log("Using emLead GPS");
-        if (data.includes("$GNRMC")) {
-          resolve(gprmc(data));
-        }
-      }
-
-      // Using Drotek GPS
-      else if (GPS_Modele == "Drotek") {
-        if (data.includes("$GNRMC")) {
-          // resolve(nmea.parse(data));
-          resolve(GNSS_Drotek(data));
-        }
-      }
-    });
   });
 }
 
