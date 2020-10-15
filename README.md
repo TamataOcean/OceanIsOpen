@@ -20,7 +20,7 @@ GPS Position.
 [emLid technologie](https://store.emlid.com/product/reachm-plus/)   
 
 ### Installation
-[Raspi Image](https://github.com/jancelin/pi-gen/releases/tag/oio_1.0alpha1)
+[Raspi Image](https://github.com/jancelin/pi-gen/releases/tag/oio_1.0alpha1)   
 [Teensy](https://www.pjrc.com/teensy/td_download.html)   
 [emLid](https://jancelin.github.io/centipede/3_0_montage.html)  
 
