@@ -252,7 +252,7 @@ SELECT x.q FROM (												--Keep only the replay req
 	END q
 	, rp.ts													--rp.ts for order by timestamp
   FROM 	sync.replay  rp, 										 	--CALL the replay view
-	(SELECT  (json_array_elements(replay.sauv)->> replay.pk)::NUMERIC i from sync.replay) as i,             --entity ID
+	(SELECT  (json_array_elements(replay.sauv)->> replay.pk) i from sync.replay) as i,             --entity ID
 	(select e.ts, string_agg(e.json, ',') f,								--list of fields for upsert update
 	 string_agg(e.json,',EXCLUDED.') g 									--list of fileds for upsert update + EXCLUDED.
 	 from (select ts, json_object_keys(d.json) json								--list fields on json
