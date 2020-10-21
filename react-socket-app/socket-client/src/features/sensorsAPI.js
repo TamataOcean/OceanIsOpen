@@ -20,7 +20,6 @@ export const ApiGetServerConfig = () => async (dispatch, getState) => {
     const body = await response.json();
     const serverConfig = JSON.parse(body.apiAnswer);
 
-    console.log(serverConfig);
     const { logInterval, start_log, sensors } = serverConfig;
     dispatch(serverConnected());
     dispatch(changeLogsInterval(logInterval));

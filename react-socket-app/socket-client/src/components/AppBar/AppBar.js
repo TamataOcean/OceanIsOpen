@@ -75,6 +75,9 @@ export default ({ toggleDrawer }) => {
           OceanIsOpen
         </Typography>
         <Hidden smDown>
+          <Link to="/gnss">
+            <Button className={classes.links}>GNSS</Button>
+          </Link>
           <Link to="/acquisition">
             <Button className={classes.links}>Acquisition</Button>
           </Link>
