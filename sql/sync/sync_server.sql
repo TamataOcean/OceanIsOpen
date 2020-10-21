@@ -18,7 +18,7 @@ Logiciel diffusé sous licence open-source AGPL
 /*
 Ce schema contiendra une table et des vues pour la gestion votre synchronisation
 */
---DROP SCHEMA IF EXISTS sync CASCADE;
+DROP SCHEMA IF EXISTS sync CASCADE;
 CREATE SCHEMA IF NOT EXISTS sync AUTHORIZATION postgres;
 COMMENT ON SCHEMA sync
   IS 'sync schema for multi bases synchro';
