@@ -361,7 +361,7 @@ EXECUTE PROCEDURE sync.sync();
 
 -----------------------
 
-DROP VIEW sync.replay_infos;
+DROP VIEW IF EXISTS sync.replay_infos;
 CREATE OR REPLACE VIEW sync.replay_infos AS
 SELECT
 CASE 
