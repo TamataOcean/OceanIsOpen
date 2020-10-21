@@ -1,4 +1,4 @@
-
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 --tbl for save sensors data + GPS
 CREATE TABLE public.sensors
 (
