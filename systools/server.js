@@ -11,7 +11,7 @@
 */
 var DEBUG = true;
 var DEBUG_GPS = false;
-var GNSS_CONNECTED = false; // FOR TEST ONLY - True if GNSS Connected
+var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
 
 var jsonfile = require("jsonfile");
 jsonfile.spaces = 4;
@@ -81,6 +81,15 @@ function begin() {
 
   io.on("connect", (evt) => {
     console.log("WebSocket Connected");
+  });
+
+  io.on("refreshGnss", (evt) => {
+    console.log("WebSocket refreshGnss received"); 
+    getGpsPosition().then((parsedPosition) => {
+      if (DEBUG) console.log("Position get " + JSON.stringify(parsedPosition));
+      io.emit("gnssData", parsedPosition);
+      console.log("GNSS Position transmitted by Socket.io")
+    })
   });
 
   var ejs_index = "indexW3.ejs";
@@ -219,6 +228,19 @@ function begin() {
       writeToTeensy(port_TEENSY, "sensorInfo", sensorId).then((data) => {
         res.send({ apiAnswer: data });
       });
+    })
+
+    // **********************************
+    // get Position
+    // **********************************
+    .get("/api/getPosition", function (req, res) {
+      console.log("Command requested getPosition");
+      getGpsPosition().then((parsedPosition) => {
+        if (DEBUG) console.log("Position get " + JSON.stringify(parsedPosition));
+        io.emit("gnssData", parsedPosition);
+        console.log("GNSS Position transmitted by API getPosition ")
+        res.send({ apiAnswer: parsedPosition });
+      })
     })
 
     .post("/api/command", (req, res) => {

@@ -26,6 +26,7 @@ const Gnss = () => {
   }, [socket, dispatch]);
 
   const handleClick = () => {
+    console.log("Refresh GNSS emitted");
     socket.emit("refreshGnss");
   };
 

@@ -17,16 +17,8 @@
       "port": "5432"
     },
 
-    "influxDB": {
-      "database": "datateensy",
-      "host": "192.168.0.104",
-      "port": 8086,
-      "username": "test",
-      "password": "test"
-    },
-
     "serialport_GPS": {
-        "port": "/dev/tty.usbmodem1461",
+        "port": "/dev/tty.usbmodem1411",
         "baud": 9600,
         "modele": "Drotek"
     },
