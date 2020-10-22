@@ -38,6 +38,25 @@ const initialState = {
     isConnected: false,
     isFetching: false,
   },
+
+  gnss: {
+    gps: {
+      datetime: "2020-09-18 13:33:33.33",
+      date: "2020-09-18",
+      time: "13:33:33.33",
+      validity: true,
+    },
+    geo: {
+      latitude: 46.155253,
+      longitude: -1.145492,
+      bearing: null,
+    },
+    speed: {
+      knots: 0.038,
+      kmh: 0.07,
+      mph: 0.044,
+    },
+  },
 };
 
 const sensorsSlice = createSlice({
@@ -68,12 +87,6 @@ const sensorsSlice = createSlice({
         if (sensor.sensorId === sensorId) {
           sensor.calibrationCurrentStep = 0;
           sensor.message = "";
-          // // TODO: Utiliser les calibration step plutôt que isCalibrate
-          // if (sensor.isCalibrate === 1) {
-          //   sensor.calibrationCurrentStep = 0;
-          // } else {
-          //   sensor.calibrationCurrentStep = 1;
-          // }
         }
       });
     },
@@ -104,6 +117,9 @@ const sensorsSlice = createSlice({
     serverDisconnected(state) {
       state.server.isConnected = false;
     },
+    setGnssData(state, action) {
+      state.gnss = action.payload;
+    },
   },
 });
 
@@ -118,6 +134,7 @@ export const {
   fetchedData,
   fetchingData,
   setSensorMessage,
+  setGnssData,
 } = sensorsSlice.actions;
 
 export default sensorsSlice.reducer;

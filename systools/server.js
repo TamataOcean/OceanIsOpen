@@ -438,42 +438,44 @@ function getGpsPosition() {
   return new Promise((resolve, reject) => {
     const nmea = require("node-nmea");
     const gprmc = require("gprmc-parser");
-	
-	// DEBUG MODE Without GPS
-	if ( !GNSS_CONNECTED ) {
-		resolve(gprmc("$GNRMC,133333.33,A,4609.31519,N,00108.72949,W,0.038,,180920,,,A,V*02"))
-	}
-	else {
-		parser_GPS.on("data", function (data) {
-		  if (DEBUG_GPS) {
-			//	console.log(data)
-		  }
-	
-		  // Using USB GPS classic
-		  if (GPS_Modele == "standard") {
-			if (data.includes("$GPRMC")) {
-			  //console.log("Using standard GPS : "+ GPS_Modele);
-			  resolve(nmea.parse(data));
-			}
-		  }
-		  // Using emLead GPS
-		  else if (GPS_Modele == "emLead") {
-			//console.log("Using emLead GPS");
-			if (data.includes("$GNRMC")) {
-			  resolve(gprmc(data));
-			}
-		  }
-	
-		  // Using Drotek GPS
-		  else if (GPS_Modele == "Drotek") {
-			if (data.includes("$GNRMC")) {
-			  // resolve(nmea.parse(data));
-			  resolve(GNSS_Drotek(data));
-			}
-		  }
-		});
-	}
 
+    // DEBUG MODE Without GPS
+    if (!GNSS_CONNECTED) {
+      resolve(
+        gprmc(
+          "$GNRMC,133333.33,A,4609.31519,N,00108.72949,W,0.038,,180920,,,A,V*02"
+        )
+      );
+    } else {
+      parser_GPS.on("data", function (data) {
+        if (DEBUG_GPS) {
+          //	console.log(data)
+        }
+
+        // Using USB GPS classic
+        if (GPS_Modele == "standard") {
+          if (data.includes("$GPRMC")) {
+            //console.log("Using standard GPS : "+ GPS_Modele);
+            resolve(nmea.parse(data));
+          }
+        }
+        // Using emLead GPS
+        else if (GPS_Modele == "emLead") {
+          //console.log("Using emLead GPS");
+          if (data.includes("$GNRMC")) {
+            resolve(gprmc(data));
+          }
+        }
+
+        // Using Drotek GPS
+        else if (GPS_Modele == "Drotek") {
+          if (data.includes("$GNRMC")) {
+            // resolve(nmea.parse(data));
+            resolve(GNSS_Drotek(data));
+          }
+        }
+      });
+    }
   });
 }
 

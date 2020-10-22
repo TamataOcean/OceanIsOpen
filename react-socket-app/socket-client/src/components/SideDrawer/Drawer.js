@@ -18,6 +18,7 @@ import LocationOnIcon from "@material-ui/icons/LocationOn";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Brightness4Icon from "@material-ui/icons/Brightness4";
 import BrightnessHighIcon from "@material-ui/icons/BrightnessHigh";
+import GPSFixedIcon from "@material-ui/icons/GpsFixed";
 
 const drawerWidth = 240;
 
@@ -56,6 +57,14 @@ export default ({ isOpen, toggleDrawer, theme, toggleDarkTheme }) => {
         </div>
         <Divider />
         <List>
+          <Link to="/gnss">
+            <ListItem button>
+              <ListItemIcon>
+                <GPSFixedIcon />
+              </ListItemIcon>
+              <ListItemText>GNSS</ListItemText>
+            </ListItem>
+          </Link>
           <Link to="/acquisition">
             <ListItem button>
               <ListItemIcon>
