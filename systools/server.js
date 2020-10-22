@@ -11,12 +11,13 @@
 */
 var DEBUG = true;
 var DEBUG_GPS = false;
-var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
+var GNSS_CONNECTED = false; // FOR TEST ONLY - True if GNSS Connected
 
 var jsonfile = require("jsonfile");
 jsonfile.spaces = 4;
 
 const io = require("socket.io");
+const { execFile } = require('child_process');
 
 var mqtt = require("mqtt"); //includes mqtt server
 const TamataPostgres = require("./actions/components/TamataPostgres");
@@ -140,6 +141,30 @@ function begin() {
 
     /* ---------------------- API Service for REACT APP -----------------*/
     /* ------------------------------------------------------------------*/
+    .get("/api/sync", (req, res) => {
+      console.log("API Sync requested with GET Method: " + req.query.command);
+
+      execFile (__dirname + '/auto_replay.sh', (error, stdout, stderr) => {
+        if (error) {
+          console.error(`error: ${error.message}`);
+          res.send({ apiAnswer: error.message });
+          return;
+        }
+      
+        if (stderr) {
+          console.error(`stderr: ${stderr}`);
+          res.send({ apiAnswer: stderr });
+
+          return;
+        }
+      
+        console.log(`stdout:\n${stdout}`);
+        res.send( {apiAnswer: stdout });
+      });
+
+      
+    })
+
     .get("/api/hello", (req, res) => {
       console.log("API hello requested with GET Method: " + req.query.cmd_id);
       res.send({ express: "Hello From Express" });

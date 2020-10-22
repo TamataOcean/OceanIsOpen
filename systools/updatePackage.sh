@@ -32,9 +32,9 @@ echo "-----------------------------------"
 npm run build
 
 echo "-----------------------------------"
-echo "Copy build to express server"
+echo "Move build directory to express server"
 echo "-----------------------------------"
-cp -r /home/pi/OceanIsOpen/react-socket-app/socket-client/build /home/pi/OceanIsOpen/systools/build
+mv /home/pi/OceanIsOpen/react-socket-app/socket-client/build /home/pi/OceanIsOpen/systools/build
 
 echo "-----------------------------------"
 echo "starting service oio"
