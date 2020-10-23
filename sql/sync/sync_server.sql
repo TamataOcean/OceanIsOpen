@@ -375,3 +375,8 @@ END AS infos,
 st_setsrid(st_makepoint(100,-11), 4326) AS geom
 FROM sync.replay r
 Group by r.integrateur;
+--------------------------------------
+--traçabilité uuid data/ Integrateur
+CREATE VIEW sync.id_integrateur as
+SELECT  (json_array_elements(sd.sauv)->> sd.pk) id, integrateur
+FROM sync.sauv_data sd;
