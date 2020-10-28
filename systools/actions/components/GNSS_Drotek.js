@@ -58,6 +58,7 @@ const parseGNRMC = function(raw) {
   
   return {
     'gps': {
+      'model': "Drotek",
       'datetime': gpsDate + " " + gpsTime,
       'date': gpsDate,
       'time': gpsTime,

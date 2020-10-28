@@ -14,6 +14,7 @@ const Gnss = () => {
   const speedKmh = useSelector((state) => state.gnss.speed.kmh);
   const speedKnots = useSelector((state) => state.gnss.speed.knots);
   const speedMph = useSelector((state) => state.gnss.speed.mph);
+  const model = useSelector((state) => state.gnss.gps.model);
 
   // Handles socket io events
   useEffect(() => {
@@ -33,7 +34,7 @@ const Gnss = () => {
   return (
     <>
       <h1>GNSS</h1>
-      <p>Modèle: ...</p>
+      <p>Modèle: {model ? model : "..."}</p>
       <p>
         Latitude: {lat ? lat : "..."} ; Longitude: {lon ? lon : "..."}
       </p>
