@@ -96,7 +96,7 @@ function begin() {
 
   app.use(session({ secret: "SerialCommunication" }));
   app.use(bodyParser.json());
-  app.use(express.static(path.join(__dirname, "build")));
+  app.use(express.static(path.join(__dirname, "../react-socket-app/socket-client/build")));
   app
     .use(bodyParser.urlencoded({ extended: false }))
     /* --------------------------- Index print ------------------------ */
@@ -491,7 +491,7 @@ function getGpsPosition() {
         else if (GPS_Modele == "Drotek") {
           if (data.includes("$GNRMC")) {
             // resolve(nmea.parse(data));
-            resolve(GNSS_Drotek(data));
+            resolve(GNSS_Drotek(data, GPS_Modele ));
           }
         }
       });

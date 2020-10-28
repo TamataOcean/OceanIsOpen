@@ -22,7 +22,7 @@ const fixGeo = function(coord, cardinalPoint) {
   return convert(coord, (cardinalPoint === 'S' || cardinalPoint === 'W' ? -1 : 1));
 };
 
-const parseGNRMC = function(raw) {
+const parseGNRMC = function(raw, model) {
   const splitted = raw.split(',');
 
   if (splitted.length !== 14 || splitted[0] !== '$GNRMC') {
@@ -58,7 +58,7 @@ const parseGNRMC = function(raw) {
   
   return {
     'gps': {
-      'model': "Drotek",
+      'model': model,
       'datetime': gpsDate + " " + gpsTime,
       'date': gpsDate,
       'time': gpsTime,
