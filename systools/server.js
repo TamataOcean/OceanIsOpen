@@ -16,7 +16,7 @@ var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
 var jsonfile = require("jsonfile");
 jsonfile.spaces = 4;
 
-const { execFile } = require("child_process");
+const { exec } = require("child_process");
 
 var mqtt = require("mqtt"); //includes mqtt server
 const TamataPostgres = require("./actions/components/TamataPostgres");
@@ -149,10 +149,17 @@ function begin() {
 
     /* ---------------------- API Service for REACT APP -----------------*/
     /* ------------------------------------------------------------------*/
-    .get("/api/sync", (req, res) => {
+    .get("/api/syncAutoReplay", (req, res) => {
       console.log("API Sync requested with GET Method: " + req.query.command);
+      var cmd = req.query.command;
+      if (cmd = "start") {
+        execCmd = "sudo service auto_replay start";
+      } else {
+        execCmd = "sudo service auto_replay stop";
+      }
+      console.log("Exec Cmd => " + execCmd);
 
-      execFile(__dirname + "/auto_replay.sh", (error, stdout, stderr) => {
+      exec(execCmd, (error, stdout, stderr) => {
         if (error) {
           console.error(`error: ${error.message}`);
           res.send({ apiAnswer: error.message });
