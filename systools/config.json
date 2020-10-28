@@ -1,0 +1,42 @@
+{
+  "AppName": "OceanIsOpen",
+  "Version": "1.0.0",
+  "Copyright": "Copyright Open Source - W3Licence",
+  "system": {
+    "user": "OceanIsOpen",
+    "id": "teensySensors",
+    "mac": "123456789007",
+    "interval": 10,
+
+    "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
+    
+    "postgres": {
+      "user": "docker",
+      "host": "127.0.0.1",
+      "database": "oio",
+      "password": "docker",
+      "port": "5432"
+    },
+    
+    "serialport_GPS": {
+        "port": "/dev/ttyGNSS",
+        "baud": 9600,
+        "modele": "Drotek"
+    },
+
+    "serialport_TEENSY":{
+      "port": "/dev/ttyTeensy",
+      "baud": 115200
+    }
+  },
+
+  "sensors": {
+    "phSensor": 0,
+    "temperatureSensor": 1,
+    "doSensor": 2,
+    "ecSensor": 3,
+    "tdsSensor": 4,
+    "orpSensor": 5,
+    "turbiditySensor": 6
+  }
+}
