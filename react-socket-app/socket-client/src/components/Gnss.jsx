@@ -18,10 +18,15 @@ const Gnss = () => {
 
   // Handles socket io events
   useEffect(() => {
-    socket.on("connect", () => console.log("connecté à socket.io"));
+    let interval;
+    socket.on("connect", () => {
+      console.log("connecté à socket.io");
+      interval = setInterval(() => socket.emit("refreshGnss"), 5000);
+    });
     socket.on("gnssData", (data) => dispatch(setGnssData(data)));
 
     return () => {
+      clearInterval(interval);
       socket.disconnect();
     };
   }, [socket, dispatch]);
