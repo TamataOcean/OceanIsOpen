@@ -378,8 +378,7 @@ function begin() {
       console.log("Data sensors arrived");
 
       io.emit("data", data);
-
-      insertData("serial", data);
+      insertData("serial", data, io);
     }
   });
 
@@ -398,7 +397,7 @@ function begin() {
 /***************************************
 - function insertData(topic, message)
 Parse message & position and INSERT into Database */
-async function insertData(topic, message) {
+async function insertData(topic, message, socket) {
   var parsedMessage = JSON.parse(message);
 
   if (DEBUG) console.log("***********************************");
@@ -411,6 +410,9 @@ async function insertData(topic, message) {
     // 	/* INSERT to Postgres database */
     posgresDB = new TamataPostgres(jsonConfig.system.postgres);
     posgresDB.save(parsedMessage, parsedPosition, GPS_Modele);
+    
+    socket.emit("dataSaved", JSON.stringify(parsedPosition));
+    
     // 	/* INSERT to influx database */
     // 	influx = new TamataInfluxDB( jsonConfig.system.influxDB );
     // 	influx.save( parsedMessage, parsedPosition );

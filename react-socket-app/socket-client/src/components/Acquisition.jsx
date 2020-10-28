@@ -16,7 +16,7 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Sensor from "./Sensors/Sensor";
 import { ApiChangeLogsInterval, ApiToggleLogs } from "../features/sensorsAPI";
 import io from "socket.io-client";
-import { setSensors } from "../features/sensorsSlice";
+import { setSensors, dataSaved } from "../features/sensorsSlice";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -57,6 +57,8 @@ const Acquisition = () => {
   const sensors = useSelector((state) => state.sensors);
   const log = useSelector((state) => state.log);
 
+  const dateUpdateData = useSelector((state) => state.lastDataSaved );
+
   const socket = useMemo(() => io(), []);
 
   // Handles socket io events
@@ -65,6 +67,12 @@ const Acquisition = () => {
     socket.on("data", (data) => {
       const parsedData = JSON.parse(data);
       dispatch(setSensors(parsedData.state.reported.sensors));
+    });
+    
+    socket.on("dataSaved", (data) => {
+      const parsedData = JSON.parse(data);
+      console.log("state.lastDataSaved = " + parsedData.gps.datetime );
+      dispatch(dataSaved(parsedData.gps.datetime));
     });
 
     return () => {
@@ -157,9 +165,11 @@ const Acquisition = () => {
 
       <div>
         <p>
-          <strong>Server answer:</strong>
+          <strong>Server console :</strong>
+          <p></p>
         </p>
         <p>{resToPost}</p>
+        <p>Last recording in postgres : {dateUpdateData}</p>
       </div>
     </div>
   );

@@ -41,9 +41,9 @@ const initialState = {
 
   gnss: {
     gps: {
-      datetime: "2020-09-18 13:33:33.33",
-      date: "2020-09-18",
-      time: "13:33:33.33",
+      datetime: "DD/MM/YYYY HH:MM:SS.MS",
+      date: "DD/MM/YYYY",
+      time: "HH:MM:SS.MS",
       validity: true,
     },
     geo: {
@@ -120,10 +120,14 @@ const sensorsSlice = createSlice({
     setGnssData(state, action) {
       state.gnss = action.payload;
     },
+    dataSaved(state, action) {
+      state.lastDataSaved = action.payload;
+    },
   },
 });
 
 export const {
+  dataSaved,
   setSensors,
   calibrateSensor,
   initSensorCalibration,
