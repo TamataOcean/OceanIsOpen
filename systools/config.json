@@ -30,6 +30,12 @@
     }
   },
 
+  "Acquisition": {
+    "isToggleOn": false,
+    "state": "Pause", 
+    "interval": "10000"
+  },
+
   "sensors": {
     "phSensor": 0,
     "temperatureSensor": 1,

@@ -14,7 +14,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import PauseIcon from "@material-ui/icons/Pause";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Sensor from "./Sensors/Sensor";
-import { ApiChangeLogsInterval, ApiToggleLogs } from "../features/sensorsAPI";
+import { ApiChangeLogsInterval, ApiToggleLogs, ApiSyncData } from "../features/sensorsAPI";
 import io from "socket.io-client";
 import { setSensors, dataSaved } from "../features/sensorsSlice";
 
@@ -56,7 +56,8 @@ const Acquisition = () => {
   // Redux selectors to access the state
   const sensors = useSelector((state) => state.sensors);
   const log = useSelector((state) => state.log);
-
+  const server = useSelector((state) => state.server);
+  
   const dateUpdateData = useSelector((state) => state.lastDataSaved );
 
   const socket = useMemo(() => io(), []);
@@ -94,6 +95,15 @@ const Acquisition = () => {
     const newInterval = e.target.value;
     dispatch(ApiChangeLogsInterval(newInterval, post));
   };
+
+  // Toggles the sync of data
+  // and display response from server
+  const handleSync = async (e) => {
+    e.preventDefault();
+    const serverResponse = await dispatch(ApiSyncData(post));
+    setResToPost(serverResponse);
+  };
+
 
   const sensorsList = sensors.length ? (
     <div className={classes.root}>
@@ -171,6 +181,32 @@ const Acquisition = () => {
         <p>{resToPost}</p>
         <p>Last recording in postgres : {dateUpdateData}</p>
       </div>
+
+      {/* Launch recording process */}
+      {server.isSynchronized ? (
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          // onClick={this.handleAcquisitionButton}
+          onClick={handleSync}
+          className={classes.button}
+          startIcon={<PauseIcon />}
+        >
+          Stop Sync
+        </Button>
+      ) : (
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          onClick={handleSync}
+          className={classes.button}
+          startIcon={<PlayArrowIcon />}
+        >
+          Start Sync
+        </Button>
+      )}
     </div>
   );
 };

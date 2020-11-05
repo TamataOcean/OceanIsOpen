@@ -9,6 +9,8 @@ import {
   calibrateSensor,
   initSensorCalibration,
   setSensorMessage,
+  syncDataOn,
+  syncDataOff,
 } from "./sensorsSlice";
 
 // TODO: ajouter fonction de gestions des erreurs de requêtes
@@ -135,4 +137,27 @@ export const ApiCalibrateSensor = (sensorId) => async (dispatch, getState) => {
     dispatch(calibrateSensor({ sensorId, isCalibrate }));
     dispatch(setSensorMessage({ sensorId, message }));
   } catch (err) {}
+};
+
+
+export const ApiSyncData = (post) => async (dispatch, getState) => {
+  try {
+    const syncCommand = getState().server.isSynchronized ? "stop" : "start";
+    console.log({ syncCommand });
+
+    const response = await fetch(`/api/syncAutoReplay?cmd_id=${syncCommand}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // récupération de la réponse du serveur http
+      body: JSON.stringify({ post }),
+    });
+    const body = await response.text();
+    if (response.status !== 200) throw Error(body.message);
+    dispatch(syncDataOn(body));
+    return body;
+  } catch (err) {
+    dispatch(serverDisconnected());
+  }
 };

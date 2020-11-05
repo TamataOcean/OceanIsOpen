@@ -37,6 +37,7 @@ const initialState = {
   server: {
     isConnected: false,
     isFetching: false,
+    isSynchronized : false,
   },
 
   gnss: {
@@ -123,6 +124,12 @@ const sensorsSlice = createSlice({
     dataSaved(state, action) {
       state.lastDataSaved = action.payload;
     },
+    syncDataOn(state) {
+      state.server.isSynchronized = true;
+    },
+    syncDataOff(state) {
+      state.server.isSynchronized = false;
+    },
   },
 });
 
@@ -139,6 +146,8 @@ export const {
   fetchingData,
   setSensorMessage,
   setGnssData,
+  syncDataOn,
+  syncDataOff,
 } = sensorsSlice.actions;
 
 export default sensorsSlice.reducer;

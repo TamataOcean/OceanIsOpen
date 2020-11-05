@@ -152,7 +152,7 @@ function begin() {
     .get("/api/syncAutoReplay", (req, res) => {
       console.log("API Sync requested with GET Method: " + req.query.command);
       var cmd = req.query.command;
-      if (cmd = "start") {
+      if (cmd == "start") {
         execCmd = "sudo service auto_replay start";
       } else {
         execCmd = "sudo service auto_replay stop";
@@ -254,9 +254,6 @@ function begin() {
       );
       console.log(
         "Command requested : " + '{"order":"' + req.query.cmd_id + '"}'
-      );
-      console.log(
-        "Interval requested : " + '{"interval":"' + req.query.interval + '"}'
       );
 
       port_TEENSY.write('{"order":"' + req.query.cmd_id + '"}', function (err) {
