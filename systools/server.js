@@ -14,6 +14,8 @@ var DEBUG_GPS = false;
 var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
 
 var jsonfile = require("jsonfile");
+const updateJsonFile = require('update-json-file')
+
 jsonfile.spaces = 4;
 
 const { exec } = require("child_process");
@@ -25,10 +27,10 @@ const GNSS_Drotek = require("./actions/components/GNSS_Drotek");
 
 var configFile = "config.json";
 var jsonConfig;
-var mqttTopicIn = "";
-var mqttTopicOut = "";
+var mqttTopicUpdate = "";
+var mqttTopicOrder = "";
 var mqttServer = "";
-var mqttAWS = "";
+var interval = 5000;
 var influx;
 var mongo;
 var serialport_GPS;
@@ -38,7 +40,7 @@ var baud_GPS;
 let parser_GPS;
 let parser_TEENSY;
 var GPS_Modele;
-
+var new_interval;
 var apiAnswer = "";
 //---------------------
 // INITIALISATION
@@ -47,10 +49,18 @@ jsonfile.readFile(configFile, function (err, data) {
   jsonConfig = data;
 
   if (err) throw err;
-  mqttTopic = data.system.mqttTopic;
-  mqttServer = data.system.mqttServer;
-  mqttUser = data.system.mqttUser;
-  mqttAWS = data.system.mqttAWS;
+  /* Mosquitto Config */
+  mqttServer = data.system.mqtt.server;
+  mqttTopicUpdate = data.system.mqtt.topicUpdate;
+  mqttTopicOrder = data.system.mqtt.topicOrder;
+  mqttUser = data.system.mqtt.user;
+
+  /* state */
+  satellite_Acquisition = data.state.satellite_Acquisition;
+  teensy_Acquisition = data.state.teensy_Acquisition;
+  interval = data.state.interval;
+  new_interval = data.state.interval;
+
   user = data.system.user;
   serialport_TEENSY = data.system.serialport_TEENSY.port;
   baud_TEENSY = data.system.serialport_TEENSY.baud;
@@ -78,6 +88,22 @@ function begin() {
   const server = require("http").createServer(app);
   const io = require("socket.io")(server);
 
+
+  const SerialPort = require("serialport");
+  const Readline = require("@serialport/parser-readline");
+
+  /* LISTENING TEENSY */
+  /* **************** */
+  const port_TEENSY = new SerialPort(serialport_TEENSY, {
+    baudRate: baud_TEENSY,
+  });
+
+  /* LISTENING on MQTT ( Mosquitto ) */
+  client = mqtt.connect('mqtt://'+ jsonConfig.system.mqtt.server );
+  client.subscribe( jsonConfig.system.mqtt.topicUpdate ); 
+  client.on('connect', () => { console.log('Mqtt connected to ' + jsonConfig.system.mqtt.server + "/ Topic : " + jsonConfig.system.mqtt.topicUpdate )} )
+  //client.on('message', insertDataSatellite );
+  
   io.on("connect", (socket) => {
     console.log("WebSocket Connected");
     socket.on("refreshGnss", (evt) => {
@@ -139,7 +165,7 @@ function begin() {
       console.log("Command requested with POST Method: " + req.query.cmd_id);
 
       if ((req.query.cmd_id = "update_interval")) {
-        var new_interval = parseFloat(req.body.interval_value);
+        new_interval = parseFloat(req.body.interval_value);
         console.log("interval value : " + new_interval);
         writeToTeensy(port_TEENSY, "update_interval").then((data) => {
           res.send({ apiAnswer: data });
@@ -248,6 +274,9 @@ function begin() {
       });
     })
 
+    // ************************************
+    // Start / Stop Acquisition Teensy 
+    // ************************************
     .post("/api/command", (req, res) => {
       console.log(
         "API Command requested with POST Method: " + req.query.cmd_id
@@ -261,29 +290,35 @@ function begin() {
           return console.log("Error : ", err.message);
         }
         console.log("command " + req.query.cmd_id + " sent");
-        //res.redirect('/');
-      });
-
+        })
       console.log(req.body);
-      console.log("Interval : ", req.interval);
       res.send(`Server received your POST request. This : ${req.body.post}`);
+
+      // Writing state to JSON File
+      if ( req.query.cmd_id == "startLog") {
+        updateJsonFile(configFile, (data) => {
+          data.state.satellite_Acquisition = true;
+          return data
+        })
+      }
+      else if ( req.query.cmd_id == "stopLog") {
+        updateJsonFile(configFile, (data) => {
+          data.state.satellite_Acquisition = false;
+          return data
+        })
+      }
+      console.log("state.teensy_Acquisition saved " + req.query.cmd_id  )
     })
+    
 
+    /* REACT - UPDATE INTERVAL TO TEENSY  */
+    /************************************ */
     .post("/api/updateLogInterval", (req, res) => {
-      console.log(
-        "Interval requested : " + '{"interval":"' + req.query.interval + '"}'
-      );
-
-      // writeToTeensy(port_TEENSY, "update_interval", req.query.interval).then( (data) => {
-      // 	res.send({ apiAnswer: data })
-      // })
-
+      console.log("Interval requested : " + '{"interval":"' + req.query.interval + '"}');
       port_TEENSY.write(
-        '{"order":"' +
-          req.query.cmd_id +
-          '","value":"' +
-          req.query.interval +
-          '" }',
+        '{"order":"' + req.query.cmd_id 
+        + '","value":"' + req.query.interval +
+        '" }',
         function (err) {
           if (err) {
             return console.log("Error : ", err.message);
@@ -292,6 +327,12 @@ function begin() {
           //res.redirect('/');
         }
       );
+      
+      // Writing state to JSON File
+      updateJsonFile(configFile, (data) => {
+        data.state.interval = parseFloat(req.query.interval);
+        return data
+      })
 
       console.log(req.body);
       console.log("Interval : ", req.interval);
@@ -305,25 +346,26 @@ function begin() {
       res.redirect("/");
     });
 
-  /* STARTING HTTP SERVER
-    /* -----------------------------------------------------------------*/
-  app.on("connect", function (req, res) {
-    port_TEENSY.write("WebUser_init", function (err) {
-      if (err) {
-        return console.log("Error: ", err.message);
-      }
-      console.log("message login sent");
+    app.on("connect", function (req, res) {
+      port_TEENSY.write("WebUser_init", function (err) {
+        if (err) {
+          return console.log("Error: ", err.message);
+        }
+        console.log("message login sent");
+      });
+      console.log("new user arrived");
     });
-    console.log("new user arrived");
-  });
-  console.log("-------------------------------");
-  server.listen(8080, () => console.log("Web server listening on 8080"));
+    
+    /* STARTING HTTP SERVER
+    /* -----------------------------------------------------------------*/
+    console.log("-------------------------------");
+    server.listen(8080, () => console.log("Web server listening on 8080"));
 
   if (DEBUG) {
     console.log(".............. CONFIG .............");
     console.log("MqttServer = " + mqttServer);
     console.log("MqttUser = " + mqttUser);
-    console.log("MqttTopic = " + mqttTopic);
+    console.log("MqttTopic Update = " + mqttTopicUpdate);
     console.log("Postgres = " + JSON.stringify(jsonConfig.system.postgres));
     console.log(
       "SerialPort TEENSY = " +
@@ -345,25 +387,23 @@ function begin() {
   /* ************************************ */
   /* LISTENING on SERIAL for TEENSY & GPS */
   /* ************************************ */
-  const SerialPort = require("serialport");
-  const Readline = require("@serialport/parser-readline");
-
-  /* LISTENING TEENSY */
-  /* **************** */
-  const port_TEENSY = new SerialPort(serialport_TEENSY, {
-    baudRate: baud_TEENSY,
-  });
   port_TEENSY.on("error", function (err) {
     console.log("Error: ", err.message);
   });
 
   port_TEENSY.on("open", function () {
-    port_TEENSY.write('{"order":"Init_connection_from_Raspi"}', function (err) {
-      if (err) {
-        return console.log("Error: ", err.message);
-      }
-      console.log("message init sent");
-    });
+    console.log("Port Teensy opened");
+    
+    /* First order to teensy regarding the state */
+    if (satellite_Acquisition) {   
+      //Launching interval value
+      new_interval = interval;
+      console.log("Reloading config Teensy since last Reboot");
+      writeToTeensy(port_TEENSY, "startLog");
+      //setTimeout( writeToTeensy(port_TEENSY, "update_interval", new_interval ), 1500 )
+      //setTimeout( writeToTeensy(port_TEENSY, "startLog"), 3000 )
+      //writeToTeensy(port_TEENSY, "update_interval", new_interval ).then();
+    }
   });
 
   port_TEENSY.on("close", function () {
@@ -413,7 +453,7 @@ async function insertData(topic, message, socket) {
 
     // 	/* INSERT to Postgres database */
     posgresDB = new TamataPostgres(jsonConfig.system.postgres);
-    posgresDB.save(parsedMessage, parsedPosition, GPS_Modele);
+    posgresDB.save(parsedMessage, parsedPosition, GPS_Modele, "Teensy");
     
     socket.emit("dataSaved", JSON.stringify(parsedPosition));
     
@@ -452,6 +492,68 @@ async function insertData(topic, message, socket) {
     }
   });
 }
+
+/***************************************
+- function insertDataSatellite(topic, message)
+Parse message & position and INSERT into Database */
+async function insertDataSatellite(topic, message, socket) {
+  var parsedMessage = JSON.parse(message);
+
+  if (DEBUG) console.log("***********************************");
+  if (DEBUG) console.log(" Satellite Data Message received : " + message);
+  if (DEBUG) console.log("***********************************");
+
+  if ( satellite_Acquisition ) {
+    console.log("Satellite message arrived will be saved")
+    getGpsPosition().then((parsedPosition) => {
+      if (DEBUG) console.log("Position get " + JSON.stringify(parsedPosition));
+  
+      // 	/* INSERT to Postgres database */
+      posgresDB = new TamataPostgres(jsonConfig.system.postgres);
+      posgresDB.save(parsedMessage, parsedPosition, GPS_Modele, "Satellite");
+      
+      // socket.emit("dataSaved", JSON.stringify(parsedPosition));
+  
+      if (DEBUG) console.log("Inserted datas : " + JSON.stringify(parsedMessage));
+      // Classic GPS on USB
+      if (GPS_Modele == "standard") {
+        if (DEBUG)
+          console.log(
+            "At GPS position : LAT = " +
+              JSON.stringify(parsedPosition.loc.dmm.latitude) +
+              " LON=" +
+              JSON.stringify(parsedPosition.loc.dmm.longitude)
+          );
+      } else if (GPS_Modele == "emLead") {
+        // EmLid GPS
+        if (DEBUG)
+          console.log(
+            "At GPS position : LAT = " +
+              JSON.stringify(parsedPosition.geo.latitude) +
+              " LON=" +
+              JSON.stringify(parsedPosition.geo.longitude)
+          );
+      } else if (GPS_Modele == "Drotek") {
+        //Drotek modele
+        if (DEBUG)
+          console.log(
+            "At GPS position : LAT = " +
+              JSON.stringify(parsedPosition.geo.latitude) +
+              " LON=" +
+              JSON.stringify(parsedPosition.geo.longitude)
+          );
+      }
+    });
+
+  }
+  else {
+    console.log("Satellite message arrived without saving")
+
+  }
+
+
+}
+
 
 /***************************************
 - function getGpsPosition()
@@ -612,20 +714,43 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
   }
 
   if (messageType == "update_interval") {
+    console.log("Function WriteToTeensy / update_interval")
     port_TEENSY.write(
-      '{"order":"' + sensorId + '","value":' + new_interval + "}",
+      '{"order":"update_interval","value":' + new_interval + "}",
       function (err) {
         if (err) {
           return console.log("Error : ", err.message);
         }
         console.log("command update_interval sent");
       }
+      );
+      
+      return new Promise((resolve, reject) => {
+        parser_TEENSY.on("data", function (data) {
+          if (data.includes("update_intervalAnswer")) {
+            console.log("Api answer update_intervalAnswer received");
+            resolve(data);
+          }
+        });
+      });
+    }
+    
+    if (messageType == "startLog") {
+      console.log("Function WriteToTeensy / startLog")
+      port_TEENSY.write(
+      '{"order":"startLog"}',
+      function (err) {
+        if (err) {
+          return console.log("Error : ", err.message);
+        }
+        console.log("command startLog sent");
+      }
     );
 
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
-        if (data.includes("update_intervalAnswer")) {
-          console.log("Api answer update_intervalAnswer received");
+        if (data.includes("Start log received")) {
+          console.log("Api answer Start log received");
           resolve(data);
         }
       });
