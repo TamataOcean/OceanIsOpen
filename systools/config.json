@@ -27,14 +27,15 @@
 			"modele": "Drotek"
 		},
 		"serialport_TEENSY": {
-			"port": "/dev/ttyTEENSY",
+			"port": "/dev/ttyTeensy",
 			"baud": 115200
 		}
 	},
 	"state": {
 		"satellite_Acquisition": false,
 		"teensy_Acquisition": false,
-		"interval": 10000
+		"interval": 10000,
+		"data_sync": false
 	},
 	"sensors": {
 		"phSensor": 0,

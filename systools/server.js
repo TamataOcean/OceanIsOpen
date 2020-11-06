@@ -31,8 +31,6 @@ var mqttTopicUpdate = "";
 var mqttTopicOrder = "";
 var mqttServer = "";
 var interval = 5000;
-var influx;
-var mongo;
 var serialport_GPS;
 var serialport_TEENSY;
 var baud_TEENSY;
@@ -42,6 +40,7 @@ let parser_TEENSY;
 var GPS_Modele;
 var new_interval;
 var apiAnswer = "";
+var data_sync;
 //---------------------
 // INITIALISATION
 //---------------------
@@ -60,6 +59,7 @@ jsonfile.readFile(configFile, function (err, data) {
   teensy_Acquisition = data.state.teensy_Acquisition;
   interval = data.state.interval;
   new_interval = data.state.interval;
+  data_sync = data.state.data_sync
 
   user = data.system.user;
   serialport_TEENSY = data.system.serialport_TEENSY.port;
@@ -180,8 +180,14 @@ function begin() {
       var cmd = req.query.command;
       if (cmd == "start") {
         execCmd = "sudo service auto_replay start";
+        updateJsonFile(configFile, (data) => {
+          data.state.data_sync = true;
+          return data})
       } else {
         execCmd = "sudo service auto_replay stop";
+        updateJsonFile(configFile, (data) => {
+          data.state.data_sync = false;
+          return data})
       }
       console.log("Exec Cmd => " + execCmd);
 
@@ -297,13 +303,13 @@ function begin() {
       // Writing state to JSON File
       if ( req.query.cmd_id == "startLog") {
         updateJsonFile(configFile, (data) => {
-          data.state.satellite_Acquisition = true;
+          data.state.teensy_Acquisition = true;
           return data
         })
       }
       else if ( req.query.cmd_id == "stopLog") {
         updateJsonFile(configFile, (data) => {
-          data.state.satellite_Acquisition = false;
+          data.state.teensy_Acquisition = false;
           return data
         })
       }
@@ -395,14 +401,12 @@ function begin() {
     console.log("Port Teensy opened");
     
     /* First order to teensy regarding the state */
-    if (satellite_Acquisition) {   
+    if (teensy_Acquisition) {   
       //Launching interval value
       new_interval = interval;
       console.log("Reloading config Teensy since last Reboot");
       writeToTeensy(port_TEENSY, "startLog");
-      //setTimeout( writeToTeensy(port_TEENSY, "update_interval", new_interval ), 1500 )
-      //setTimeout( writeToTeensy(port_TEENSY, "startLog"), 3000 )
-      //writeToTeensy(port_TEENSY, "update_interval", new_interval ).then();
+      // TO DO ... SENDING Interval after the startlog ... without overloading Teensy port... 
     }
   });
 
