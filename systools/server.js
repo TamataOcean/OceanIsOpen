@@ -24,6 +24,7 @@ var mqtt = require("mqtt"); //includes mqtt server
 const TamataPostgres = require("./actions/components/TamataPostgres");
 const TamataInfluxDB = require("./actions/components/TamataInflux");
 const GNSS_Drotek = require("./actions/components/GNSS_Drotek");
+const { cpuUsage } = require("process");
 
 var configFile = "config.json";
 var jsonConfig;
@@ -67,6 +68,10 @@ jsonfile.readFile(configFile, function (err, data) {
   serialport_GPS = data.system.serialport_GPS.port;
   baud_GPS = data.system.serialport_GPS.baud;
   GPS_Modele = data.system.serialport_GPS.modele;
+
+  /* Init State */
+  if (data_sync) execService("auto_replay", "start")
+
   begin();
 });
 
@@ -178,36 +183,7 @@ function begin() {
     .get("/api/syncAutoReplay", (req, res) => {
       console.log("API Sync requested with GET Method: " + req.query.command);
       var cmd = req.query.command;
-      if (cmd == "start") {
-        execCmd = "sudo service auto_replay start";
-        updateJsonFile(configFile, (data) => {
-          data.state.data_sync = true;
-          return data})
-      } else {
-        execCmd = "sudo service auto_replay stop";
-        updateJsonFile(configFile, (data) => {
-          data.state.data_sync = false;
-          return data})
-      }
-      console.log("Exec Cmd => " + execCmd);
-
-      exec(execCmd, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`error: ${error.message}`);
-          res.send({ apiAnswer: error.message });
-          return;
-        }
-
-        if (stderr) {
-          console.error(`stderr: ${stderr}`);
-          res.send({ apiAnswer: stderr });
-
-          return;
-        }
-
-        console.log(`stdout:\n${stdout}`);
-        res.send({ apiAnswer: stdout });
-      });
+      execService( "auto_replay", cmd )
     })
 
     .get("/api/hello", (req, res) => {
@@ -440,6 +416,45 @@ function begin() {
 
   parser_GPS = port_GPS.pipe(new Readline({ delimiter: "\r\n" }));
   //	getGpsPosition()
+}
+
+/***************************************
+ * - function execService( service, cmd )
+ * Exec the service with cmd ( start / stop )
+ */
+function execService( service, cmd ) {
+  if (cmd == "start") {
+    execCmd = "sudo service "+ service + " " + cmd;
+    if (DEBUG) console.log("Exec command = " + execCmd);
+
+    updateJsonFile(configFile, (data) => {
+      data.state.data_sync = true;
+      return data})
+  } else {
+    execCmd = "sudo service auto_replay stop";
+    updateJsonFile(configFile, (data) => {
+      data.state.data_sync = false;
+      return data})
+  }
+  console.log("Exec Cmd => " + execCmd);
+
+  exec(execCmd, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`error: ${error.message}`);
+      res.send({ apiAnswer: error.message });
+      return;
+    }
+
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+      res.send({ apiAnswer: stderr });
+
+      return;
+    }
+
+    console.log(`stdout:\n${stdout}`);
+    res.send({ apiAnswer: stdout });
+  });
 }
 
 /***************************************
