@@ -10,7 +10,7 @@
 )
 */
 var DEBUG = true;
-var DEBUG_GPS = false;
+var DEBUG_GPS = true;
 var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
 
 var jsonfile = require("jsonfile");
@@ -24,6 +24,8 @@ var mqtt = require("mqtt"); //includes mqtt server
 const TamataPostgres = require("./actions/components/TamataPostgres");
 const TamataInfluxDB = require("./actions/components/TamataInflux");
 const GNSS_Drotek = require("./actions/components/GNSS_Drotek");
+const GNSS_Standard = require("./actions/components/GNSS_Standard");
+
 const { cpuUsage } = require("process");
 
 var configFile = "config.json";
@@ -583,7 +585,6 @@ function getGpsPosition() {
   }
   console.log("GPS MODELE in config.json : " + GPS_Modele);
   return new Promise((resolve, reject) => {
-    const nmea = require("node-nmea");
     const gprmc = require("gprmc-parser");
 
     // DEBUG MODE Without GPS
@@ -596,29 +597,28 @@ function getGpsPosition() {
     } else {
       parser_GPS.on("data", function (data) {
         if (DEBUG_GPS) {
-          //	console.log(data)
+          	//console.log(data)
         }
 
         // Using USB GPS classic
         if (GPS_Modele == "standard") {
           if (data.includes("$GPRMC")) {
-            //console.log("Using standard GPS : "+ GPS_Modele);
-            resolve(nmea.parse(data));
-          }
-        }
-        // Using emLead GPS
-        else if (GPS_Modele == "emLead") {
-          //console.log("Using emLead GPS");
-          if (data.includes("$GNRMC")) {
-            resolve(gprmc(data));
+            resolve( GNSS_Standard(data, GPS_Modele));
           }
         }
 
         // Using Drotek GPS
         else if (GPS_Modele == "Drotek") {
           if (data.includes("$GNRMC")) {
-            // resolve(nmea.parse(data));
             resolve(GNSS_Drotek(data, GPS_Modele ));
+          }
+        }
+
+        // Using emLead GPS
+        else if (GPS_Modele == "emLead") {
+          //console.log("Using emLead GPS");
+          if (data.includes("$GNRMC")) {
+            resolve(gprmc(data));
           }
         }
       });

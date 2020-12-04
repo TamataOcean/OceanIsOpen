@@ -13,7 +13,6 @@
     "influx": "^5.5.1",
     "jsonfile": "^5.0.0",
     "mqtt": "^3.0.0",
-    "node-nmea": "^2.0.0",
     "parser-readline": "^1.0.2",
     "pg": "^7.12.1",
     "serialport": "^7.1.5",
