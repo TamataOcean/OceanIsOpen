@@ -9,7 +9,7 @@
 	- ...
 )
 */
-var DEBUG = true;
+var DEBUG = false;
 var DEBUG_GPS = false;
 var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
 
