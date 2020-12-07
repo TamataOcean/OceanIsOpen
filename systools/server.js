@@ -9,7 +9,7 @@
 	- ...
 )
 */
-var DEBUG = false;
+var DEBUG = true;
 var DEBUG_GPS = false;
 var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
 
@@ -119,7 +119,7 @@ function begin() {
         if (DEBUG)
           console.log("Position get " + JSON.stringify(parsedPosition));
         socket.emit("gnssData", parsedPosition);
-        console.log("GNSS Position transmitted by Socket.io");
+        if (DEBUG_GPS) {console.log("GNSS Position transmitted by Socket.io");}
       });
     });
   });
@@ -630,7 +630,7 @@ function getGpsPosition() {
 - function writeToTeensy()
 Return a Promise when Teensy answer */
 async function writeToTeensy(port_TEENSY, messageType, sensorId) {
-  if (DEBUG_GPS) {
+  if (DEBUG) {
     console.log("writeToTeensy.... ");
   }
 
@@ -641,14 +641,14 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
         if (err) {
           return console.log("Error : ", err.message);
         }
-        console.log("command sensorInfo for sensor " + sensorId + " sent");
+        if (DEBUG) {console.log("command sensorInfo for sensor " + sensorId + " sent");}
       }
     );
 
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("sensorInfoAnswer")) {
-          console.log("Api answer sensorInfo received");
+          if (DEBUG) {console.log("Api answer sensorInfo received");}
           resolve(data);
         }
       });
@@ -665,7 +665,7 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("Config_Teensy")) {
-          console.log("Api answer Config_Teensy received");
+          if (DEBUG) {console.log("Api answer Config_Teensy received");}
           resolve(data);
         }
       });
@@ -682,7 +682,7 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("calibrationStatusAnswer")) {
-          console.log("Api answer calibrationStatusAnswer received");
+          if (DEBUG) {console.log("Api answer calibrationStatusAnswer received");}
           resolve(data);
         }
       });
@@ -696,7 +696,7 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
         if (err) {
           return console.log("Error : ", err.message);
         }
-        console.log("command calibrate for sensor " + sensorId + " sent");
+        if (DEBUG) {console.log("command calibrate for sensor " + sensorId + " sent");}
         //res.redirect('/');
       }
     );
@@ -704,7 +704,7 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("calibrationAnswer")) {
-          console.log("Api answer calibrationAnswer received");
+          if (DEBUG){console.log("Api answer calibrationAnswer received");}
           resolve(data);
         }
       });
@@ -718,14 +718,14 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
         if (err) {
           return console.log("Error : ", err.message);
         }
-        console.log("command calibrate for sensor " + sensorId + " sent");
+        if (DEBUG) {console.log("command calibrate for sensor " + sensorId + " sent");}
       }
     );
 
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("calibrationAnswer")) {
-          console.log("Api answer calibrationAnswer received");
+          if (DEBUG){console.log("Api answer calibrationAnswer received");}
           resolve(data);
         }
       });
@@ -740,14 +740,14 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
         if (err) {
           return console.log("Error : ", err.message);
         }
-        console.log("command update_interval sent");
+        if (DEBUG){console.log("command update_interval sent");}
       }
       );
       
       return new Promise((resolve, reject) => {
         parser_TEENSY.on("data", function (data) {
           if (data.includes("update_intervalAnswer")) {
-            console.log("Api answer update_intervalAnswer received");
+            if (DEBUG){console.log("Api answer update_intervalAnswer received");}
             resolve(data);
           }
         });
@@ -762,14 +762,14 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
         if (err) {
           return console.log("Error : ", err.message);
         }
-        console.log("command startLog sent");
+        if (DEBUG){console.log("command startLog sent");}
       }
     );
 
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("Start log received")) {
-          console.log("Api answer Start log received");
+          if (DEBUG){console.log("Api answer Start log received");}
           resolve(data);
         }
       });
