@@ -483,17 +483,8 @@ async function insertData(topic, message, socket) {
     // 	influx.save( parsedMessage, parsedPosition );
 
     if (DEBUG) console.log("Inserted datas : " + JSON.stringify(parsedMessage));
-    // Classic GPS on USB
-    if (GPS_Modele == "standard") {
-      if (DEBUG)
-        console.log(
-          "At GPS position : LAT = " +
-            JSON.stringify(parsedPosition.loc.dmm.latitude) +
-            " LON=" +
-            JSON.stringify(parsedPosition.loc.dmm.longitude)
-        );
-    } else if (GPS_Modele == "emLead") {
-      // EmLid GPS
+    // EmLid GPS
+    if (GPS_Modele == "emLead") {
       if (DEBUG)
         console.log(
           "At GPS position : LAT = " +
@@ -501,8 +492,8 @@ async function insertData(topic, message, socket) {
             " LON=" +
             JSON.stringify(parsedPosition.geo.longitude)
         );
-    } else if (GPS_Modele == "Drotek") {
-      //Drotek modele
+        //Drotek & standard Model
+    } else if (GPS_Modele == "Drotek" || GPS_Modele == "standard") {
       if (DEBUG)
         console.log(
           "At GPS position : LAT = " +
