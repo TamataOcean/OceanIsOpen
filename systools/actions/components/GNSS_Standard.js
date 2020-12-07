@@ -26,7 +26,7 @@ const fixGeo = function(coord, cardinalPoint) {
 };
 
 const parseGNRMC = function(raw, model) {
-  console.log("GNSS Standard function");
+  if (debug) {console.log("GNSS Standard function");}
 
   const splitted = raw.split(',');
 

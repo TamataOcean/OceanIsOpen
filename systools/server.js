@@ -10,7 +10,7 @@
 )
 */
 var DEBUG = true;
-var DEBUG_GPS = true;
+var DEBUG_GPS = false;
 var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
 
 var jsonfile = require("jsonfile");
