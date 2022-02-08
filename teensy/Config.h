@@ -26,14 +26,14 @@
 #define SELECTTDS
 
 //Sensor pin settings
-#define PHPIN  35
-#define TEMPPIN 33
-#define DOPIN  A0
-#define ECPIN  14
+#define PHPIN  23 //35 for Proto HAckathon / 23 with Malette OSI
+#define TEMPPIN 33 // Same same 
+#define DOPIN  A0 
+#define ECPIN  14 // 14 Proto Hackaton / 17 with Malette OSI
 #define TDSPIN 36
 #define ORPPIN 37
 #define TURBPINLED A4
-#define TURBPINSENSOR 15
+#define TURBPINSENSOR A21 // 15 Proto Hackathon / A21 with Malette OSI
 
 //Set sensor offset (calibration data)
 #define PHOFFSET 0.12
