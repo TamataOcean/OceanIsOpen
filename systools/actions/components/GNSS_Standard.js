@@ -26,10 +26,12 @@ const fixGeo = function(coord, cardinalPoint) {
 };
 
 const parseGNRMC = function(raw, model) {
+  if (debug) {console.log("GNSS Standard function");}
+
   const splitted = raw.split(',');
 
-  if (splitted.length !== 14 || splitted[0] !== '$GNRMC') {
-    throw new TypeError('Invalid GNRMC string - lenght = ' + splitted.length );
+  if (splitted.length !== 13 || splitted[0] !== '$GPRMC') {
+    throw new TypeError('Invalid GPRMC string - lenght = ' + splitted.length + 'splitted[0] = ' + splitted[0] );
   }
 
   if (debug) {

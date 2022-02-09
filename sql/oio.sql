@@ -1,8 +1,8 @@
-
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 --tbl for save sensors data + GPS
 CREATE TABLE public.sensors
 (
-        id serial,
+        id uuid DEFAULT uuid_generate_v4 (),            --UUID
         teensy_user character varying,                  --Id du teensy
         teensy_phSensor double precision,               --PH
         teensy_temperatureSensor double precision,      --Température
@@ -19,10 +19,10 @@ CREATE TABLE public.sensors
         geom geometry(Point,4326),                      --Geométrie fabrique avec les long lat
             CONSTRAINT sensors_pkey PRIMARY KEY (id)
 );
-CREATE INDEX sensors_index
-    ON public.sensors USING gist
-    (geom gist_geometry_ops)
-    TABLESPACE pg_default;
+--CREATE INDEX sensors_index
+--    ON public.sensors USING gist
+--    (geom gist_geometry_ops)
+--    TABLESPACE pg_default;
 
 --make Geom with lon_lat
 CREATE OR REPLACE FUNCTION public.func_add_geom()

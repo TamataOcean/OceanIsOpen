@@ -37,6 +37,26 @@ const initialState = {
   server: {
     isConnected: false,
     isFetching: false,
+    isSynchronized : false,
+  },
+
+  gnss: {
+    gps: {
+      datetime: "DD/MM/YYYY HH:MM:SS.MS",
+      date: "DD/MM/YYYY",
+      time: "HH:MM:SS.MS",
+      validity: true,
+    },
+    geo: {
+      latitude: 46.155253,
+      longitude: -1.145492,
+      bearing: null,
+    },
+    speed: {
+      knots: 0.038,
+      kmh: 0.07,
+      mph: 0.044,
+    },
   },
 };
 
@@ -68,12 +88,6 @@ const sensorsSlice = createSlice({
         if (sensor.sensorId === sensorId) {
           sensor.calibrationCurrentStep = 0;
           sensor.message = "";
-          // // TODO: Utiliser les calibration step plutôt que isCalibrate
-          // if (sensor.isCalibrate === 1) {
-          //   sensor.calibrationCurrentStep = 0;
-          // } else {
-          //   sensor.calibrationCurrentStep = 1;
-          // }
         }
       });
     },
@@ -104,10 +118,23 @@ const sensorsSlice = createSlice({
     serverDisconnected(state) {
       state.server.isConnected = false;
     },
+    setGnssData(state, action) {
+      state.gnss = action.payload;
+    },
+    dataSaved(state, action) {
+      state.lastDataSaved = action.payload;
+    },
+    syncDataOn(state) {
+      state.server.isSynchronized = true;
+    },
+    syncDataOff(state) {
+      state.server.isSynchronized = false;
+    },
   },
 });
 
 export const {
+  dataSaved,
   setSensors,
   calibrateSensor,
   initSensorCalibration,
@@ -118,6 +145,9 @@ export const {
   fetchedData,
   fetchingData,
   setSensorMessage,
+  setGnssData,
+  syncDataOn,
+  syncDataOff,
 } = sensorsSlice.actions;
 
 export default sensorsSlice.reducer;

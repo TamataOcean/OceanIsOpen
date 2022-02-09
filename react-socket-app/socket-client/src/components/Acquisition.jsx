@@ -14,9 +14,9 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import PauseIcon from "@material-ui/icons/Pause";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Sensor from "./Sensors/Sensor";
-import { ApiChangeLogsInterval, ApiToggleLogs } from "../features/sensorsAPI";
+import { ApiChangeLogsInterval, ApiToggleLogs, ApiSyncData } from "../features/sensorsAPI";
 import io from "socket.io-client";
-import { setSensors } from "../features/sensorsSlice";
+import { setSensors, dataSaved } from "../features/sensorsSlice";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -56,6 +56,9 @@ const Acquisition = () => {
   // Redux selectors to access the state
   const sensors = useSelector((state) => state.sensors);
   const log = useSelector((state) => state.log);
+  const server = useSelector((state) => state.server);
+  
+  const dateUpdateData = useSelector((state) => state.lastDataSaved );
 
   const socket = useMemo(() => io(), []);
 
@@ -65,6 +68,12 @@ const Acquisition = () => {
     socket.on("data", (data) => {
       const parsedData = JSON.parse(data);
       dispatch(setSensors(parsedData.state.reported.sensors));
+    });
+    
+    socket.on("dataSaved", (data) => {
+      const parsedData = JSON.parse(data);
+      console.log("state.lastDataSaved = " + parsedData.gps.datetime );
+      dispatch(dataSaved(parsedData.gps.datetime));
     });
 
     return () => {
@@ -86,6 +95,15 @@ const Acquisition = () => {
     const newInterval = e.target.value;
     dispatch(ApiChangeLogsInterval(newInterval, post));
   };
+
+  // Toggles the sync of data
+  // and display response from server
+  const handleSync = async (e) => {
+    e.preventDefault();
+    const serverResponse = await dispatch(ApiSyncData(post));
+    setResToPost(serverResponse);
+  };
+
 
   const sensorsList = sensors.length ? (
     <div className={classes.root}>
@@ -157,10 +175,38 @@ const Acquisition = () => {
 
       <div>
         <p>
-          <strong>Server answer:</strong>
+          <strong>Server console :</strong>
+          <p></p>
         </p>
         <p>{resToPost}</p>
+        <p>Last recording in postgres : {dateUpdateData}</p>
       </div>
+
+      {/* Launch recording process */}
+      {server.isSynchronized ? (
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          // onClick={this.handleAcquisitionButton}
+          onClick={handleSync}
+          className={classes.button}
+          startIcon={<PauseIcon />}
+        >
+          Stop Sync
+        </Button>
+      ) : (
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          onClick={handleSync}
+          className={classes.button}
+          startIcon={<PlayArrowIcon />}
+        >
+          Start Sync
+        </Button>
+      )}
     </div>
   );
 };

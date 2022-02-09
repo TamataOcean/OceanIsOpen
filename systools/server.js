@@ -14,23 +14,26 @@ var DEBUG_GPS = false;
 var GNSS_CONNECTED = true; // FOR TEST ONLY - True if GNSS Connected
 
 var jsonfile = require("jsonfile");
+const updateJsonFile = require('update-json-file')
+
 jsonfile.spaces = 4;
 
-const io = require("socket.io");
+const { exec } = require("child_process");
 
 var mqtt = require("mqtt"); //includes mqtt server
 const TamataPostgres = require("./actions/components/TamataPostgres");
 const TamataInfluxDB = require("./actions/components/TamataInflux");
 const GNSS_Drotek = require("./actions/components/GNSS_Drotek");
+const GNSS_Standard = require("./actions/components/GNSS_Standard");
+
+const { cpuUsage } = require("process");
 
 var configFile = "config.json";
 var jsonConfig;
-var mqttTopicIn = "";
-var mqttTopicOut = "";
+var mqttTopicUpdate = "";
+var mqttTopicOrder = "";
 var mqttServer = "";
-var mqttAWS = "";
-var influx;
-var mongo;
+var interval = 5000;
 var serialport_GPS;
 var serialport_TEENSY;
 var baud_TEENSY;
@@ -38,8 +41,9 @@ var baud_GPS;
 let parser_GPS;
 let parser_TEENSY;
 var GPS_Modele;
-
+var new_interval;
 var apiAnswer = "";
+var data_sync;
 //---------------------
 // INITIALISATION
 //---------------------
@@ -47,16 +51,29 @@ jsonfile.readFile(configFile, function (err, data) {
   jsonConfig = data;
 
   if (err) throw err;
-  mqttTopic = data.system.mqttTopic;
-  mqttServer = data.system.mqttServer;
-  mqttUser = data.system.mqttUser;
-  mqttAWS = data.system.mqttAWS;
+  /* Mosquitto Config */
+  mqttServer = data.system.mqtt.server;
+  mqttTopicUpdate = data.system.mqtt.topicUpdate;
+  mqttTopicOrder = data.system.mqtt.topicOrder;
+  mqttUser = data.system.mqtt.user;
+
+  /* state */
+  satellite_Acquisition = data.state.satellite_Acquisition;
+  teensy_Acquisition = data.state.teensy_Acquisition;
+  interval = data.state.interval;
+  new_interval = data.state.interval;
+  data_sync = data.state.data_sync
+
   user = data.system.user;
   serialport_TEENSY = data.system.serialport_TEENSY.port;
   baud_TEENSY = data.system.serialport_TEENSY.baud;
   serialport_GPS = data.system.serialport_GPS.port;
   baud_GPS = data.system.serialport_GPS.baud;
   GPS_Modele = data.system.serialport_GPS.modele;
+
+  /* Init State */
+  if (data_sync) execService("auto_replay", "start")
+
   begin();
 });
 
@@ -78,8 +95,33 @@ function begin() {
   const server = require("http").createServer(app);
   const io = require("socket.io")(server);
 
-  io.on("connect", (evt) => {
+
+  const SerialPort = require("serialport");
+  const Readline = require("@serialport/parser-readline");
+
+  /* LISTENING TEENSY */
+  /* **************** */
+  const port_TEENSY = new SerialPort(serialport_TEENSY, {
+    baudRate: baud_TEENSY,
+  });
+
+  /* LISTENING on MQTT ( Mosquitto ) */
+  client = mqtt.connect('mqtt://'+ jsonConfig.system.mqtt.server );
+  client.subscribe( jsonConfig.system.mqtt.topicUpdate ); 
+  client.on('connect', () => { console.log('Mqtt connected to ' + jsonConfig.system.mqtt.server + "/ Topic : " + jsonConfig.system.mqtt.topicUpdate )} )
+  //client.on('message', insertDataSatellite );
+  
+  io.on("connect", (socket) => {
     console.log("WebSocket Connected");
+    socket.on("refreshGnss", (evt) => {
+      console.log("WebSocket refreshGnss received");
+      getGpsPosition().then((parsedPosition) => {
+        if (DEBUG)
+          console.log("Position get " + JSON.stringify(parsedPosition));
+        socket.emit("gnssData", parsedPosition);
+        if (DEBUG_GPS) {console.log("GNSS Position transmitted by Socket.io");}
+      });
+    });
   });
 
   var ejs_index = "indexW3.ejs";
@@ -87,7 +129,7 @@ function begin() {
 
   app.use(session({ secret: "SerialCommunication" }));
   app.use(bodyParser.json());
-  app.use(express.static(path.join(__dirname, "build")));
+  app.use(express.static(path.join(__dirname, "../react-socket-app/socket-client/build")));
   app
     .use(bodyParser.urlencoded({ extended: false }))
     /* --------------------------- Index print ------------------------ */
@@ -130,7 +172,7 @@ function begin() {
       console.log("Command requested with POST Method: " + req.query.cmd_id);
 
       if ((req.query.cmd_id = "update_interval")) {
-        var new_interval = parseFloat(req.body.interval_value);
+        new_interval = parseFloat(req.body.interval_value);
         console.log("interval value : " + new_interval);
         writeToTeensy(port_TEENSY, "update_interval").then((data) => {
           res.send({ apiAnswer: data });
@@ -140,6 +182,12 @@ function begin() {
 
     /* ---------------------- API Service for REACT APP -----------------*/
     /* ------------------------------------------------------------------*/
+    .get("/api/syncAutoReplay", (req, res) => {
+      console.log("API Sync requested with GET Method: " + req.query.command);
+      var cmd = req.query.command;
+      execService( "auto_replay", cmd )
+    })
+
     .get("/api/hello", (req, res) => {
       console.log("API hello requested with GET Method: " + req.query.cmd_id);
       res.send({ express: "Hello From Express" });
@@ -196,6 +244,23 @@ function begin() {
       });
     })
 
+    // **********************************
+    // get Position
+    // **********************************
+    .get("/api/getPosition", function (req, res) {
+      console.log("Command requested getPosition");
+      getGpsPosition().then((parsedPosition) => {
+        if (DEBUG)
+          console.log("Position get " + JSON.stringify(parsedPosition));
+        io.emit("gnssData", parsedPosition);
+        console.log("GNSS Position transmitted by API getPosition ");
+        res.send({ apiAnswer: parsedPosition });
+      });
+    })
+
+    // ************************************
+    // Start / Stop Acquisition Teensy 
+    // ************************************
     .post("/api/command", (req, res) => {
       console.log(
         "API Command requested with POST Method: " + req.query.cmd_id
@@ -203,38 +268,41 @@ function begin() {
       console.log(
         "Command requested : " + '{"order":"' + req.query.cmd_id + '"}'
       );
-      console.log(
-        "Interval requested : " + '{"interval":"' + req.query.interval + '"}'
-      );
 
       port_TEENSY.write('{"order":"' + req.query.cmd_id + '"}', function (err) {
         if (err) {
           return console.log("Error : ", err.message);
         }
         console.log("command " + req.query.cmd_id + " sent");
-        //res.redirect('/');
-      });
-
+        })
       console.log(req.body);
-      console.log("Interval : ", req.interval);
       res.send(`Server received your POST request. This : ${req.body.post}`);
+
+      // Writing state to JSON File
+      if ( req.query.cmd_id == "startLog") {
+        updateJsonFile(configFile, (data) => {
+          data.state.teensy_Acquisition = true;
+          return data
+        })
+      }
+      else if ( req.query.cmd_id == "stopLog") {
+        updateJsonFile(configFile, (data) => {
+          data.state.teensy_Acquisition = false;
+          return data
+        })
+      }
+      console.log("state.teensy_Acquisition saved " + req.query.cmd_id  )
     })
+    
 
+    /* REACT - UPDATE INTERVAL TO TEENSY  */
+    /************************************ */
     .post("/api/updateLogInterval", (req, res) => {
-      console.log(
-        "Interval requested : " + '{"interval":"' + req.query.interval + '"}'
-      );
-
-      // writeToTeensy(port_TEENSY, "update_interval", req.query.interval).then( (data) => {
-      // 	res.send({ apiAnswer: data })
-      // })
-
+      console.log("Interval requested : " + '{"interval":"' + req.query.interval + '"}');
       port_TEENSY.write(
-        '{"order":"' +
-          req.query.cmd_id +
-          '","value":"' +
-          req.query.interval +
-          '" }',
+        '{"order":"' + req.query.cmd_id 
+        + '","value":"' + req.query.interval +
+        '" }',
         function (err) {
           if (err) {
             return console.log("Error : ", err.message);
@@ -243,6 +311,12 @@ function begin() {
           //res.redirect('/');
         }
       );
+      
+      // Writing state to JSON File
+      updateJsonFile(configFile, (data) => {
+        data.state.interval = parseFloat(req.query.interval);
+        return data
+      })
 
       console.log(req.body);
       console.log("Interval : ", req.interval);
@@ -256,25 +330,26 @@ function begin() {
       res.redirect("/");
     });
 
-  /* STARTING HTTP SERVER
-    /* -----------------------------------------------------------------*/
-  app.on("connect", function (req, res) {
-    port_TEENSY.write("WebUser_init", function (err) {
-      if (err) {
-        return console.log("Error: ", err.message);
-      }
-      console.log("message login sent");
+    app.on("connect", function (req, res) {
+      port_TEENSY.write("WebUser_init", function (err) {
+        if (err) {
+          return console.log("Error: ", err.message);
+        }
+        console.log("message login sent");
+      });
+      console.log("new user arrived");
     });
-    console.log("new user arrived");
-  });
-  console.log("-------------------------------");
-  server.listen(8080, () => console.log("Web server listening on 8080"));
+    
+    /* STARTING HTTP SERVER
+    /* -----------------------------------------------------------------*/
+    console.log("-------------------------------");
+    server.listen(8080, () => console.log("Web server listening on 8080"));
 
   if (DEBUG) {
     console.log(".............. CONFIG .............");
     console.log("MqttServer = " + mqttServer);
     console.log("MqttUser = " + mqttUser);
-    console.log("MqttTopic = " + mqttTopic);
+    console.log("MqttTopic Update = " + mqttTopicUpdate);
     console.log("Postgres = " + JSON.stringify(jsonConfig.system.postgres));
     console.log(
       "SerialPort TEENSY = " +
@@ -296,25 +371,21 @@ function begin() {
   /* ************************************ */
   /* LISTENING on SERIAL for TEENSY & GPS */
   /* ************************************ */
-  const SerialPort = require("serialport");
-  const Readline = require("@serialport/parser-readline");
-
-  /* LISTENING TEENSY */
-  /* **************** */
-  const port_TEENSY = new SerialPort(serialport_TEENSY, {
-    baudRate: baud_TEENSY,
-  });
   port_TEENSY.on("error", function (err) {
     console.log("Error: ", err.message);
   });
 
   port_TEENSY.on("open", function () {
-    port_TEENSY.write('{"order":"Init_connection_from_Raspi"}', function (err) {
-      if (err) {
-        return console.log("Error: ", err.message);
-      }
-      console.log("message init sent");
-    });
+    console.log("Port Teensy opened");
+    
+    /* First order to teensy regarding the state */
+    if (teensy_Acquisition) {   
+      //Launching interval value
+      new_interval = interval;
+      console.log("Reloading config Teensy since last Reboot");
+      writeToTeensy(port_TEENSY, "startLog");
+      // TO DO ... SENDING Interval after the startlog ... without overloading Teensy port... 
+    }
   });
 
   port_TEENSY.on("close", function () {
@@ -333,8 +404,7 @@ function begin() {
       console.log("Data sensors arrived");
 
       io.emit("data", data);
-
-      insertData("serial", data);
+      insertData("serial", data, io);
     }
   });
 
@@ -351,9 +421,48 @@ function begin() {
 }
 
 /***************************************
+ * - function execService( service, cmd )
+ * Exec the service with cmd ( start / stop )
+ */
+function execService( service, cmd ) {
+  if (cmd == "start") {
+    execCmd = "sudo service "+ service + " " + cmd;
+    if (DEBUG) console.log("Exec command = " + execCmd);
+
+    updateJsonFile(configFile, (data) => {
+      data.state.data_sync = true;
+      return data})
+  } else {
+    execCmd = "sudo service auto_replay stop";
+    updateJsonFile(configFile, (data) => {
+      data.state.data_sync = false;
+      return data})
+  }
+  console.log("Exec Cmd => " + execCmd);
+
+  exec(execCmd, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`error: ${error.message}`);
+      res.send({ apiAnswer: error.message });
+      return;
+    }
+
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+      res.send({ apiAnswer: stderr });
+
+      return;
+    }
+
+    console.log(`stdout:\n${stdout}`);
+    res.send({ apiAnswer: stdout });
+  });
+}
+
+/***************************************
 - function insertData(topic, message)
 Parse message & position and INSERT into Database */
-async function insertData(topic, message) {
+async function insertData(topic, message, socket) {
   var parsedMessage = JSON.parse(message);
 
   if (DEBUG) console.log("***********************************");
@@ -365,23 +474,17 @@ async function insertData(topic, message) {
 
     // 	/* INSERT to Postgres database */
     posgresDB = new TamataPostgres(jsonConfig.system.postgres);
-    posgresDB.save(parsedMessage, parsedPosition, GPS_Modele);
+    posgresDB.save(parsedMessage, parsedPosition, GPS_Modele, "Teensy");
+    
+    socket.emit("dataSaved", JSON.stringify(parsedPosition));
+    
     // 	/* INSERT to influx database */
     // 	influx = new TamataInfluxDB( jsonConfig.system.influxDB );
     // 	influx.save( parsedMessage, parsedPosition );
 
     if (DEBUG) console.log("Inserted datas : " + JSON.stringify(parsedMessage));
-    // Classic GPS on USB
-    if (GPS_Modele == "standard") {
-      if (DEBUG)
-        console.log(
-          "At GPS position : LAT = " +
-            JSON.stringify(parsedPosition.loc.dmm.latitude) +
-            " LON=" +
-            JSON.stringify(parsedPosition.loc.dmm.longitude)
-        );
-    } else if (GPS_Modele == "emLead") {
-      // EmLid GPS
+    // EmLid GPS
+    if (GPS_Modele == "emLead") {
       if (DEBUG)
         console.log(
           "At GPS position : LAT = " +
@@ -389,8 +492,8 @@ async function insertData(topic, message) {
             " LON=" +
             JSON.stringify(parsedPosition.geo.longitude)
         );
-    } else if (GPS_Modele == "Drotek") {
-      //Drotek modele
+        //Drotek & standard Model
+    } else if (GPS_Modele == "Drotek" || GPS_Modele == "standard") {
       if (DEBUG)
         console.log(
           "At GPS position : LAT = " +
@@ -403,6 +506,68 @@ async function insertData(topic, message) {
 }
 
 /***************************************
+- function insertDataSatellite(topic, message)
+Parse message & position and INSERT into Database */
+async function insertDataSatellite(topic, message, socket) {
+  var parsedMessage = JSON.parse(message);
+
+  if (DEBUG) console.log("***********************************");
+  if (DEBUG) console.log(" Satellite Data Message received : " + message);
+  if (DEBUG) console.log("***********************************");
+
+  if ( satellite_Acquisition ) {
+    console.log("Satellite message arrived will be saved")
+    getGpsPosition().then((parsedPosition) => {
+      if (DEBUG) console.log("Position get " + JSON.stringify(parsedPosition));
+  
+      // 	/* INSERT to Postgres database */
+      posgresDB = new TamataPostgres(jsonConfig.system.postgres);
+      posgresDB.save(parsedMessage, parsedPosition, GPS_Modele, "Satellite");
+      
+      // socket.emit("dataSaved", JSON.stringify(parsedPosition));
+  
+      if (DEBUG) console.log("Inserted datas : " + JSON.stringify(parsedMessage));
+      // Classic GPS on USB
+      if (GPS_Modele == "standard") {
+        if (DEBUG)
+          console.log(
+            "At GPS position : LAT = " +
+              JSON.stringify(parsedPosition.loc.dmm.latitude) +
+              " LON=" +
+              JSON.stringify(parsedPosition.loc.dmm.longitude)
+          );
+      } else if (GPS_Modele == "emLead") {
+        // EmLid GPS
+        if (DEBUG)
+          console.log(
+            "At GPS position : LAT = " +
+              JSON.stringify(parsedPosition.geo.latitude) +
+              " LON=" +
+              JSON.stringify(parsedPosition.geo.longitude)
+          );
+      } else if (GPS_Modele == "Drotek") {
+        //Drotek modele
+        if (DEBUG)
+          console.log(
+            "At GPS position : LAT = " +
+              JSON.stringify(parsedPosition.geo.latitude) +
+              " LON=" +
+              JSON.stringify(parsedPosition.geo.longitude)
+          );
+      }
+    });
+
+  }
+  else {
+    console.log("Satellite message arrived without saving")
+
+  }
+
+
+}
+
+
+/***************************************
 - function getGpsPosition()
 Return a Promise with position type NMEA */
 function getGpsPosition() {
@@ -411,44 +576,44 @@ function getGpsPosition() {
   }
   console.log("GPS MODELE in config.json : " + GPS_Modele);
   return new Promise((resolve, reject) => {
-    const nmea = require("node-nmea");
     const gprmc = require("gprmc-parser");
-	
-	// DEBUG MODE Without GPS
-	if ( !GNSS_CONNECTED ) {
-		resolve(gprmc("$GNRMC,133333.33,A,4609.31519,N,00108.72949,W,0.038,,180920,,,A,V*02"))
-	}
-	else {
-		parser_GPS.on("data", function (data) {
-		  if (DEBUG_GPS) {
-			//	console.log(data)
-		  }
-	
-		  // Using USB GPS classic
-		  if (GPS_Modele == "standard") {
-			if (data.includes("$GPRMC")) {
-			  //console.log("Using standard GPS : "+ GPS_Modele);
-			  resolve(nmea.parse(data));
-			}
-		  }
-		  // Using emLead GPS
-		  else if (GPS_Modele == "emLead") {
-			//console.log("Using emLead GPS");
-			if (data.includes("$GNRMC")) {
-			  resolve(gprmc(data));
-			}
-		  }
-	
-		  // Using Drotek GPS
-		  else if (GPS_Modele == "Drotek") {
-			if (data.includes("$GNRMC")) {
-			  // resolve(nmea.parse(data));
-			  resolve(GNSS_Drotek(data));
-			}
-		  }
-		});
-	}
 
+    // DEBUG MODE Without GPS
+    if (!GNSS_CONNECTED) {
+      resolve(
+        gprmc(
+          "$GNRMC,133333.33,A,4609.31519,N,00108.72949,W,0.038,,180920,,,A,V*02"
+        )
+      );
+    } else {
+      parser_GPS.on("data", function (data) {
+        if (DEBUG_GPS) {
+          	//console.log(data)
+        }
+
+        // Using USB GPS classic
+        if (GPS_Modele == "standard") {
+          if (data.includes("$GPRMC")) {
+            resolve( GNSS_Standard(data, GPS_Modele));
+          }
+        }
+
+        // Using Drotek GPS
+        else if (GPS_Modele == "Drotek") {
+          if (data.includes("$GNRMC")) {
+            resolve(GNSS_Drotek(data, GPS_Modele ));
+          }
+        }
+
+        // Using emLead GPS
+        else if (GPS_Modele == "emLead") {
+          //console.log("Using emLead GPS");
+          if (data.includes("$GNRMC")) {
+            resolve(gprmc(data));
+          }
+        }
+      });
+    }
   });
 }
 
@@ -456,7 +621,7 @@ function getGpsPosition() {
 - function writeToTeensy()
 Return a Promise when Teensy answer */
 async function writeToTeensy(port_TEENSY, messageType, sensorId) {
-  if (DEBUG_GPS) {
+  if (DEBUG) {
     console.log("writeToTeensy.... ");
   }
 
@@ -467,14 +632,14 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
         if (err) {
           return console.log("Error : ", err.message);
         }
-        console.log("command sensorInfo for sensor " + sensorId + " sent");
+        if (DEBUG) {console.log("command sensorInfo for sensor " + sensorId + " sent");}
       }
     );
 
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("sensorInfoAnswer")) {
-          console.log("Api answer sensorInfo received");
+          if (DEBUG) {console.log("Api answer sensorInfo received");}
           resolve(data);
         }
       });
@@ -491,7 +656,7 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("Config_Teensy")) {
-          console.log("Api answer Config_Teensy received");
+          if (DEBUG) {console.log("Api answer Config_Teensy received");}
           resolve(data);
         }
       });
@@ -508,7 +673,7 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("calibrationStatusAnswer")) {
-          console.log("Api answer calibrationStatusAnswer received");
+          if (DEBUG) {console.log("Api answer calibrationStatusAnswer received");}
           resolve(data);
         }
       });
@@ -522,7 +687,7 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
         if (err) {
           return console.log("Error : ", err.message);
         }
-        console.log("command calibrate for sensor " + sensorId + " sent");
+        if (DEBUG) {console.log("command calibrate for sensor " + sensorId + " sent");}
         //res.redirect('/');
       }
     );
@@ -530,7 +695,7 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("calibrationAnswer")) {
-          console.log("Api answer calibrationAnswer received");
+          if (DEBUG){console.log("Api answer calibrationAnswer received");}
           resolve(data);
         }
       });
@@ -544,14 +709,14 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
         if (err) {
           return console.log("Error : ", err.message);
         }
-        console.log("command calibrate for sensor " + sensorId + " sent");
+        if (DEBUG) {console.log("command calibrate for sensor " + sensorId + " sent");}
       }
     );
 
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
         if (data.includes("calibrationAnswer")) {
-          console.log("Api answer calibrationAnswer received");
+          if (DEBUG){console.log("Api answer calibrationAnswer received");}
           resolve(data);
         }
       });
@@ -559,20 +724,43 @@ async function writeToTeensy(port_TEENSY, messageType, sensorId) {
   }
 
   if (messageType == "update_interval") {
+    console.log("Function WriteToTeensy / update_interval")
     port_TEENSY.write(
-      '{"order":"' + sensorId + '","value":' + new_interval + "}",
+      '{"order":"update_interval","value":' + new_interval + "}",
       function (err) {
         if (err) {
           return console.log("Error : ", err.message);
         }
-        console.log("command update_interval sent");
+        if (DEBUG){console.log("command update_interval sent");}
+      }
+      );
+      
+      return new Promise((resolve, reject) => {
+        parser_TEENSY.on("data", function (data) {
+          if (data.includes("update_intervalAnswer")) {
+            if (DEBUG){console.log("Api answer update_intervalAnswer received");}
+            resolve(data);
+          }
+        });
+      });
+    }
+    
+    if (messageType == "startLog") {
+      console.log("Function WriteToTeensy / startLog")
+      port_TEENSY.write(
+      '{"order":"startLog"}',
+      function (err) {
+        if (err) {
+          return console.log("Error : ", err.message);
+        }
+        if (DEBUG){console.log("command startLog sent");}
       }
     );
 
     return new Promise((resolve, reject) => {
       parser_TEENSY.on("data", function (data) {
-        if (data.includes("update_intervalAnswer")) {
-          console.log("Api answer update_intervalAnswer received");
+        if (data.includes("Start log received")) {
+          if (DEBUG){console.log("Api answer Start log received");}
           resolve(data);
         }
       });

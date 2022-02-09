@@ -1,49 +1,49 @@
 {
-  "AppName": "OceanIsOpen",
-  "Version": "1.0.0",
-  "Copyright": "Copyright Open Source - W3Licence",
-  "system": {
-    "user": "OceanIsOpen",
-    "id": "teensySensors",
-    "mac": "123456789007",
-    "interval": 10,
-
-    "httpDashboard": "http://geopoppy.local:3000/d/BdnP6wmRz/data-spiru?orgId=1&from=1540744402674&to=1540917202674",
-    "postgres": {
-      "user": "postgres",
-      "host": "192.168.0.113",
-      "database": "postgis_oceanSensors",
-      "password": "postgres",
-      "port": "5432"
-    },
-
-    "influxDB": {
-      "database": "datateensy",
-      "host": "192.168.0.104",
-      "port": 8086,
-      "username": "test",
-      "password": "test"
-    },
-
-    "serialport_GPS": {
-        "port": "/dev/tty.usbmodem1461",
-        "baud": 9600,
-        "modele": "Drotek"
-    },
-
-    "serialport_TEENSY": {
-      "port": "/dev/ttyACM0",
-      "baud": 115200
-    }
-  },
-
-  "sensors": {
-    "phSensor": 0,
-    "temperatureSensor": 1,
-    "doSensor": 2,
-    "ecSensor": 3,
-    "tdsSensor": 4,
-    "orpSensor": 5,
-    "turbiditySensor": 6
-  }
+	"AppName": "OceanIsOpen",
+	"Version": "1.1.0",
+	"Copyright": "Copyright Open Source - W3Licence",
+	"system": {
+		"user": "OceanIsOpen",
+		"id": "teensySensors",
+		"mac": "123456789007",
+		"interval": 10,
+		"httpDashboard": "http://localhost.local:3000/",
+		"postgres": {
+			"user": "docker",
+			"host": "localhost",
+			"database": "oio",
+			"password": "docker",
+			"port": "5432"
+		},
+		"mqtt": {
+			"server": "localhost",
+			"topicUpdate": "esp32/update",
+			"topicLog": "esp32/log",
+			"topicOrder": "esp32/order"
+		},
+		"serialport_GPS": {
+			"port": "/dev/ttyGNSS",
+			"baud": 9600,
+			"modele": "Drotek"
+		},
+		"serialport_TEENSY": {
+			"port": "/dev/ttyTeensy",
+			"baud": 115200
+		}
+	},
+	"state": {
+		"satellite_Acquisition": false,
+		"teensy_Acquisition": false,
+		"interval": 10000,
+		"data_sync": false
+	},
+	"sensors": {
+		"phSensor": 0,
+		"temperatureSensor": 1,
+		"doSensor": 2,
+		"ecSensor": 3,
+		"tdsSensor": 4,
+		"orpSensor": 5,
+		"turbiditySensor": 6
+	}
 }
