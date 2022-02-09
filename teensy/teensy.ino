@@ -51,8 +51,116 @@
 #include "SdService.h"
 #include "Debug.h"
 #include <ArduinoJson.h>
+#include <LiquidCrystal.h>
+
 
 DynamicJsonDocument jsonDoc(256); 
+//Liquid Crystal 
+const int rs = 26, en = 25, d0 = 5, d1 = 6, d2 = 7, d3 = 8;
+LiquidCrystal lcd(rs, en, d0, d1, d2, d3);
+int p=0;
+
+byte customChars[8][8] = {
+    {
+        B00000,
+        B00000,
+        B00000,
+        B00000,
+        B00000,
+        B00001,
+        B00011,
+        B00101
+    },{
+        B00000,
+        B00000,
+        B00000,
+        B00010,
+        B10000,
+        B01101,
+        B11000,
+        B11110
+    },{
+        B00000,
+        B00000,
+        B00010,
+        B01000,
+        B01100,
+        B10010,
+        B01100,
+        B00010
+    },{
+        B01110,
+        B01110,
+        B01111,
+        B11110,
+        B11110,
+        B11111,
+        B11111,
+        B11111
+    },{
+        B11100,
+        B11100,
+        B01100,
+        B11110,
+        B10111,
+        B11001,
+        B00111,
+        B11101
+    },{
+        B10000,
+        B00000,
+        B00000,
+        B00000,
+        B00000,
+        B10000,
+        B11100,
+        B11111
+    },{
+        B11111,
+        B11111,
+        B00000,
+        B00000,
+        B11111,
+        B00000,
+        B11111,
+        B11111
+    },{
+        B11111,
+        B11111,
+        B00000,
+        B11111,
+        B00000,
+        B00000,
+        B00000,
+        B00000
+    }
+};
+
+byte Data[2][8] = {
+    {
+      B00000,
+  B11111,
+  B01010,
+  B00111,
+  B00010,
+  B00010,
+  B00010,
+  B00010
+    },{
+  B00000,
+  B11000,
+  B10000,
+  B00001,
+  B00001,
+  B00101,
+  B10101,
+  B10101
+    }
+};
+
+int val=0;
+void drawBanner();
+
 
 
 //Create variable to track time
@@ -72,8 +180,23 @@ void setup() {
 	//SERIAL INIT
 	Serial.begin(115200);
 	delay(1000);
-	Debug::println("INIT_SENSOR_HUB");
 	
+  //Init LCD
+  Serial.println("LCD BEGIN");
+  lcd.begin(20, 4);
+  for(int i = 0; i < 8; i++)
+        lcd.createChar(i, customChars[i]);
+    
+    for(int i = 17;  i >= 0; i--){
+        lcd.clear();
+        drawBanner(i);
+        delay(250);
+    }
+  
+  Debug::println("INIT_SENSOR_HUB");
+	
+
+
 	/**************************/
 	/* 			SENSORS SETUP 		*/
   //Reset and initialize sensors
@@ -233,4 +356,20 @@ void configToSerial(){
 
 void sensorCalibrationStepToSerial(){
   Serial.println(sensorHub.getCalibrationStatus().c_str());
+}
+
+void drawBanner(int offset){
+    for(int j = 1; j < 3; j++){
+        for(int i = 0; i < 3; i++){
+            lcd.setCursor(offset+i, j);
+            int characterIndex = (j-1) * 3 + i;
+            lcd.write(byte(characterIndex));
+        }
+    }
+    
+    lcd.setCursor(offset+4,1);
+    lcd.write("Ocean is Open");    
+    lcd.setCursor(offset+4,2);
+    lcd.write("WATER ANALYSER");
+    
 }
