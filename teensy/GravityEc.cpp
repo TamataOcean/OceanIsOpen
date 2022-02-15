@@ -49,6 +49,20 @@ void GravityEc::update()
   float value = 0;
   value = 1000*averageVoltage/RES2/ECREF*this->kValue*10.0;
   this->ecValue = value;
+
+  /* Calcul ClubSandwich
+  // READ EC VOLT
+  voltageEC = analogRead(ECPIN) / 65535.0 * 3300;
+  // ARRONDI AVEC 1 DECIMAL
+  voltageEC = (round(voltageEC * 10));
+  voltageEC = voltageEC / 10;
+
+  // CALCULATE EC VALUE
+  ecValue    = ec.readEC(voltageEC, temperature);      // convert voltage to EC with temperature compensation
+  ecValue = ecValue * 1000;
+  //  ARRONDI AVEC 0 decimal
+  ecValue = (round(ecValue * 1));
+  */
 }
 
 double GravityEc::getValue()

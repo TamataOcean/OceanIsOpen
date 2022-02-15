@@ -23,6 +23,7 @@
 #include <Arduino.h>
 #include "ISensor.h"
 #include "Config.h"
+#include "DFRobot_PH.h"
 
 class GravityPh:public ISensor
 {
@@ -36,6 +37,8 @@ public:
 private:
 	int pHArray[ARRAYLENGTH];    // stores the average value of the sensor return data
 	double pHValue;
+	DFRobot_PH phRobot;
+	float  voltagePH,voltageEC,phValue,ecValue,temperature = 25;
 
 public:
 	GravityPh();
@@ -45,6 +48,12 @@ public:
 
 	// update the sensor data
 	void  update ();
+
+	// update with Club Sandwich code
+	void updateCS();
+
+	// using DFRobot to calibrate
+	void calibrate(String cmd);
 
 	// Get the sensor data
 	double getValue();

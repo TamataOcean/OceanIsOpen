@@ -33,6 +33,7 @@ DFRobot_PH::DFRobot_PH()
     this->_acidVoltage    = 2032.44;    //buffer solution 4.0 at 25C
     this->_neutralVoltage = 1500.0;     //buffer solution 7.0 at 25C
     this->_voltage        = 1500.0;
+    this->status          = 0;
 }
 
 DFRobot_PH::~DFRobot_PH()
@@ -137,6 +138,12 @@ byte DFRobot_PH::cmdParse()
     return modeIndex;
 }
 
+// 0 calibration to do, 
+// 1 put into 4.0 or 7.0 solution, 2 calibrated with 7.0, 3 calibrated with 4.0, 5 error. 
+int DFRobot_PH::getStatus(){
+    return this-> status;
+}
+
 void DFRobot_PH::phCalibration(byte mode)
 {
     char *receivedBufferPtr;
@@ -156,6 +163,7 @@ void DFRobot_PH::phCalibration(byte mode)
         Serial.println(F(">>>Enter PH Calibration Mode<<<"));
         Serial.println(F(">>>Please put the probe into the 4.0 or 7.0 standard buffer solution<<<"));
         Serial.println();
+        this->status = 1;
         break;
 
         case 2:
@@ -167,6 +175,8 @@ void DFRobot_PH::phCalibration(byte mode)
                 Serial.println(F(",Send EXITPH to Save and Exit<<<"));
                 Serial.println();
                 phCalibrationFinish = 1;
+                this->status = 2;
+
             }else if((this->_voltage>1854)&&(this->_voltage<2210)){  //buffer solution:4.0
                 Serial.println();
                 Serial.print(F(">>>Buffer Solution:4.0"));
@@ -174,11 +184,13 @@ void DFRobot_PH::phCalibration(byte mode)
                 Serial.println(F(",Send EXITPH to Save and Exit<<<")); 
                 Serial.println();
                 phCalibrationFinish = 1;
+                this->status = 3;
             }else{
                 Serial.println();
                 Serial.print(F(">>>Buffer Solution Error Try Again<<<"));
                 Serial.println();                                    // not buffer solution or faulty operation
                 phCalibrationFinish = 0;
+                this->status = 4;
             }
         }
         break;
@@ -193,8 +205,10 @@ void DFRobot_PH::phCalibration(byte mode)
                     EEPROM_write(PHVALUEADDR+4, this->_acidVoltage);
                 }
                 Serial.print(F(">>>Calibration Successful"));
+                this->status = 5;
             }else{
                 Serial.print(F(">>>Calibration Failed"));
+                this->status = 6;
             }
             Serial.println(F(",Exit PH Calibration Mode<<<"));
             Serial.println();

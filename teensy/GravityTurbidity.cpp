@@ -45,6 +45,22 @@ void GravityTurbidity::update()
   	turbidityValue = sensorValue * (3.3 / 4096.0); // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
 	Serial.print("Turbidity Sensor update : " );
 	Serial.println(turbidityValue);
+
+	/* Calcul ClubSandwich
+	// READ TURB VOLT
+	voltageTurb = (analogRead(TURBPINSENSOR) / 65535.0 * 3300);
+	// ARRONDI AVEC 1 DECIMAL 
+	voltageTurb = (round(voltageTurb * 10));
+	voltageTurb = voltageTurb / 10;
+
+	// CALCULATE TURB VALUE
+	// Please that voltage needs to be in Volts to integrate the formula
+	turbidity = ((voltageTurb/1000 - 2.128)/-0.7021)*1000;
+	// ARRONDI AVEC 1 DECIMAL
+	turbidity = (round(turbidity * 10));
+	turbidity = turbidity / 10;
+
+	*/
 }
 
 double GravityTurbidity::getValue()

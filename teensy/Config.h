@@ -54,6 +54,8 @@ enum SensorNumber
 	turbiditySensor = 6		//Turbidity Sensor
 };
 
+// STEP how many action you need to calibrate a sensor ?
+// Exemple for Ph : Init calibration / put into 4.0 solution or 7.0 solution / Save & Exit ( 3 steps )
 #define PH_CALIBRATION_STEP 3
 #define TEMP_CALIBRATION_STEP 0
 #define EC_CALIBRATION_STEP 3

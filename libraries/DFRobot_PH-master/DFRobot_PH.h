@@ -30,7 +30,8 @@ public:
     void    calibration(float voltage, float temperature);
     float   readPH(float voltage, float temperature); // voltage to pH value, with temperature compensation
     void    begin();   //initialization
-
+    int     getStatus(); // getting status to send message to user.
+    int status; 
 private:
     float  _phValue;
     float  _acidVoltage;

@@ -1,6 +1,6 @@
 /*********************************************************************
 * WaterMonitor.ino
-*
+* 
 * Copyright (C)    2019   [DFRobot](http://www.dfrobot.com)
 * GitHub Link :https://github.com/DFRobot/watermonitor
 * This Library is free software: you can redistribute it and/or modify
@@ -59,6 +59,10 @@ DynamicJsonDocument jsonDoc(256);
 const int rs = 26, en = 25, d0 = 5, d1 = 6, d2 = 7, d3 = 8;
 LiquidCrystal lcd(rs, en, d0, d1, d2, d3);
 int p=0;
+
+// les branchements
+const int boutonGauche = 4; // le bouton de gauche
+const int boutonDroite = 3; // le bouton de droite
 
 byte customChars[8][8] = {
     {
@@ -241,15 +245,19 @@ int commandManager(String message) {
   DeserializationError error = deserializeJson(jsonDoc, message);
   if(error) {
     Serial.println("parseObject() failed");
+    lcdPrint("ParseObject() failed");
     //return false;
   }
 
+  // {"order":"Init_connection_from_Raspi"}
   if ( jsonDoc["order"] == "Init_connection_from_Raspi") {
     Serial.println( name + " - INIT Raspi received ");
+    lcdPrint(" - INIT Raspi received ");
     configToSerial();
   }
   else if ( jsonDoc["order"] == "getConfig") {
     Serial.println( name + " - getConfig received ");
+    
     configToSerial();
   }
   else if (jsonDoc["order"] == "restart") {
@@ -264,8 +272,12 @@ int commandManager(String message) {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - initCalibration order received for sensor : " + sensorId);
     (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 0 );
-    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
+    Debug::println(name + " Sensor ENTER calibration PH = " );
+    ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("ENTERPH");
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );
+
+    (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 1 );
+    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
   }
 
   else if (jsonDoc["order"] == "calibrate") {
@@ -274,6 +286,7 @@ int commandManager(String message) {
 
     Debug::println(name + " - Sensor current calibration step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
     (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
+    ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("CALPH");
     Debug::println(name + " - Sensor new calibration Step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep() );
     Debug::println(name + " - Sensor isCalibrated ? = " + (sensorHub.sensors[sensorId])->isCalibrate() );
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );    
@@ -323,6 +336,7 @@ int commandManager(String message) {
   }
   else {
     Serial.println(name + " - Unknown command : " + message );
+    lcdPrint(" Unknown command : "+ message);
   }
 }
 
@@ -372,4 +386,11 @@ void drawBanner(int offset){
     lcd.setCursor(offset+4,2);
     lcd.write("WATER ANALYSER");
     
+}
+
+void lcdPrint(String message){
+  lcd.clear();
+  lcd.setCursor(0,0);
+lcd.print(message);
+
 }

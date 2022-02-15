@@ -48,6 +48,8 @@ void GravityPh::setup()
 		this->sensorIsCalibrate = false;
 	}
 	pinMode(pin, INPUT);
+
+	phRobot.begin();
 }
 
 
@@ -71,6 +73,54 @@ void GravityPh::update()
 
 }
 
+//********************************************************************************************
+// function name: updateCS ()
+// Function Description: Update the sensor value from ClubSanwithStudio code
+//********************************************************************************************
+void GravityPh::updateCS()
+{
+	// READ PH VOLTAGE
+  	voltagePH = analogRead(PHPIN) / 65535.0 * 3300; // read the voltage
+  	// ARRONDI AVEC 1 DECIMAL 
+  	voltagePH = (round(voltagePH * 10));
+  	voltagePH = voltagePH / 10;
+
+  // CALCULATE PH VALUE
+  phValue = phRobot.readPH(voltagePH, temperature); // convert voltage to pH with temperature compensation
+  // ARRONDI AVEC 1 DECIMAL 
+  phValue = (round(phValue * 10));
+  phValue = phValue / 10; 
+
+}
+
+//********************************************************************************************
+// function name: calibrate ()
+// Function Description: Update the sensor value with DFRobot library
+// cmd = 
+//	"ENTERPH" modeIndex = 1;
+//		Serial.println(F(">>>Enter PH Calibration Mode<<<"));
+//	Serial.println(F(">>>Please put the probe into the 4.0 or 7.0 standard buffer solution<<<"));
+//  "CALPH"  modeIndex = 2;
+// 	
+//  "EXITPH" modeIndex = 3;
+//********************************************************************************************
+void GravityPh::calibrate(String cmd)
+{
+  // READ PH VOLTAGE
+	voltagePH = analogRead(PHPIN) / 65535.0 * 3300; // read the voltage
+  	// ARRONDI AVEC 1 DECIMAL 
+  	voltagePH = (round(voltagePH * 10));
+  	voltagePH = voltagePH / 10;
+
+	
+    phRobot.calibration(voltagePH, temperature, cmd.c_str()); // convert voltage to pH with temperature compensation
+	calibrationCurrentStep += 1;
+	
+	if (phRobot.getStatus()== 5 ) {
+		calibrationCurrentStep = PH_CALIBRATION_STEP;
+	}
+}
+
 
 //********************************************************************************************
 // function name: getValue ()
@@ -87,22 +137,29 @@ void GravityPh::setOffset(float offset)
 }
 
 String GravityPh::getCalibrationMessage() {
-	const String calibrationMessage[PH_CALIBRATION_STEP] = {
-		"\"message\":\" INIT Calibration PH step 0\"",
-		"\"message\":\" calibration Gravity PH step 1 \"",	
-		"\"message\":\" calibration Gravity PH step 2 \""	
-	};
-	
+	//int phStatus = phRobot.getStatus();
 	String json = "{\"calibrationAnswer\":{";
 	json += "\"sensorId\":"+ (String)_sensorId + ",";
 	json += "\"calibrationCurrentStep\":" + (String)this->calibrationCurrentStep +",";
 	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
 	
+	const String calibrationMessage[] = {
+		"\"message\":\" PH Probe need calibration \n Please launch the calibration process\"",
+		"\"message\":\" INIT Calibration PH launched\n Please put the probe into the 4.0 or 7.0 standard buffer solution\"",		"\"message\":\" calibration Gravity PH step 1 \"",	
+		"\"message\":\" Buffer solution 7.0\n Save & Exit\"",
+		"\"message\":\" Buffer solution 4.0\n Save & Exit\"",
+		"\"message\":\" Buffer Solution Error Try Again\"",
+		"\"message\":\" Calibration successfull\"",
+		"\"message\":\" Calibration failed\"",
+		
+	};
+
 	if (this->isCalibrate()) {
 		json += "\"message\":\"Sensor is calibrate \"";
 	}
 	else {
-		json += calibrationMessage[this->calibrationCurrentStep];
+		//Depending on status 
+		json += calibrationMessage[this->phRobot.getStatus()];
 	}
 
 	json += "}}";
