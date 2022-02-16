@@ -9,9 +9,9 @@
 *
 * Description:Monitoring water quality parameters Oxidation-Reduction Potential
 *
-* Product Links：http://www.dfrobot.com.cn/goods-840.html
+* Product Links:http://www.dfrobot.com.cn/goods-840.html
 *
-* Sensor driver pin：A3 
+* Sensor driver pin:A3 
 *
 * author  :  Jason(jason.ling@dfrobot.com)
 * version :  V1.0

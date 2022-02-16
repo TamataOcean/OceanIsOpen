@@ -9,9 +9,9 @@
 *
 * Description:Monitoring water quality parameters ph
 *
-* Product Links：http://www.dfrobot.com.cn/goods-812.html
+* Product Links:http://www.dfrobot.com.cn/goods-812.html
 *
-* Sensor driver pin：A2 
+* Sensor driver pin:A2 
 *
 * author  :  Jason(jason.ling@dfrobot.com)
 * version :  V1.0

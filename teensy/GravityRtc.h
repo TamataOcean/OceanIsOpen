@@ -9,9 +9,9 @@
 *
 * Description:Get real-time clock data
 *
-* Product Links：https://www.dfrobot.com/wiki/index.php/Gravity:_I2C_SD2405_RTC_Module_SKU:_DFR0469
+* Product Links:https://www.dfrobot.com/wiki/index.php/Gravity:_I2C_SD2405_RTC_Module_SKU:_DFR0469
 *
-* Sensor driver pin：I2C
+* Sensor driver pin:I2C
 *
 * author  :  Jason(jason.ling@dfrobot.com)
 * version :  V1.0

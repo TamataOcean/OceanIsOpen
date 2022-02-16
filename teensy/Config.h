@@ -48,7 +48,7 @@ enum SensorNumber
 	phSensor = 0,			//Ph
 	temperatureSensor = 1,	//Temperature
 	doSensor = 2,			//Dissolved Oxygen
-	ecSensor = 3,			//Electrical conductivitÃ© (Redox)
+	ecSensor = 3,			//Electrical conductivité (Redox)
 	tdsSensor = 4,			//TDS Sensor
 	orpSensor = 5,			//ORP Sensor
 	turbiditySensor = 6		//Turbidity Sensor
