@@ -1,5 +1,4 @@
-﻿/*********************************************************************************************
-* GravitySensorHub.cpp
+/* GravitySensorHub.cpp
 *
 * Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
 * GitHub Link :https://github.com/DFRobot/watermonitor
@@ -13,7 +12,7 @@
 * author  :  Jason(jason.ling@dfrobot.com)
 * version :  V1.0
 * date    :  2017-04-12
-*********************************************************************************************/
+********************************************************************************************/
 
 
 #include "GravitySensorHub.h"

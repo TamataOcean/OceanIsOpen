@@ -1,5 +1,4 @@
-/*********************************************************************
-* GravityOrp.cpp
+/* GravityOrp.cpp
 *
 * Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
 * GitHub Link :https://github.com/DFRobot/watermonitor

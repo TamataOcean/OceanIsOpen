@@ -1,5 +1,4 @@
-/*********************************************************************
-* WaterMonitor.ino
+/* WaterMonitor.ino
 * 
 * Copyright (C)    2019   [DFRobot](http://www.dfrobot.com)
 * GitHub Link :https://github.com/DFRobot/watermonitor

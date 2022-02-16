@@ -27,7 +27,7 @@
 			"modele": "Drotek"
 		},
 		"serialport_TEENSY": {
-			"port": "/dev/ttyACM0",
+			"port": "COM3",
 			"baud": 115200
 		}
 	},

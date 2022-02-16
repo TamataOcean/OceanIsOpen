@@ -23,5 +23,3 @@ private:
     double turbidityValue = 0;
     
 };  
-
-

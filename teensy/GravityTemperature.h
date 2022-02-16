@@ -1,5 +1,4 @@
-﻿/*********************************************************************
-* GravityTemperature.h
+/* GravityTemperature.h
 *
 * Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
 * GitHub Link :https://github.com/DFRobot/watermonitor
@@ -52,4 +51,3 @@ private:
 	// Analyze temperature data
 	double TempProcess(bool ch);
 };
-
