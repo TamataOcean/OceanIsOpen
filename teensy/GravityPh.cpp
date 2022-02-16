@@ -19,15 +19,26 @@
 **********************************************************************/
 
 #include "GravityPh.h"
+#include <EEPROM.h>
+
+#define EEPROM_write(address, p) {int i = 0; byte *pp = (byte*)&(p);for(; i < sizeof(p); i++) EEPROM.write(address+i, pp[i]);}
+#define EEPROM_read(address, p)  {int i = 0; byte *pp = (byte*)&(p);for(; i < sizeof(p); i++) pp[i]=EEPROM.read(address+i);}
+#define PHVALUEADDR 0x00    //the start address of the pH calibration parameters stored in the EEPROM
 
 extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 
-GravityPh::GravityPh(): pin(PHPIN), offset(0.0f), pHValue(0)
+GravityPh::GravityPh(): pin(PHPIN), offset(0.0f)
 {
   _sensorId = phSensor;
   sensorName = "GravityPH";
   unit = "pH";
-
+    this->_temperature    = 25.0;
+    this->_phValue        = 7.0;
+    this->_acidVoltage    = 2032.44;    //buffer solution 4.0 at 25C
+    this->_neutralVoltage = 1500.0;     //buffer solution 7.0 at 25C
+    this->_voltage        = 1500.0;
+    this->status          = 0;
+    this->messageId       = 0;
 }
 
 //********************************************************************************************
@@ -48,7 +59,22 @@ void GravityPh::setup()
   }
   pinMode(pin, INPUT);
 
-  phRobot.begin();
+  EEPROM_read(PHVALUEADDR, this->_neutralVoltage);  //load the neutral (pH = 7.0)voltage of the pH board from the EEPROM
+    Serial.print("_neutralVoltage:");
+    Serial.println(this->_neutralVoltage);
+    if(EEPROM.read(PHVALUEADDR)==0xFF && EEPROM.read(PHVALUEADDR+1)==0xFF && EEPROM.read(PHVALUEADDR+2)==0xFF && EEPROM.read(PHVALUEADDR+3)==0xFF){
+        this->_neutralVoltage = 1500.0;  // new EEPROM, write typical voltage
+        EEPROM_write(PHVALUEADDR, this->_neutralVoltage);
+    }
+    EEPROM_read(PHVALUEADDR+4, this->_acidVoltage);//load the acid (pH = 4.0) voltage of the pH board from the EEPROM
+    Serial.print("_acidVoltage:");
+    Serial.println(this->_acidVoltage);
+    if(EEPROM.read(PHVALUEADDR+4)==0xFF && EEPROM.read(PHVALUEADDR+5)==0xFF && EEPROM.read(PHVALUEADDR+6)==0xFF && EEPROM.read(PHVALUEADDR+7)==0xFF){
+        this->_acidVoltage = 2032.44;  // new EEPROM, write typical voltage
+        EEPROM_write(PHVALUEADDR+4, this->_acidVoltage);
+    }
+
+  //phRobot.begin();
 }
 
 
@@ -68,27 +94,24 @@ void GravityPh::update()
   }
   averageVoltage = readMedianValue(pHArray, ARRAYLENGTH);
   averageVoltage = averageVoltage * 3.3 / 4096.0;
-  pHValue = 3.5 * averageVoltage + this->offset;
+  this->_phValue = 3.5 * averageVoltage + this->offset;
 
 }
 
 //********************************************************************************************
 // function name: updateCS ()
-// Function Description: Update the sensor value from ClubSanwithStudio code
+// Function Description: Update the sensor value from DFRobot code
 //********************************************************************************************
 void GravityPh::updateCS()
 {
-  // READ PH VOLTAGE
-  voltagePH = analogRead(PHPIN) / 65535.0 * 3300; // read the voltage
-  // ARRONDI AVEC 1 DECIMAL
-  voltagePH = (round(voltagePH * 10));
-  voltagePH = voltagePH / 10;
-
-  // CALCULATE PH VALUE
-  phValue = phRobot.readPH(voltagePH, temperature); // convert voltage to pH with temperature compensation
-  // ARRONDI AVEC 1 DECIMAL
-  phValue = (round(phValue * 10));
-  phValue = phValue / 10;
+float slope = (7.0-4.0)/((this->_neutralVoltage-1500.0)/3.0 - (this->_acidVoltage-1500.0)/3.0);  // two point: (_neutralVoltage,7.0),(_acidVoltage,4.0)
+  float intercept =  7.0 - slope*(this->_neutralVoltage-1500.0)/3.0;
+  //Serial.print("slope:");
+  //Serial.print(slope);
+  //Serial.print(",intercept:");
+  //Serial.println(intercept);
+  this->_phValue = slope*(this->_voltage-1500.0)/3.0+intercept;  //y = k*x + b
+  return this->_phValue;
 
 }
 
@@ -103,21 +126,28 @@ void GravityPh::updateCS()
 //
 //  "EXITPH" modeIndex = 3;
 //********************************************************************************************
-void GravityPh::calibrate(String cmd)
+void GravityPh::calibrate()
 {
+  Serial.println("GravityPH calibrate function with status = " + status);
   // READ PH VOLTAGE
+
+  Serial.println("GravityPH calibrate read voltage");
 	voltagePH = analogRead(PHPIN) / 65535.0 * 3300; // read the voltage
   	// ARRONDI AVEC 1 DECIMAL 
   	voltagePH = (round(voltagePH * 10));
   	voltagePH = voltagePH / 10;
+  Serial.println("GravityPH voltage = " + voltagePH );
 
-	
-    phRobot.calibration(voltagePH, temperature, cmd.c_str()); // convert voltage to pH with temperature compensation
-	//calibrationCurrentStep += 1;
-	
-	if (phRobot.getStatus()== 5 ) {
-		calibrationCurrentStep = PH_CALIBRATION_STEP;
-	}
+  if (status == 0 )
+    this->calibration(voltagePH, temperature, "ENTERPH" ); // convert voltage to pH with temperature compensation
+  else if ( status == 1 )
+    this->calibration(voltagePH, temperature, "CALPH" ); // convert voltage to pH with temperature compensation
+  else if ( status == 2 )
+    this->calibration(voltagePH, temperature, "EXITPH" ); // convert voltage to pH with temperature compensation
+  else
+    Serial.println("Calibrate function error on status");
+
+  Serial.println("GravityPH calibrate function exit status = " + status);
 }
 
 
@@ -127,12 +157,43 @@ void GravityPh::calibrate(String cmd)
 //********************************************************************************************
 double GravityPh::getValue()
 {
-  return this->pHValue;
+  float slope = (7.0-4.0)/((this->_neutralVoltage-1500.0)/3.0 - (this->_acidVoltage-1500.0)/3.0);  // two point: (_neutralVoltage,7.0),(_acidVoltage,4.0)
+  float intercept =  7.0 - slope*(this->_neutralVoltage-1500.0)/3.0;
+  //Serial.print("slope:");
+  //Serial.print(slope);
+  //Serial.print(",intercept:");
+  //Serial.println(intercept);
+  this->_phValue = slope*(this->_voltage-1500.0)/3.0+intercept;  //y = k*x + b
+  return this->_phValue;
 }
 
 void GravityPh::setOffset(float offset)
 {
   this->offset = offset;
+}
+
+void GravityPh::calibration(float voltage, float temperature,char* cmd)
+{
+    this->_voltage = voltage;
+    this->_temperature = temperature;
+    strupr(cmd);
+    this->phCalibration(cmdParse(cmd));  // if received Serial CMD from the serial monitor, enter into the calibration mode
+}
+
+byte GravityPh::cmdParse(const char* cmd)
+{
+    byte modeIndex = 0;
+    if(strstr(cmd, "ENTERPH")      != NULL){
+        Serial.println("cmdParse = ENTERPH" );
+        modeIndex = 1;
+    }else if(strstr(cmd, "EXITPH") != NULL){
+        Serial.println("cmdParse = EXITPH" );
+        modeIndex = 3;
+    }else if(strstr(cmd, "CALPH")  != NULL){
+        Serial.println("cmdParse = CALPH" );
+        modeIndex = 2;
+    }
+    return modeIndex;
 }
 
 String GravityPh::getCalibrationMessage() {
@@ -144,13 +205,13 @@ String GravityPh::getCalibrationMessage() {
 	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
 	
 	const String calibrationMessage[] = {
-		"\"message\":\" PH Probe need calibration - Please launch the calibration process\"",
-		"\"message\":\" INIT Calibration PH launched - Please put the probe into the 4.0 or 7.0 standard buffer solution\"",		"\"message\":\" calibration Gravity PH step 1 \"",	
-		"\"message\":\" Buffer solution 7.0\n Save & Exit\"",
-		"\"message\":\" Buffer solution 4.0\n Save & Exit\"",
-		"\"message\":\" Buffer Solution Error Try Again\"",
-		"\"message\":\" Calibration successfull\"",
-		"\"message\":\" Calibration failed\""
+		"\"message\":\" PH Probe need calibration - Please launch the calibration process\"",                                   //0
+		"\"message\":\" INIT Calibration PH launched - Please put the probe into the 4.0 or 7.0 standard buffer solution\"",		//1
+    "\"message\":\" Buffer solution 7.0\n Save & Exit\"",                                                                   //2
+		"\"message\":\" Buffer solution 4.0\n Save & Exit\"",                                                                   //3
+		"\"message\":\" Buffer Solution Error Try Again\"",                                                                     //4
+		"\"message\":\" Calibration successfull\"",                                                                             //5
+		"\"message\":\" Calibration failed\""                                                                                   //6
 		
 	};
 
@@ -159,9 +220,90 @@ String GravityPh::getCalibrationMessage() {
 	}
 	else {
 		//Depending on status 
-		json += calibrationMessage[this->phRobot.getStatus()];
+		json += calibrationMessage[this->messageId];
 	}
 
 	json += "}}";
 	return json;
+}
+
+void GravityPh::phCalibration(byte mode)
+{
+    Serial.println("DFRobot_PH.phCalibration() begin");
+    char *receivedBufferPtr;
+    static boolean phCalibrationFinish  = 0;
+    static boolean enterCalibrationFlag = 0;
+    switch(mode){
+        case 0:
+        if(enterCalibrationFlag){
+            Serial.println(F(">>>Command Error<<<"));
+        }
+        break;
+
+        case 1:
+        this->sensorIsCalibrate = false;
+        enterCalibrationFlag = 1;
+        phCalibrationFinish  = 0;
+        Serial.println();
+        Serial.println(F(">>>Enter PH Calibration Mode<<<"));
+        Serial.println(F(">>>Please put the probe into the 4.0 or 7.0 standard buffer solution<<<"));
+        Serial.println();
+        this->messageId = 1;
+        break;
+
+        case 2:
+        if(enterCalibrationFlag){
+            if((this->_voltage>1322)&&(this->_voltage<1678)){        // buffer solution:7.0{
+                Serial.println();
+                Serial.print(F(">>>Buffer Solution:7.0"));
+                this->_neutralVoltage =  this->_voltage;
+                Serial.println(F(",Send EXITPH to Save and Exit<<<"));
+                Serial.println();
+                phCalibrationFinish = 1;
+                this->messageId = 2;
+
+            }else if((this->_voltage>1854)&&(this->_voltage<2210)){  //buffer solution:4.0
+                Serial.println();
+                Serial.print(F(">>>Buffer Solution:4.0"));
+                this->_acidVoltage =  this->_voltage;
+                Serial.println(F(",Send EXITPH to Save and Exit<<<")); 
+                Serial.println();
+                phCalibrationFinish = 1;
+                this->messageId = 3;
+            }else{
+                Serial.println();
+                Serial.print(F(">>>Buffer Solution Error Try Again<<<"));
+                Serial.println();                                    // not buffer solution or faulty operation
+                phCalibrationFinish = 0;
+                this->messageId = 4;
+            }
+        }
+        break;
+
+        case 3:
+        if(enterCalibrationFlag){
+            Serial.println();
+            if(phCalibrationFinish){
+                if((this->_voltage>1322)&&(this->_voltage<1678)){
+                    EEPROM_write(PHVALUEADDR, this->_neutralVoltage);
+                }else if((this->_voltage>1854)&&(this->_voltage<2210)){
+                    EEPROM_write(PHVALUEADDR+4, this->_acidVoltage);
+                }
+                Serial.print(F(">>>Calibration Successful"));
+                this->status = 2;
+                this->messageId = 5;
+                this->sensorIsCalibrate = true;
+            }else{
+                Serial.print(F(">>>Calibration Failed"));
+                this->status = 0;
+                this->sensorIsCalibrate = false;
+                this->messageId = 6;
+            }
+            Serial.println(F(",Exit PH Calibration Mode<<<"));
+            Serial.println();
+            phCalibrationFinish  = 0;
+            enterCalibrationFlag = 0;
+        }
+        break;
+    }
 }

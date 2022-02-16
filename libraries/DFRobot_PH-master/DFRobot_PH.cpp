@@ -116,10 +116,13 @@ byte DFRobot_PH::cmdParse(const char* cmd)
 {
     byte modeIndex = 0;
     if(strstr(cmd, "ENTERPH")      != NULL){
+        Serial.println("cmdParse = ENTERPH" );
         modeIndex = 1;
     }else if(strstr(cmd, "EXITPH") != NULL){
+        Serial.println("cmdParse = EXITPH" );
         modeIndex = 3;
     }else if(strstr(cmd, "CALPH")  != NULL){
+        Serial.println("cmdParse = CALPH" );
         modeIndex = 2;
     }
     return modeIndex;
@@ -146,6 +149,7 @@ int DFRobot_PH::getStatus(){
 
 void DFRobot_PH::phCalibration(byte mode)
 {
+    Serial.println("DFRobot_PH.phCalibration() begin");
     char *receivedBufferPtr;
     static boolean phCalibrationFinish  = 0;
     static boolean enterCalibrationFlag = 0;

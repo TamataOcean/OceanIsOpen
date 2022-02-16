@@ -22,8 +22,8 @@
 #include <Arduino.h>
 #include "ISensor.h"
 #include "Config.h"
-#include "DFRobot_PH.h"
 
+#define ReceivedBufferLength 10 
 class GravityPh:public ISensor
 {
 public:
@@ -35,9 +35,18 @@ public:
 
 private:
 	int pHArray[ARRAYLENGTH];    // stores the average value of the sensor return data
-	double pHValue;
-	DFRobot_PH phRobot;
-	float  voltagePH,voltageEC,phValue,ecValue,temperature = 25;
+	//DFRobot_PH phRobot;
+	float  voltagePH,temperature = 25;
+	int status; // 0 - to calibrate, 1 - Put the probe into solution, 2 - calibrated
+	int messageId;
+
+    float  _phValue;
+    float  _acidVoltage;
+    float  _neutralVoltage;
+    float  _voltage;
+    float  _temperature;
+    char   _cmdReceivedBuffer[ReceivedBufferLength];  //store the Serial CMD
+    byte   _cmdReceivedBufferIndex;
 
 public:
 	GravityPh();
@@ -52,7 +61,8 @@ public:
 	void updateCS();
 
 	// using DFRobot to calibrate
-	void calibrate(String cmd);
+	void calibrate();
+	void calibration(float voltage, float temperature,char* cmd);
 
 	// Get the sensor data
 	double getValue();
@@ -61,5 +71,8 @@ public:
 	void setOffset(float offset);
 
 	String getCalibrationMessage();
+
+	void    phCalibration(byte mode); // calibration process, wirte key parameters to EEPROM
+    byte    cmdParse(const char* cmd);
 
 };

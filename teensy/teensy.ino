@@ -270,6 +270,7 @@ int commandManager(String message) {
 
   /* CALIBRATION WORKFLOW */
   /* ******************** */
+  // Exemple order : {"order":"calibrate", "sensorId":0}
   else if (jsonDoc["order"] == "initCalibration") {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - initCalibration order received for sensor : " + sensorId);
@@ -278,19 +279,21 @@ int commandManager(String message) {
     Debug::println(name + " Sensor ENTER calibration PH = " );
     delay(100);
     lcdPrint(name + " Sensor ENTER calibration PH = " );
-    ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("ENTERPH");
+    // ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("ENTERPH");
+    ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate();
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );
 
-    (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 1 );
-    Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
+    //(sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 1 );
+    //Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
   }
 
   else if (jsonDoc["order"] == "calibrate") {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - CALIBRATE order received for sensor : " + sensorId);
     Debug::println(name + " - Sensor current calibration step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
-    (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
-    ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("CALPH");
+    //(sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
+    // ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("CALPH");
+    ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate();
     Debug::println(name + " - Sensor new calibration Step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep() );
     Debug::println(name + " - Sensor isCalibrated ? = " + (sensorHub.sensors[sensorId])->isCalibrate() );
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );    
