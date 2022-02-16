@@ -114,7 +114,7 @@ void GravityPh::calibrate(String cmd)
 
 	
     phRobot.calibration(voltagePH, temperature, cmd.c_str()); // convert voltage to pH with temperature compensation
-	calibrationCurrentStep += 1;
+	//calibrationCurrentStep += 1;
 	
 	if (phRobot.getStatus()== 5 ) {
 		calibrationCurrentStep = PH_CALIBRATION_STEP;
@@ -144,13 +144,13 @@ String GravityPh::getCalibrationMessage() {
 	json += "\"isCalibrate\":" + (String)this->isCalibrate()+ ",";
 	
 	const String calibrationMessage[] = {
-		"\"message\":\" PH Probe need calibration \n Please launch the calibration process\"",
-		"\"message\":\" INIT Calibration PH launched\n Please put the probe into the 4.0 or 7.0 standard buffer solution\"",		"\"message\":\" calibration Gravity PH step 1 \"",	
+		"\"message\":\" PH Probe need calibration - Please launch the calibration process\"",
+		"\"message\":\" INIT Calibration PH launched - Please put the probe into the 4.0 or 7.0 standard buffer solution\"",		"\"message\":\" calibration Gravity PH step 1 \"",	
 		"\"message\":\" Buffer solution 7.0\n Save & Exit\"",
 		"\"message\":\" Buffer solution 4.0\n Save & Exit\"",
 		"\"message\":\" Buffer Solution Error Try Again\"",
 		"\"message\":\" Calibration successfull\"",
-		"\"message\":\" Calibration failed\"",
+		"\"message\":\" Calibration failed\""
 		
 	};
 

@@ -34,7 +34,7 @@
 	"state": {
 		"satellite_Acquisition": false,
 		"teensy_Acquisition": false,
-		"interval": 10000,
+		"interval": 5000,
 		"data_sync": false
 	},
 	"sensors": {

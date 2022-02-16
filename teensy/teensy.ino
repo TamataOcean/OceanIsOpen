@@ -53,6 +53,7 @@
 #include <ArduinoJson.h>
 #include <LiquidCrystal.h>
 
+#define DEBUG_AVR 
 
 DynamicJsonDocument jsonDoc(256); 
 //Liquid Crystal 
@@ -234,6 +235,8 @@ void loop() {
     String data = Serial.readStringUntil('\n');
     Serial.print( name + " - message received : ");
     Serial.println(data);
+    lcdPrint( name + " - message received :" + data);
+
     commandManager(data);
   }  
 }
@@ -252,12 +255,12 @@ int commandManager(String message) {
   // {"order":"Init_connection_from_Raspi"}
   if ( jsonDoc["order"] == "Init_connection_from_Raspi") {
     Serial.println( name + " - INIT Raspi received ");
-    lcdPrint(" - INIT Raspi received ");
+    lcdPrint("INIT Raspi received ");
     configToSerial();
   }
   else if ( jsonDoc["order"] == "getConfig") {
     Serial.println( name + " - getConfig received ");
-    
+    lcdPrint("getConfig received ");
     configToSerial();
   }
   else if (jsonDoc["order"] == "restart") {
@@ -271,8 +274,11 @@ int commandManager(String message) {
   else if (jsonDoc["order"] == "initCalibration") {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - initCalibration order received for sensor : " + sensorId);
+    
     (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 0 );
     Debug::println(name + " Sensor ENTER calibration PH = " );
+    delay(100);
+    lcdPrint(name + " Sensor ENTER calibration PH = " );
     ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("ENTERPH");
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );
 
@@ -283,7 +289,6 @@ int commandManager(String message) {
   else if (jsonDoc["order"] == "calibrate") {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - CALIBRATE order received for sensor : " + sensorId);
-
     Debug::println(name + " - Sensor current calibration step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
     (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
     ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("CALPH");
@@ -336,7 +341,7 @@ int commandManager(String message) {
   }
   else {
     Serial.println(name + " - Unknown command : " + message );
-    lcdPrint(" Unknown command : "+ message);
+    lcdPrint("Unknown command: "+ message);
   }
 }
 
@@ -390,6 +395,7 @@ void drawBanner(int offset){
 
 void lcdPrint(String message){
   lcd.clear();
+  delay(50);
   lcd.setCursor(0,0);
 lcd.print(message);
 

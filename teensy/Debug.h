@@ -17,6 +17,8 @@
 * date    :  2017-04-27
 **********************************************************************/
 
+#define DEBUG_AVR 
+
 #pragma once
 #include <string.h>
 #include "Config.h"
