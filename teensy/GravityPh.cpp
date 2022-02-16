@@ -1,4 +1,4 @@
-/*  GravityPh.cpp
+﻿/*  GravityPh.cpp
 
   Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
   GitHub Link :https://github.com/DFRobot/watermonitor
@@ -136,7 +136,7 @@ void GravityPh::setOffset(float offset)
 }
 
 String GravityPh::getCalibrationMessage() {
-<<<<<<< HEAD
+
 	//int phStatus = phRobot.getStatus();
 	String json = "{\"calibrationAnswer\":{";
 	json += "\"sensorId\":"+ (String)_sensorId + ",";
@@ -165,33 +165,3 @@ String GravityPh::getCalibrationMessage() {
 	json += "}}";
 	return json;
 }
-=======
-  //int phStatus = phRobot.getStatus();
-  String json = "{\"calibrationAnswer\":{";
-  json += "\"sensorId\":" + (String)_sensorId + ",";
-  json += "\"calibrationCurrentStep\":" + (String)this->calibrationCurrentStep + ",";
-  json += "\"isCalibrate\":" + (String)this->isCalibrate() + ",";
-
-  const String calibrationMessage[] = {
-    "\"message\":\" PH Probe need calibration \n Please launch the calibration process\"",
-    "\"message\":\" INIT Calibration PH launched\n Please put the probe into the 4.0 or 7.0 standard buffer solution\"",		"\"message\":\" calibration Gravity PH step 1 \"",
-    "\"message\":\" Buffer solution 7.0\n Save & Exit\"",
-    "\"message\":\" Buffer solution 4.0\n Save & Exit\"",
-    "\"message\":\" Buffer Solution Error Try Again\"",
-    "\"message\":\" Calibration successfull\"",
-    "\"message\":\" Calibration failed\"",
-
-  };
-
-  if (this->isCalibrate()) {
-    json += "\"message\":\"Sensor is calibrate \"";
-  }
-  else {
-    //Depending on status
-    json += calibrationMessage[this->phRobot.getStatus()];
-  }
-
-  json += "}}";
-  return json;
-}
->>>>>>> f8a18b82106ef81eed1b164dffcfa2e5651e85ed
