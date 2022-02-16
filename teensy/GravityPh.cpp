@@ -1,4 +1,4 @@
-/*  GravityPh.cpp
+﻿/*  GravityPh.cpp
 
   Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
   GitHub Link :https://github.com/DFRobot/watermonitor
@@ -128,7 +128,7 @@ float slope = (7.0-4.0)/((this->_neutralVoltage-1500.0)/3.0 - (this->_acidVoltag
 //********************************************************************************************
 void GravityPh::calibrate()
 {
-  Serial.println("GravityPH calibrate function with status = " + status);
+  Serial.println("GravityPH calibrate function with status = " + String(status));
   // READ PH VOLTAGE
 
   Serial.println("GravityPH calibrate read voltage");
@@ -136,18 +136,25 @@ void GravityPh::calibrate()
   	// ARRONDI AVEC 1 DECIMAL 
   	voltagePH = (round(voltagePH * 10));
   	voltagePH = voltagePH / 10;
-  Serial.println("GravityPH voltage = " + voltagePH );
+  Serial.println("GravityPH voltage = " + String(voltagePH) );
 
-  if (status == 0 )
+  if (status == 0 ) {
+	Serial.println("Gravity command : ENTERPH" );
     this->calibration(voltagePH, temperature, "ENTERPH" ); // convert voltage to pH with temperature compensation
-  else if ( status == 1 )
+  }
+  else if ( status == 1 ) {
+	Serial.println("Gravity command : CALPH" );
     this->calibration(voltagePH, temperature, "CALPH" ); // convert voltage to pH with temperature compensation
-  else if ( status == 2 )
+  }
+  else if ( status == 2 ) {
+	Serial.println("Gravity command : ExitPH" );
     this->calibration(voltagePH, temperature, "EXITPH" ); // convert voltage to pH with temperature compensation
-  else
+  }
+  else {
     Serial.println("Calibrate function error on status");
+  }
 
-  Serial.println("GravityPH calibrate function exit status = " + status);
+  Serial.println("GravityPH calibrate function exit status = " + String(status));
 }
 
 
@@ -174,25 +181,28 @@ void GravityPh::setOffset(float offset)
 
 void GravityPh::calibration(float voltage, float temperature,char* cmd)
 {
+	Serial.println("calibration process enter cmd = " + String(cmd));
     this->_voltage = voltage;
-    this->_temperature = temperature;
-    strupr(cmd);
+	this->_temperature = temperature;
+    //strupr(cmd); NOT WORKING
     this->phCalibration(cmdParse(cmd));  // if received Serial CMD from the serial monitor, enter into the calibration mode
 }
 
 byte GravityPh::cmdParse(const char* cmd)
 {
+	Serial.println("Entering into cmdParse");
     byte modeIndex = 0;
     if(strstr(cmd, "ENTERPH")      != NULL){
         Serial.println("cmdParse = ENTERPH" );
         modeIndex = 1;
-    }else if(strstr(cmd, "EXITPH") != NULL){
-        Serial.println("cmdParse = EXITPH" );
-        modeIndex = 3;
     }else if(strstr(cmd, "CALPH")  != NULL){
         Serial.println("cmdParse = CALPH" );
         modeIndex = 2;
+    }else if(strstr(cmd, "EXITPH") != NULL){
+        Serial.println("cmdParse = EXITPH" );
+        modeIndex = 3;
     }
+	Serial.println("Exit cmdParse modeIndex = "+ String(modeIndex));
     return modeIndex;
 }
 
@@ -207,12 +217,11 @@ String GravityPh::getCalibrationMessage() {
 	const String calibrationMessage[] = {
 		"\"message\":\" PH Probe need calibration - Please launch the calibration process\"",                                   //0
 		"\"message\":\" INIT Calibration PH launched - Please put the probe into the 4.0 or 7.0 standard buffer solution\"",		//1
-    "\"message\":\" Buffer solution 7.0\n Save & Exit\"",                                                                   //2
+    	"\"message\":\" Buffer solution 7.0\n Save & Exit\"",                                                                   //2
 		"\"message\":\" Buffer solution 4.0\n Save & Exit\"",                                                                   //3
 		"\"message\":\" Buffer Solution Error Try Again\"",                                                                     //4
 		"\"message\":\" Calibration successfull\"",                                                                             //5
 		"\"message\":\" Calibration failed\""                                                                                   //6
-		
 	};
 
 	if (this->isCalibrate()) {
@@ -240,7 +249,7 @@ void GravityPh::phCalibration(byte mode)
         }
         break;
 
-        case 1:
+        case 1: // ENTERPH command
         this->sensorIsCalibrate = false;
         enterCalibrationFlag = 1;
         phCalibrationFinish  = 0;
@@ -248,10 +257,11 @@ void GravityPh::phCalibration(byte mode)
         Serial.println(F(">>>Enter PH Calibration Mode<<<"));
         Serial.println(F(">>>Please put the probe into the 4.0 or 7.0 standard buffer solution<<<"));
         Serial.println();
-        this->messageId = 1;
+        this->messageId = 2;
+		this->status = 1;
         break;
 
-        case 2:
+        case 2: // CALPH command
         if(enterCalibrationFlag){
             if((this->_voltage>1322)&&(this->_voltage<1678)){        // buffer solution:7.0{
                 Serial.println();
@@ -261,6 +271,7 @@ void GravityPh::phCalibration(byte mode)
                 Serial.println();
                 phCalibrationFinish = 1;
                 this->messageId = 2;
+				this->status = 2;
 
             }else if((this->_voltage>1854)&&(this->_voltage<2210)){  //buffer solution:4.0
                 Serial.println();
@@ -270,17 +281,19 @@ void GravityPh::phCalibration(byte mode)
                 Serial.println();
                 phCalibrationFinish = 1;
                 this->messageId = 3;
+				this->status = 2;
             }else{
                 Serial.println();
                 Serial.print(F(">>>Buffer Solution Error Try Again<<<"));
                 Serial.println();                                    // not buffer solution or faulty operation
                 phCalibrationFinish = 0;
                 this->messageId = 4;
+				this->status = 2;
             }
         }
         break;
 
-        case 3:
+        case 3: // Exit & Save command
         if(enterCalibrationFlag){
             Serial.println();
             if(phCalibrationFinish){

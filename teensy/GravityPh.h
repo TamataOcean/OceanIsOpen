@@ -1,4 +1,4 @@
-/* GravityPh.h
+﻿/* GravityPh.h
 *
 * Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
 * GitHub Link :https://github.com/DFRobot/watermonitor
@@ -35,7 +35,6 @@ public:
 
 private:
 	int pHArray[ARRAYLENGTH];    // stores the average value of the sensor return data
-	//DFRobot_PH phRobot;
 	float  voltagePH,temperature = 25;
 	int status; // 0 - to calibrate, 1 - Put the probe into solution, 2 - calibrated
 	int messageId;
