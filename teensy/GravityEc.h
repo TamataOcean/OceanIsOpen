@@ -19,4 +19,3 @@ public:
 	float kValue;
 
 };
-

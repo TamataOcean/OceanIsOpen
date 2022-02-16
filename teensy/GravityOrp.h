@@ -1,5 +1,4 @@
-/*********************************************************************************
-* GravityOrp.h
+/* GravityOrp.h
 *
 * Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
 * GitHub Link :https://github.com/DFRobot/watermonitor
@@ -58,4 +57,3 @@ public:
 	String getCalibrationMessage();
 
 };
-

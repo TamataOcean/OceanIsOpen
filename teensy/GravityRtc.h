@@ -1,5 +1,4 @@
-/*********************************************************************
-* GravityRtc.h
+/* GravityRtc.h
 *
 * Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
 * GitHub Link :https://github.com/DFRobot/Gravity-I2C-SD2405-RTC-Module/
@@ -78,4 +77,3 @@ private:
 	uint8_t conv2d(const char* p);
 
 };
-

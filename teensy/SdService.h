@@ -1,5 +1,4 @@
-﻿/*********************************************************************
-* SdService.h
+/* SdService.h
 *
 * Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
 * GitHub Link :https://github.com/DFRobot/watermonitor
@@ -63,4 +62,3 @@ private:
 	void connectString(double value);
 
 };
-
