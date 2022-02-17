@@ -97,3 +97,8 @@ String GravityEc::getCalibrationMessage() {
 	json += "}}";
 	return json;
 }
+
+void GravityEc::calibrate() {
+	Serial.println("GravityEC calibrate process begin");
+	
+}

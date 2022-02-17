@@ -293,7 +293,7 @@ int commandManager(String message) {
     Debug::println(name + " - Sensor current calibration step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
     //(sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
     // ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("CALPH");
-    ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate();
+    (sensorHub.sensors[sensorId])->calibrate();
     Debug::println(name + " - Sensor new calibration Step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep() );
     Debug::println(name + " - Sensor isCalibrated ? = " + (sensorHub.sensors[sensorId])->isCalibrate() );
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );    

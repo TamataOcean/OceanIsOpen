@@ -34,17 +34,11 @@ int ISensor::isCalibrate() {
 String ISensor::getUnit() {
     return this->unit;
 }
-// String ISensor::getCalibrationMessage(int stepNumber) {
-//     if ( stepNumber == 0 ) {
-//     return "{\"initCalibrationAnswer\":{\"message\":\"Message INIT Calibration step0 ready\"}}";
 
-//     }
-//     else
-//     {
-//     return "{\"calibrateAnswer\":{\"message\":\"Message TEST Calibration step1\"}}";
-//     }
-    
-// }
+void ISensor::calibrate(){
+    // No need to be calibrate, sensors witch need will override the function
+    Serial.println("ISensor info, sensor no need calibration");
+}
 
 void ISensor::setCalibrationCurrentStep(int step)
 {
@@ -60,7 +54,5 @@ void ISensor::setCalibrationCurrentStep(int step)
     else
     {
         this->sensorIsCalibrate = false;
-    }
-    
-    
+    }    
 }

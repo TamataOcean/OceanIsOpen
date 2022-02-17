@@ -29,6 +29,7 @@ extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 
 GravityPh::GravityPh(): pin(PHPIN), offset(0.0f)
 {
+  calibrationCurrentStep = 0;
   _sensorId = phSensor;
   sensorName = "GravityPH";
   unit = "pH";
@@ -190,7 +191,7 @@ void GravityPh::calibration(float voltage, float temperature,char* cmd)
 
 byte GravityPh::cmdParse(const char* cmd)
 {
-	Serial.println("Entering into cmdParse");
+	//Serial.println("Entering into cmdParse");
     byte modeIndex = 0;
     if(strstr(cmd, "ENTERPH")      != NULL){
         Serial.println("cmdParse = ENTERPH" );
@@ -202,7 +203,7 @@ byte GravityPh::cmdParse(const char* cmd)
         Serial.println("cmdParse = EXITPH" );
         modeIndex = 3;
     }
-	Serial.println("Exit cmdParse modeIndex = "+ String(modeIndex));
+	//Serial.println("Exit cmdParse modeIndex = "+ String(modeIndex));
     return modeIndex;
 }
 
@@ -259,6 +260,7 @@ void GravityPh::phCalibration(byte mode)
         Serial.println();
         this->messageId = 2;
 		this->status = 1;
+		this->calibrationCurrentStep = 1;
         break;
 
         case 2: // CALPH command
@@ -272,6 +274,7 @@ void GravityPh::phCalibration(byte mode)
                 phCalibrationFinish = 1;
                 this->messageId = 2;
 				this->status = 2;
+				this->calibrationCurrentStep = 2;
 
             }else if((this->_voltage>1854)&&(this->_voltage<2210)){  //buffer solution:4.0
                 Serial.println();
@@ -282,6 +285,8 @@ void GravityPh::phCalibration(byte mode)
                 phCalibrationFinish = 1;
                 this->messageId = 3;
 				this->status = 2;
+				this->calibrationCurrentStep = 2;
+
             }else{
                 Serial.println();
                 Serial.print(F(">>>Buffer Solution Error Try Again<<<"));
@@ -306,11 +311,14 @@ void GravityPh::phCalibration(byte mode)
                 this->status = 2;
                 this->messageId = 5;
                 this->sensorIsCalibrate = true;
+				this->calibrationCurrentStep = 3;
             }else{
                 Serial.print(F(">>>Calibration Failed"));
                 this->status = 0;
                 this->sensorIsCalibrate = false;
                 this->messageId = 6;
+				this->calibrationCurrentStep = 0;
+
             }
             Serial.println(F(",Exit PH Calibration Mode<<<"));
             Serial.println();
