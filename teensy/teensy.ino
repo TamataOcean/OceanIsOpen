@@ -55,6 +55,8 @@
 #define DEBUG_AVR 
 
 DynamicJsonDocument jsonDoc(256); 
+DynamicJsonDocument jsonMessage(256); 
+
 //Liquid Crystal 
 const int rs = 26, en = 25, d0 = 5, d1 = 6, d2 = 7, d3 = 8;
 LiquidCrystal lcd(rs, en, d0, d1, d2, d3);
@@ -234,7 +236,7 @@ void loop() {
     String data = Serial.readStringUntil('\n');
     Serial.print( name + " - message received : ");
     Serial.println(data);
-    lcdPrint("message received :" + data);
+    //lcdPrint("message received :" + data);      //DEBUG MODE WITH LCD
 
     commandManager(data);
   }  
@@ -274,15 +276,10 @@ int commandManager(String message) {
   else if (jsonDoc["order"] == "initCalibration") {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - initCalibration order received for sensor : " + sensorId);
-    lcdPrint(name + " - initCalibration order received for sensor : " + sensorId );
+    lcdPrint("initCalibration order received for sensor : " + sensorId );
     (sensorHub.sensors[sensorId])->initCalibration();
-    (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 0 );
-    //((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate();
-    Debug::println("coucou test");
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );
-
-    //(sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 1 );
-    //Debug::println(name + " Sensor setCalibration = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
+    lcdPrint((sensorHub.sensors[sensorId])->getCalibrationMessage());
   }
 
   else if (jsonDoc["order"] == "calibrate") {
@@ -295,13 +292,26 @@ int commandManager(String message) {
     (sensorHub.sensors[sensorId])->calibrate();
     Debug::println(name + " - Sensor new calibration Step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep() );
     Debug::println(name + " - Sensor isCalibrated ? = " + (sensorHub.sensors[sensorId])->isCalibrate() );
-    Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );    
+    Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );
+
+    error = deserializeJson(jsonMessage, (sensorHub.sensors[sensorId])->getCalibrationMessage());
+    if(error) {
+      Serial.println("parseObject() failed for jsonMessage" );
+      lcdPrint("ParseObject() failed for jsonMessage ");
+    //return false;
+    } else {
+      Serial.println("jsonMessage parsed = " + (sensorHub.sensors[sensorId])->getCalibrationMessage() );
+      String msg = jsonMessage["calibrationAnswer"]["message"];
+      Serial.println( msg );
+      lcdPrint(msg );  
+    }
     
   }
 
   else if (jsonDoc["order"] == "calibrationStatus") {
     Serial.println( name + " - CALIBRATE Info received");
     Serial.println(sensorHub.getCalibrationStatus().c_str());
+    lcdPrint("calibrationStatus order received");
   }
 
   else if (jsonDoc["order"] == "sensorInfo") {
@@ -310,6 +320,7 @@ int commandManager(String message) {
     //sensorHub.getSensorInfo( sensorId );
     Debug::println(name + " - Sensor info for " + sensorHub.getSensorName(sensorId) );
     Debug::println( sensorHub.getSensorInfo(sensorId) );
+    lcdPrint("sensorInfo order received");
   }
 
   /* START / STOP LOG */
@@ -318,11 +329,13 @@ int commandManager(String message) {
     Serial.println( name + " - Start log received ");
     Serial.print( name + " - Using interval : " );
     Serial.println( logInterval );
+    lcdPrint("Start log received");
     start_log = 1;
   }
 
   else if (jsonDoc["order"] == "stopLog") {
     Serial.println( name + " - StopLog received");
+    lcdPrint("Stop log received");
     start_log = 0;
   }
 
@@ -338,6 +351,7 @@ int commandManager(String message) {
     Serial.print(name + " - new Interval log set : " );
     Serial.println(logInterval);
     Serial.println("{\"update_intervalAnswer\":{\"newInterval\":"+(String)logInterval + "}}");
+    lcdPrint("New interval received : " + (String)logInterval );
     //logInterval = newInterval;
   }
   else {
@@ -372,6 +386,7 @@ void configToSerial(){
     json += "}";
     
     Serial.println(json);
+    lcdPrint(json);
 }
 
 void sensorCalibrationStepToSerial(){
