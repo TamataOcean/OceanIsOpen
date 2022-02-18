@@ -174,7 +174,7 @@ unsigned long previousLogTime = 0;
 
 // Alias sensor logic as sensorHub 
 GravitySensorHub sensorHub ;
-String name = "TEENSY-SERIAL";
+String name = TEENSYNAME;
 int start_log = 0;
 
 /*************************/
@@ -234,7 +234,7 @@ void loop() {
     String data = Serial.readStringUntil('\n');
     Serial.print( name + " - message received : ");
     Serial.println(data);
-    lcdPrint( name + " - message received :" + data);
+    lcdPrint("message received :" + data);
 
     commandManager(data);
   }  
@@ -274,13 +274,11 @@ int commandManager(String message) {
   else if (jsonDoc["order"] == "initCalibration") {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - initCalibration order received for sensor : " + sensorId);
-    
+    lcdPrint(name + " - initCalibration order received for sensor : " + sensorId );
+    (sensorHub.sensors[sensorId])->initCalibration();
     (sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 0 );
-    Debug::println(name + " Sensor ENTER calibration PH = " );
-    delay(100);
-    lcdPrint(name + " Sensor ENTER calibration PH = " );
-    // ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("ENTERPH");
-    ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate();
+    //((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate();
+    Debug::println("coucou test");
     Debug::println((sensorHub.sensors[sensorId])->getCalibrationMessage() );
 
     //(sensorHub.sensors[sensorId])->setCalibrationCurrentStep( 1 );
@@ -290,6 +288,7 @@ int commandManager(String message) {
   else if (jsonDoc["order"] == "calibrate") {
     int sensorId = jsonDoc["sensorId"].as<int>();
     Serial.println( name + " - CALIBRATE order received for sensor : " + sensorId);
+    lcdPrint(" - CALIBRATE order received for sensor : " + sensorId );
     Debug::println(name + " - Sensor current calibration step = " + (sensorHub.sensors[sensorId])->getCalibrationCurrentStep());
     //(sensorHub.sensors[sensorId])->setCalibrationCurrentStep( (sensorHub.sensors[sensorId])->getCalibrationCurrentStep()+1);
     // ((GravityPh*)(sensorHub.sensors[sensorId]))->calibrate("CALPH");

@@ -40,6 +40,11 @@ void ISensor::calibrate(){
     Serial.println("ISensor info, sensor no need calibration");
 }
 
+void ISensor::initCalibration(){
+    // No need to be calibrate, sensors witch need will override the function
+    Serial.println("ISensor info, sensor no need initCalibration");
+}
+
 void ISensor::setCalibrationCurrentStep(int step)
 {
     // control on max calibration step.

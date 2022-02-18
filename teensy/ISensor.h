@@ -26,7 +26,8 @@ public:
 	virtual double getValue()	= 0;
 	virtual String getCalibrationMessage() = 0;
 	virtual void calibrate(); // Can be overriden for specific sensors ( Ph / EC / ... )
-
+	virtual void initCalibration(); // Can be overriden for specific sensors ( Ph / EC / ... )
+	
 	int _sensorId;
    	String sensorName;
 	String unit; 
