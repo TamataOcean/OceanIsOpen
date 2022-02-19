@@ -1,12 +1,17 @@
 #pragma once
-#include "ISensor.h"
 #include "Arduino.h"
+#include "ISensor.h"
+#include "Config.h"
 
 #define ReceivedBufferLength 10  //length of the Serial CMD buffer
 
 class GravityEc : public ISensor
 {
 public:
+	// EC sensor pin
+	int pin;	
+	// offset compensation
+	float offset;
 	GravityEc();
 	~GravityEc();
 
@@ -18,7 +23,6 @@ public:
   	String getCalibrationMessage();
 	void calibrate();
 	void calibration(float voltage, float temperature,char* cmd);
-	int pin;
 	float kValue;
 	
 	int status; // 0 - to calibrate, 1 - Put the probe into solution, 2 - calibrated

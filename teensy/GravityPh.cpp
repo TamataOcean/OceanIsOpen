@@ -48,7 +48,7 @@ GravityPh::GravityPh(): pin(PHPIN), offset(0.0f)
 //********************************************************************************************
 void GravityPh::setup()
 {
-  Serial.println("---------- SETUP FOR PH SENSOR BEGIN --------- ");
+  Debug::println(String(TEENSYNAME) + "---------- SETUP FOR PH SENSOR BEGIN --------- ");
   this->calibrationStep = PH_CALIBRATION_STEP;
   this->calibrationCurrentStep = 0;
   if (this->calibrationCurrentStep == this->calibrationStep )
@@ -69,14 +69,13 @@ void GravityPh::setup()
         EEPROM_write(PHVALUEADDR, this->_neutralVoltage);
     }
     EEPROM_read(PHVALUEADDR+4, this->_acidVoltage);//load the acid (pH = 4.0) voltage of the pH board from the EEPROM
+    
     Serial.print(String(TEENSYNAME) + " - _acidVoltage:");
     Serial.println(this->_acidVoltage);
     if(EEPROM.read(PHVALUEADDR+4)==0xFF && EEPROM.read(PHVALUEADDR+5)==0xFF && EEPROM.read(PHVALUEADDR+6)==0xFF && EEPROM.read(PHVALUEADDR+7)==0xFF){
         this->_acidVoltage = 2032.44;  // new EEPROM, write typical voltage
         EEPROM_write(PHVALUEADDR+4, this->_acidVoltage);
     }
-
-  //phRobot.begin();
 }
 
 
@@ -234,7 +233,7 @@ String GravityPh::getCalibrationMessage() {
 	const String calibrationMessage[] = {
 		"\"message\":\" PH Probe need calibration - Please launch the calibration process\"",                                   //0
 		"\"message\":\" INIT Calibration PH launched - Please put the probe into the 4.0 or 7.0 standard buffer solution\"",		//1
-    	"\"message\":\" Buffer solution 7.0 detected - Save & Exit\"",                                                                   //2
+    "\"message\":\" Buffer solution 7.0 detected - Save & Exit\"",                                                                   //2
 		"\"message\":\" Buffer solution 4.0 detected - Save & Exit\"",                                                                   //3
 		"\"message\":\" Buffer Solution Error Try Again\"",                                                                     //4
 		"\"message\":\" Calibration successfull\"",                                                                             //5

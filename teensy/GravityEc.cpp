@@ -1,5 +1,6 @@
+
+#include "Debug.h"
 #include "GravityEc.h"
-#include "Config.h"
 #include <EEPROM.h>
 
 #define EEPROM_write(address, p) {int i = 0; byte *pp = (byte*)&(p);for(; i < sizeof(p); i++) EEPROM.write(address+i, pp[i]);}
@@ -11,7 +12,7 @@
 
 extern uint16_t readMedianValue(int* dataArray, uint16_t arrayLength);
 
-GravityEc::GravityEc() :kValue(ECKVALUE), pin(ECPIN)
+GravityEc::GravityEc() : pin(ECPIN), kValue(ECKVALUE)
 {
 	_sensorId = ecSensor;
 	sensorName = "GravityEC";
@@ -35,6 +36,7 @@ GravityEc::~GravityEc()
 
 void GravityEc::setup()
 {
+    Debug::println(String(TEENSYNAME) + "---------- SETUP FOR EC SENSOR BEGIN --------- ");
 	this->calibrationStep = EC_CALIBRATION_STEP;
 		this->calibrationCurrentStep = 0;
 		if (this->calibrationCurrentStep == this->calibrationStep )
@@ -48,11 +50,13 @@ void GravityEc::setup()
 	pinMode(pin, INPUT);
 	
 	EEPROM_read(KVALUEADDR, this->_kvalueLow);        //read the calibrated K value from EEPROM
+    Debug::println(String(TEENSYNAME) + " _kvaluelow : " +  (String)this->_kvalueLow );
     if(EEPROM.read(KVALUEADDR)==0xFF && EEPROM.read(KVALUEADDR+1)==0xFF && EEPROM.read(KVALUEADDR+2)==0xFF && EEPROM.read(KVALUEADDR+3)==0xFF){
         this->_kvalueLow = 1.0;                       // For new EEPROM, write default value( K = 1.0) to EEPROM
         EEPROM_write(KVALUEADDR, this->_kvalueLow);
     }
     EEPROM_read(KVALUEADDR+4, this->_kvalueHigh);     //read the calibrated K value from EEPRM
+    Debug::println(String(TEENSYNAME) + " _kvalueHigh : " +  (String)this->_kvalueHigh );
     if(EEPROM.read(KVALUEADDR+4)==0xFF && EEPROM.read(KVALUEADDR+5)==0xFF && EEPROM.read(KVALUEADDR+6)==0xFF && EEPROM.read(KVALUEADDR+7)==0xFF){
         this->_kvalueHigh = 1.0;                      // For new EEPROM, write default value( K = 1.0) to EEPROM
         EEPROM_write(KVALUEADDR+4, this->_kvalueHigh);
@@ -95,35 +99,41 @@ void GravityEc::update()
 }
 
 void GravityEc::calibrate() {
-	Serial.println("GravityEC calibration process begin");
-	Serial.println("GravityEC calibrate read voltage");
-	_voltage = analogRead(PHPIN) / 65535.0 * 3300; // read the voltage
+	Serial.println(String(TEENSYNAME) + "GravityEC calibration process begin");
+	analogReadResolution(16);
+    _voltage = analogRead(PHPIN) / 65535.0 * 3300; // read the voltage
 	// ARRONDI AVEC 1 DECIMAL 
 	_voltage = (round(_voltage * 10));
 	_voltage = _voltage / 10;
- 	Serial.println("GravityEC voltage = " + String(_voltage) );
+ 	Serial.println(String(TEENSYNAME) + " - GravityEC voltage = " + String(_voltage) );
 	
 	if (status == 0 ) {
-		Serial.println("Gravity command : ENTEREC" );
+		Serial.println(String(TEENSYNAME) + " - Gravity command : ENTEREC" );
 		this->calibration(_voltage, _temperature, "ENTEREC" ); // convert voltage to pH with temperature compensation
 	}
 	else if ( status == 1 ) {
-		Serial.println("Gravity command : CALEC" );
+		Serial.println(String(TEENSYNAME) + " - Gravity command : CALEC" );
 		this->calibration(_voltage, _temperature, "CALEC" ); // convert voltage to pH with temperature compensation
 	}
 	else if ( status == 2 ) {
-		Serial.println("Gravity command : ExitPH" );
+		Serial.println(String(TEENSYNAME) + " - Gravity command : ExitPH" );
 		this->calibration(_voltage, _temperature, "EXITEC" ); // convert voltage to pH with temperature compensation
 	}
 	else {
-		Serial.println("CalibrateEC function error on status");
+		Serial.println(String(TEENSYNAME) + " - CalibrateEC function error on status");
 	}
 
-  Serial.println("GravityEC calibrate function exit status = " + String(status));
+  Serial.println(String(TEENSYNAME) + " - GravityEC calibrate function exit status = " + String(status));
 }
 
 double GravityEc::getValue()
 {
+    analogReadResolution(16);
+    _voltage = analogRead(PHPIN) / 65535.0 * 3300; // read the voltage
+	// ARRONDI AVEC 1 DECIMAL 
+	_voltage = (round(_voltage * 10));
+	_voltage = _voltage / 10;
+
 	float value = 0,valueTemp = 0;
     this->_rawEC = 1000*_voltage/RES2/ECREF;
     valueTemp = this->_rawEC * this->_kvalue;
@@ -151,9 +161,13 @@ String GravityEc::getCalibrationMessage() {
 
 		"\"message\":\"EC Probe need calibration - Please launch calibration process\"",
 		"\"message\":\" INIT Calibration >>>Please put the probe into the 1413us/cm or 12.88ms/cm buffer solution",
-		"\"message\":\" calibration Gravity EC step 1 \"",
-		"\"message\":\" calibration Gravity EC step 2  \""
-	};
+		"\"message\":\" Successful,K - Save & Exit \"",
+		"\"message\":\" Buffer Solution Error Try Again  \""
+	    "\"message\":\" Calibration successfull \"",
+        "\"message\":\" Calibration failed\""
+		
+		
+    };
 	
 	String json = "{\"calibrationAnswer\":{";
 	json += "\"sensorId\":"+ (String)_sensorId + ",";
@@ -232,6 +246,7 @@ void GravityEc::ecCalibration(byte mode)
             }else{
                 Serial.print(F(">>>Buffer Solution Error Try Again<<<   "));
                 ecCalibrationFinish = 0;
+                messageId = 3;
             }
             KValueTemp = RES2*ECREF*compECsolution/1000.0/this->_voltage;       //calibrate the k value
             if((KValueTemp>0.5) && (KValueTemp<1.5)){
@@ -245,7 +260,7 @@ void GravityEc::ecCalibration(byte mode)
                     this->_kvalueHigh =  KValueTemp;
                 }
                 ecCalibrationFinish = 1;
-				this->messageId = 3;
+				this->messageId = 4;
 				this->status = 2;
 				this->calibrationCurrentStep = 2;
           }

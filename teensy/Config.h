@@ -1,6 +1,7 @@
 #pragma once
 #include"Arduino.h"		//Arduino Defs
 
+//Name used for debug log
 #define TEENSYNAME "TEENSY-SERIAL"
 //Serial print switch
 #define DEBUG_AVR
