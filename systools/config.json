@@ -27,7 +27,7 @@
 			"modele": "Drotek"
 		},
 		"serialport_TEENSY": {
-			"port": "/dev/ttyACM0",
+			"port": "/dev/tty.usbmodem68544801",
 			"baud": 115200
 		}
 	},

@@ -1,6 +1,7 @@
 #pragma once
 #include"Arduino.h"		//Arduino Defs
 
+#define TEENSYNAME "TEENSY-SERIAL"
 //Serial print switch
 #define DEBUG_AVR
 //#define DEBUG_M0
@@ -48,7 +49,7 @@ enum SensorNumber
 	phSensor = 0,			//Ph
 	temperatureSensor = 1,	//Temperature
 	doSensor = 2,			//Dissolved Oxygen
-	ecSensor = 3,			//Electrical conductivité (Redox)
+	ecSensor = 3,			//Electrical conductivitï¿½ (Redox)
 	tdsSensor = 4,			//TDS Sensor
 	orpSensor = 5,			//ORP Sensor
 	turbiditySensor = 6		//Turbidity Sensor

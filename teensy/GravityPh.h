@@ -60,6 +60,7 @@ public:
 	void updateCS();
 
 	// using DFRobot to calibrate
+	void initCalibration();
 	void calibrate();
 	void calibration(float voltage, float temperature,char* cmd);
 
