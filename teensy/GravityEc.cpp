@@ -20,8 +20,8 @@ GravityEc::GravityEc() : pin(ECPIN), kValue(ECKVALUE)
     this->_temperature            = 25.0;
 	this->_ecvalue                = 0.0;
     this->_kvalue                 = 1.0;
-    this->_kvalueLow              = 1.0;
-    this->_kvalueHigh             = 1.0;
+    this->_kvalueLow              = 1.08;
+    this->_kvalueHigh             = 1.00;
     this->_cmdReceivedBufferIndex = 0;
     this->_voltage                = 0.0;
 	this->status          = 0;
@@ -69,7 +69,7 @@ void GravityEc::setup()
 void GravityEc::update()
 {
 	float value = 0,valueTemp = 0;
-    this->_rawEC = 1000*_voltage/RES2/ECREF;
+    this->_rawEC = 1000*this->_voltage/RES2/ECREF;
     valueTemp = this->_rawEC * this->_kvalue;
     //automatic shift process
     //First Range:(0,2); Second Range:(2,20)
@@ -85,7 +85,7 @@ void GravityEc::update()
 
   /* Calcul ClubSandwich
   // READ EC VOLT
-  voltageEC = analogRead(ECPIN) / 65535.0 * 3300;
+  voltageEC = analogRead(ECPIN) / 1024.0 * 5000;
   // ARRONDI AVEC 1 DECIMAL
   voltageEC = (round(voltageEC * 10));
   voltageEC = voltageEC / 10;
@@ -100,11 +100,9 @@ void GravityEc::update()
 
 void GravityEc::calibrate() {
 	Serial.println(String(TEENSYNAME) + "GravityEC calibration process begin");
-	analogReadResolution(16);
-    _voltage = analogRead(PHPIN) / 65535.0 * 3300; // read the voltage
-	// ARRONDI AVEC 1 DECIMAL 
-	_voltage = (round(_voltage * 10));
-	_voltage = _voltage / 10;
+	//analogReadResolution(16);
+    this->_voltage = analogRead(ECPIN) / 1024.0*5000; // read the voltage
+
  	Serial.println(String(TEENSYNAME) + " - GravityEC voltage = " + String(_voltage) );
 	
 	if (status == 0 ) {
@@ -128,14 +126,15 @@ void GravityEc::calibrate() {
 
 double GravityEc::getValue()
 {
-    analogReadResolution(16);
-    _voltage = analogRead(PHPIN) / 65535.0 * 3300; // read the voltage
+    Serial.println("Gravity EC - GetValue begin");
+    //analogReadResolution(16);
+    this->_voltage = analogRead(ECPIN) / 1024.0 * 5000; // read the voltage
 	// ARRONDI AVEC 1 DECIMAL 
-	_voltage = (round(_voltage * 10));
-	_voltage = _voltage / 10;
+	// _voltage = (round(_voltage * 10));
+	// _voltage = _voltage / 10;
 
 	float value = 0,valueTemp = 0;
-    this->_rawEC = 1000*_voltage/RES2/ECREF;
+    this->_rawEC = 1000*this->_voltage/RES2/ECREF;
     valueTemp = this->_rawEC * this->_kvalue;
     //automatic shift process
     //First Range:(0,2); Second Range:(2,20)
@@ -160,13 +159,12 @@ String GravityEc::getCalibrationMessage() {
 	const String calibrationMessage[] = {
 
 		"\"message\":\"EC Probe need calibration - Please launch calibration process\"",
-		"\"message\":\" INIT Calibration >>>Please put the probe into the 1413us/cm or 12.88ms/cm buffer solution",
-		"\"message\":\" Successful,K - Save & Exit \"",
-		"\"message\":\" Buffer Solution Error Try Again  \""
+		"\"message\":\" INIT Calibration >>>Please put the probe into the 1413us/cm or 12.88ms/cm buffer solution\"",
+		"\"message\":\" Successful,K 1.413 - Save & Exit \"",
+        "\"message\":\" Successful,K 12.88 - Save & Exit \"",
+		"\"message\":\" Buffer Solution Error Try Again  \"",
 	    "\"message\":\" Calibration successfull \"",
-        "\"message\":\" Calibration failed\""
-		
-		
+        "\"message\":\" Calibration failed\""	
     };
 	
 	String json = "{\"calibrationAnswer\":{";
@@ -190,6 +188,9 @@ void GravityEc::calibration(float voltage, float temperature,char* cmd)
 {   
     this->_voltage = voltage;
     this->_temperature = temperature;
+
+    this->_rawEC = 1000*voltage/RES2/ECREF;
+
     //strupr(cmd);
     this->ecCalibration(cmdParse(cmd));                     //if received Serial CMD from the serial monitor, enter into the calibration mode
 }
@@ -213,7 +214,7 @@ byte GravityEc::cmdParse(const char* cmd)
 
 void GravityEc::ecCalibration(byte mode)
 {
-	Serial.println("DFRobot_EC. Calibration begin");
+	Serial.println("EC Calibration begin");
 
     char *receivedBufferPtr;
     static boolean ecCalibrationFinish  = 0;
@@ -233,20 +234,24 @@ void GravityEc::ecCalibration(byte mode)
         Serial.println(F(">>>Enter EC Calibration Mode<<<"));
         Serial.println(F(">>>Please put the probe into the 1413us/cm or 12.88ms/cm buffer solution<<<"));
         Serial.println();
-		this->messageId = 2;
+		this->messageId = 1;
 		this->status = 1;
 		this->calibrationCurrentStep = 1;
         break;
         case 2: //CALEC Command
+        Serial.println("CALEC - _rawEC = " + String(this->_rawEC));
+        
         if(enterCalibrationFlag){
-            if((this->_rawEC>0.9)&&(this->_rawEC<1.9)){                         //recognize 1.413us/cm buffer solution
+            if((this->_rawEC>0.9)&&(this->_rawEC<2)){                         //recognize 1.413us/cm buffer solution
+                messageId = 2;
                 compECsolution = 1.413*(1.0+0.0185*(this->_temperature-25.0));  //temperature compensation
             }else if((this->_rawEC>9)&&(this->_rawEC<16.8)){                    //recognize 12.88ms/cm buffer solution
+                messageId = 3;
                 compECsolution = 12.88*(1.0+0.0185*(this->_temperature-25.0));  //temperature compensation
             }else{
                 Serial.print(F(">>>Buffer Solution Error Try Again<<<   "));
                 ecCalibrationFinish = 0;
-                messageId = 3;
+                messageId = 4;
             }
             KValueTemp = RES2*ECREF*compECsolution/1000.0/this->_voltage;       //calibrate the k value
             if((KValueTemp>0.5) && (KValueTemp<1.5)){
@@ -260,7 +265,8 @@ void GravityEc::ecCalibration(byte mode)
                     this->_kvalueHigh =  KValueTemp;
                 }
                 ecCalibrationFinish = 1;
-				this->messageId = 4;
+                this->sensorIsCalibrate = true;
+				this->messageId = 5;
 				this->status = 2;
 				this->calibrationCurrentStep = 2;
           }
@@ -269,16 +275,17 @@ void GravityEc::ecCalibration(byte mode)
                 Serial.println(F(">>>Failed,Try Again<<<"));
                 Serial.println();
                 ecCalibrationFinish = 0;
+                this->sensorIsCalibrate = false;
 				this->messageId = 4;
-				this->status = 2;
+				this->status = 0;
             }
         }
         break;
         case 3:
         if(enterCalibrationFlag){
-                Serial.println();
+                Serial.println("");
                 if(ecCalibrationFinish){   
-                    if((this->_rawEC>0.9)&&(this->_rawEC<1.9)){
+                    if((this->_rawEC>0.9)&&(this->_rawEC<2)){ // basicly <1.9 
                         EEPROM_write(KVALUEADDR, this->_kvalueLow);
                     }else if((this->_rawEC>9)&&(this->_rawEC<16.8)){
                         EEPROM_write(KVALUEADDR+4, this->_kvalueHigh);

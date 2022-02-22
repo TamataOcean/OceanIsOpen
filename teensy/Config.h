@@ -31,7 +31,7 @@
 #define PHPIN  23 //35 for Proto HAckathon / 23 with Malette OSI
 #define TEMPPIN 33 // Same same 
 #define DOPIN  A0 
-#define ECPIN  14 // 14 Proto Hackaton / 17 with Malette OSI
+#define ECPIN  17 // 14 Proto Hackaton / 17 with Malette OSI
 #define TDSPIN 36
 #define ORPPIN 37
 #define TURBPINLED A4

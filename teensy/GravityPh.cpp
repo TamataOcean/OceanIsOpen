@@ -1,4 +1,4 @@
-﻿/*  GravityPh.cpp
+/*  GravityPh.cpp
 
   Copyright (C)    2017   [DFRobot](http://www.dfrobot.com),
   GitHub Link :https://github.com/DFRobot/watermonitor
@@ -330,11 +330,10 @@ void GravityPh::phCalibration(byte mode)
                 this->status = 2;
                 this->messageId = 5;
                 this->sensorIsCalibrate = true;
-				this->calibrationCurrentStep = 3;
+				        this->calibrationCurrentStep = 3;
             }else{
                 Serial.print(F(">>>Calibration Failed"));
                 Debug::println(String(TEENSYNAME) + " - >>>Calibration Failed");
-                
                 this->status = 0;
                 this->sensorIsCalibrate = false;
                 this->messageId = 6;

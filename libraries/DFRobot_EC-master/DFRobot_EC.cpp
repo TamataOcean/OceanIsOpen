@@ -64,6 +64,12 @@ float DFRobot_EC::readEC(float voltage, float temperature)
     float value = 0,valueTemp = 0;
     this->_rawEC = 1000*voltage/RES2/ECREF;
     valueTemp = this->_rawEC * this->_kvalue;
+    Serial.println("DFRobot_EC voltage = " + String(voltage));
+    Serial.println("DFRobot_EC _rawEC = " + String(this->_rawEC));
+    Serial.println("DFRobot_EC _kvalueHigh = " + String(this->_kvalueHigh));
+    Serial.println("DFRobot_EC _kvalueLow = " + String(this->_kvalueLow));
+    
+
     //automatic shift process
     //First Range:(0,2); Second Range:(2,20)
     if(valueTemp > 2.5){
