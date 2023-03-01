@@ -37,6 +37,7 @@ sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/hostapd.conf /etc/hostapd/hosta
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/interfaces /etc/network/interfaces
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/dnsmasq.conf /etc/dnsmasq.conf
 sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/sysctl.conf /etc/sysctl.conf
+sudo cp /home/pi/OceanIsOpen/systools/wifi_raspi/dhcpcd.conf /etc/dhcpcd.conf
 sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
 sleep 5
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE  
