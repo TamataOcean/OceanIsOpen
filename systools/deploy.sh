@@ -1,5 +1,8 @@
 ### TEST avec nouvelle install
 
+#### INSTALL Mosquitto
+sudo apt install -y mosquitto mosquitto-clients
+
 #### GRAFANA
 
 wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
