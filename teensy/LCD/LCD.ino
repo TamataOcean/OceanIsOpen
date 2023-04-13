@@ -75,21 +75,21 @@ Serial.println("lcd_key = " + String(lcd_key));
      {
      if(bnk == 15){bnk=-1;}
      bnk = bnk+1;
-     lcd.print("Btn1     ");
+     lcd.print(" - Button Right ");
      break;
      }
    case btnLEFT:
      {
      if(oct == 3){oct=0;}
      oct = oct+1;
-     lcd.print("Btn2     ");
+     lcd.print(" - Button Left ");
      break;
      }
    case btnUP:
      {
      if(thrs == 4){thrs=0;}
      thrs = thrs+1;
-     lcd.print("Btn3     ");
+     lcd.print(" - Button Up ");
      break;
      }
    case btnDOWN:
@@ -97,19 +97,19 @@ Serial.println("lcd_key = " + String(lcd_key));
      if(chn == 16){chn=0;}
      if(chn == 9){chn=10;}
      chn = chn+1;
-     lcd.print("Btn4     ");
+     lcd.print(" - Button Down ");
      break;
      }
    case btnSELECT:
      {
      if(vox == 8){vox=0;}
      vox = vox+1;
-     lcd.print("Btn2     ");
+     lcd.print(" - Button Select ");
      break;
      }
      case btnNONE:
      {
-     lcd.print("None     ");
+     lcd.print(" - Button None ");
      break;
      }
  }
