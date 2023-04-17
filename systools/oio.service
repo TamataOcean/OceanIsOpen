@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/node server.js
-WorkingDirectory=/home/pi/OceanIsOpen/systools
+WorkingDirectory=/home/$USER/OceanIsOpen/systools
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
