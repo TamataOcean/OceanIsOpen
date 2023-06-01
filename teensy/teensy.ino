@@ -51,6 +51,7 @@
 #include "Debug.h"
 #include <ArduinoJson.h>
 #include <LiquidCrystal.h>
+#include <TinyGPSPlus.h>
 
 #define DEBUG_AVR 
 
@@ -179,6 +180,8 @@ GravitySensorHub sensorHub ;
 String name = TEENSYNAME;
 int start_log = 0;
 
+TinyGPSPlus gps;
+
 /*************************/
 /*        SETUP          */
 /*************************/
@@ -217,14 +220,43 @@ void setup() {
 
 	Debug::println("Calibration Step to Serial ");
   sensorCalibrationStepToSerial();
+
+  /****************************/
+  /*      GNSS From RX        */
+  /****************************/
+  Serial5.begin(115200);
+  start_log = 1;
+  logInterval = 1000;
 }
 
 /*************************/
 /*        LOOP           */
 /*************************/
 void loop() {
-
+  // Reading RX5 for GNSS data
+  while (Serial5.available())
+    {
+      char c;
+      c = Serial5.read();
+      gps.encode(c);
+    }
+  
   if (  ((millis() - previousLogTime) >= logInterval || previousLogTime == 0 ) && start_log ) {
+    //GNSS Reading 
+    Serial.println();
+    Serial.print(gps.time.hour());
+    Serial.print(':');
+    Serial.print(gps.time.minute());
+    Serial.print(':');
+    Serial.print(gps.time.second());
+    Serial.print('.');
+    Serial.print(gps.time.centisecond());
+    Serial.print(" --- POSITION : LON = ");
+    Serial.print(String(gps.location.lng(),8));
+    Serial.print(" / LAT = ");
+    Serial.print(String(gps.location.lat(),8));
+    Serial.println();
+
     //Collect sensor readings
     sensorHub.update();
     //Export sensor in JSON
@@ -232,12 +264,11 @@ void loop() {
     previousLogTime = millis(); 
     }
 
-  if (Serial.available() > 0) {
+   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n');
     Serial.print( name + " - message received : ");
     Serial.println(data);
     //lcdPrint("message received :" + data);      //DEBUG MODE WITH LCD
-
     commandManager(data);
   }  
 }
@@ -338,7 +369,7 @@ int commandManager(String message) {
     lcdPrint("Stop log received");
     start_log = 0;
   }
-
+  // {"order":"update_interval", "value":1000}
   else if (jsonDoc["order"] == "update_interval" ) {
     Serial.print( name + " - Interval update received = ");
     Serial.println( jsonDoc["value"].as<long>() );
