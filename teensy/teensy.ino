@@ -188,7 +188,22 @@ TinyGPSPlus gps;
 void setup() {
 	//SERIAL INIT
 	Serial.begin(115200);
+  Serial1.begin(COMM_BAUDRATE);
+  String ans = "";
 	delay(1000);
+
+  // Checking for bluetooth module presence
+  // Serial1.println("AT");
+  // delay(100);
+  // while (Serial1.available())
+  //  ans.concat((char)Serial1.read()); 
+  // if (ans != "OK\r\n")  {
+  //   Serial.println("Bluetooth module : No module detected, check wiring...");
+  //   Serial.println("Waiting for reboot...");
+  //   return;
+  // }
+  // Serial.println("Bluetooth module : Module detected.");
+  // ans = "";
 	
   //Init LCD
   Serial.println("LCD BEGIN");
@@ -204,8 +219,6 @@ void setup() {
   
   Debug::println("INIT_SENSOR_HUB");
 	
-
-
 	/**************************/
 	/* 			SENSORS SETUP 		*/
   //Reset and initialize sensors
@@ -222,11 +235,11 @@ void setup() {
   sensorCalibrationStepToSerial();
 
   /****************************/
-  /*      GNSS From RX        */
+  /*      GNSS From RX5       */
   /****************************/
   Serial5.begin(115200);
   start_log = 1;
-  logInterval = 1000;
+  logInterval = 2000;
 }
 
 /*************************/
@@ -242,28 +255,34 @@ void loop() {
     }
   
   if (  ((millis() - previousLogTime) >= logInterval || previousLogTime == 0 ) && start_log ) {
-    //GNSS Reading 
-    Serial.println();
-    Serial.print(gps.time.hour());
-    Serial.print(':');
-    Serial.print(gps.time.minute());
-    Serial.print(':');
-    Serial.print(gps.time.second());
-    Serial.print('.');
-    Serial.print(gps.time.centisecond());
-    Serial.print(" --- POSITION : LON = ");
-    Serial.print(String(gps.location.lng(),8));
-    Serial.print(" / LAT = ");
-    Serial.print(String(gps.location.lat(),8));
-    Serial.println();
-
     //Collect sensor readings
     sensorHub.update();
     //Export sensor in JSON
     Serial.println(sensorHub.getJsonSensorsUpdate().c_str());
-    previousLogTime = millis(); 
+    
+    String json = "{";
+    json += "\"id\":\"OceanIsOpen_98:d3:61:fd:6c:e4\"";
+    json += ",\"time\":\"" + (String)gps.date.year() + "/" + (String)gps.date.month() + "/" + (String)gps.date.day() + " ";
+    json += (String)gps.time.hour() + ":" + (String)gps.time.minute() + ":" + (String)gps.time.second() + "." +  (String)gps.time.centisecond() + "\",";
+    json += "\"lon\":" + String(gps.location.lng(),8) + ","; 
+    json += "\"lat\":" + String(gps.location.lat(),8) + ",";
+    for (int i =0 ; i<7 ; i++) {
+        if ( i == 6 ) {
+          json += "\"" + (String)sensorHub.getSensorName(i) + "\":" + (String)sensorHub.getValue(i);
+        }
+        else {
+          json += "\"" + (String)sensorHub.getSensorName(i) + "\":" + (String)sensorHub.getValue(i) + ",";
+      }}
+      json += "}";
+
+      Serial.println(json);
+
+      // Sending over Bluetooth
+      Serial1.println(json);
+      previousLogTime = millis(); 
     }
 
+   // Receiving order from Serial
    if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n');
     Serial.print( name + " - message received : ");

@@ -195,6 +195,10 @@ String GravitySensorHub::getSensorName(int sensorId){
 	return this->sensors[sensorId]->sensorName;
 }
 
+double GravitySensorHub::getValue( int sensorId){
+	return this->sensors[sensorId]->getValue();
+}
+
 String GravitySensorHub::getJsonConfig(){
 	String json = "{";
 	for (size_t i = 0; i < SensorCount; i++)

@@ -63,4 +63,5 @@ public:
 	String getCalibrationStatus();
 	String getSensorInfo(int i);
 	String getSensorName(int sensorId);
+	double getValue( int sensorId);
 };

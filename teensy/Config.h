@@ -65,3 +65,7 @@ enum SensorNumber
 #define TDS_CALIBRATION_STEP 2
 #define ORP_CALIBRATION_STEP 3
 #define TURB_CALIBRATION_STEP 0
+
+// SETUP FOR BLUETOOTH MODULE ( Adresse Mac 98:d3:61:fd:6c:e4 )
+#define COMM_BAUDRATE         115200
+#define CONF_BAUDRATE         38400
